@@ -1,5 +1,7 @@
 # Proyecto-TSDWAD
+
 ---------
+
 # PROGRAMADOR WEB
 
 # INTEGRANTES Grupo Code Masters - Com1:
@@ -25,13 +27,11 @@ sinistri - Sebastian Balestri - balestri@gmail.com [Frontend]
 -----
 -----
 
-Proyecto (Actualizar a 2024)
-```bash
+# Proyecto (Rellenar más)
+
 El objetivo principal de este documento es proporcionar una descripción completa y detallada del proyecto, dirigida a inspección por parte de profesores del ISPC, advirtiendo que el presente proyecto se trata de una tienda en línea especializada en la venta de productos naturales destinados al consumo. Contamos con un diseño integrado por clases que conectan tanto al administrador como al usuario con la base de datos para distintas finalidades ya sea de quien acceda. Entonces, el proyecto tiene como finalidad ofrecer a clientes, mediante una web, una plataforma intuitiva y segura para adquirir una amplia variedad de productos naturales, como alimentos orgánicos, suplementos dietéticos, productos de cuidado personal y más; y al administrador la seguridad en la recolección de datos.
-
-Este proyecto que hemos decidido hacer con el equipo se trata de una pagina web, la cual es una tienda virtual de la dietetica llamada Aymara. Este proyecto ha sido realizado con Python y Djangoen la parte backend, y Html, Css, Bootstrap, Javascript y Angular en la parte del frontend.
-
-(Actualizar mas datos)
+```bash
+Este proyecto que hemos decidido hacer con el equipo se trata de una pagina web, la cual es una tienda virtual de la dietetica llamada Aymara. Este proyecto ha sido realizado con Python y Django en la parte backend, y Html, Css, Bootstrap, Javascript y Angular en la parte del frontend.
 ```
 -----
 Requisitos
