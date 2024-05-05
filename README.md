@@ -54,33 +54,58 @@ Requisitos
 
 ```
 
-# Frontend
-```bash
-La estructura frontend del proyecto se compone de las siguientes carpetas y archivos:
+La estructura frontend del proyecto está compuesta por las siguientes carpetas y archivos:
+
 Frontend:
-    .vscode: 
-        settings.json
-    Imag_contacto: (Carpeta que contiene las imagenes de redes sociales y de contacto)
-        correo.png
-        Face.webp
-        inst.png
-        tw.png
-        wsp.png
-    Imag_productos: (Carpeta que contiene las imagenes de productos)
-        aceite_coco.jpeg
-        cafe_verde.jpeg
-        garcimax.jpeg
-    Logos: (Logo de la marca)
-        icono1.ico
-        logoAymara.png
-    contacto.html (Pagina de contacto)
-    index.html (Landing page)
-    productos.html (Pagina de productos)
-    ingresar.html (Pagina de registro e inicio de sesion)
-    eventos.js
-    Proyecto.code-workspace
-    style.css
-    fondo.jpeg
+- .vscode:
+  - settings.json
+- Imag_contacto: (Carpeta que contiene las imágenes de redes sociales y de contacto)
+  - correo.png
+  - Face.webp
+  - inst.png
+  - tw.png
+  - wsp.png
+- Imag_productos: (Carpeta que contiene las imágenes de productos)
+  - aceite_coco.jpeg
+  - cafe_verde.jpeg
+  - garcimax.jpeg
+- Logos: (Logo de la marca)
+  - icono1.ico
+  - logoAymara.png
+- contacto.html (Página de contacto)
+- index.html (Página de inicio)
+- productos.html (Página de productos)
+- ingresar.html (Página de registro e inicio de sesión)
+- eventos.js
+- Proyecto.code-workspace
+- style.css
+- fondo.jpeg
+
+-ProyectoAymara2024/ (nombre del proyecto)
+
+- node_modules/ (contiene todas las dependencias del módulo)
+- src/ (directorio donde se encuentra todo el código fuente de la app)
+  - app/ (directorio principal de la app, contiene el módulo de la aplicación y el componente de la app)
+    - app.component.css
+    - app.component.html
+    - app.component.spec.ts
+    - app.component.ts
+    - app.module.ts
+  - assets/ (este directorio contiene todas las imágenes y otros archivos activos)
+  - environments/ (contiene opciones de configuración para diferentes entornos)
+  - favicon.ico (imágenes, videos)
+  - index.html (página de inicio)
+  - main.ts
+  - polyfills.ts
+  - styles.css
+  - test.ts
+- .editorconfig
+- .gitignore
+- angular.json (archivo de configuración de Angular)
+- package.json (contiene dependencias del proyecto y los scripts de construcción)
+- README.md
+- tsconfig.json (archivo de configuración para el compilador de TypeScript)
+- tslint.json (archivo de configuración para mantener la coherencia del código)
 ```
 
 Base de datos (Rellenar)
