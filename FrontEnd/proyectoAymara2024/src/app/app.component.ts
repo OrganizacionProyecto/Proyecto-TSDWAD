@@ -9,5 +9,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'proyectoAymara2024';
+  title = "Productos Naturales Aymara";
 }
