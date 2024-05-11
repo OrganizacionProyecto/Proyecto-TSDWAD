@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here  
 
-#Modelo de la tabla Categoria
+#Modelo de la tabla Categoria.
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100, blank=False)
