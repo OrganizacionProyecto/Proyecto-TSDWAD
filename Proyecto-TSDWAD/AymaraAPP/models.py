@@ -16,4 +16,15 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
     
-#Modelo de la tabla Metodo de Pago    
+#Modelo de la tabla Metodo de Pago
+class Metodo_pago(models.Model):
+    id_metodo_pago = models.AutoField(primary_key=True) 
+    nombre = models.CharField(max_length=45, blank=False)
+    class Meta:
+        db_table = "Metodo_pago"
+        verbose_name = "Metodo de Pago"
+        verbose_name_plural = "Metodos de Pagos"
+    def __unicode__(self):
+        return self.nombre
+    def __str__(self):
+        return self.nombre 
