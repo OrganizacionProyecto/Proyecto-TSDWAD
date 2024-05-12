@@ -1,40 +1,4 @@
-.custom-navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 20px;
-    padding-left: 1%;
-    padding-right: 5%;
-    font-weight: bold;
-  }
-  
-  .custom-navbar h1 {
-    color: #b61f1f;
-    font-size: 45px;
-  }
-  
-  .custom-navbar ul li {
-    display: inline-block;
-    padding: 0px 20px;
-  }
-  
-  .custom-navbar .a {
-    color: #b62929;
-    text-decoration: none;
-  }
-  
-  .custom-navbar .a:hover {
-    color: rgb(4, 31, 13);
-  }
-  
-  .carrito-icon {
-    margin-right: 20px;
-  }
-  
-  .carrito-icon img {
-    width: 30px; 
-  }
-      
+    
   .jumbotron {
     padding: 10px; /* Ajusta el espaciado interno del jumbotron */
     
