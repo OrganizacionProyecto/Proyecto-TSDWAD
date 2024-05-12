@@ -11,5 +11,9 @@ class CategoriaAdmin(admin.ModelAdmin):
 class CarritoAdmin(admin.ModelAdmin):
     list_display = ("id_carrito", "cantidad", "precio_unitario", "id_pedido", "id_producto", "id_usuario")
 
+class ProductoAdmin(admin.ModelAdmin):
+    list_display = ('productoID', 'nombre', 'descripcion', 'precio', 'disponibilidad', 'imagen', 'id_categoria')
+    
 admin.site.register(Categoria, CategoriaAdmin)    
 admin.site.register(Carrito, CarritoAdmin)
+admin.site.register(Producto, ProductoAdmin) 
