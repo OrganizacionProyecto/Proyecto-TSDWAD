@@ -4,20 +4,39 @@
     margin-right: 0%;
     margin-top: 5%;
     color: #fff;
-    padding: 20px 0;
+    padding: 1px 0;
     background-color: rgb(68, 157, 68);
     background-size: cover;
     background-image: linear-gradient(rgba(56, 85, 57, 0.75), rgba(169, 194, 170, 0.75));
   }
   
-  .redes-sociales a {
-    color: #ac1111; /* Color del texto de los enlaces de redes sociales */
-    font-size: 20px; /* Tamaño del texto de los enlaces de redes sociales */
-    margin: 0 10px; /* Espaciado entre los enlaces de redes sociales */
-    text-decoration: none; /* Elimina el subrayado de los enlaces de redes sociales */
+    
+  .social-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   
-  .redes-sociales a:hover {
-    color: #ccc; /* Cambia el color del texto al pasar el mouse sobre los enlaces */
+  .social-media ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .social-media li {
+    display: inline-block;
+    margin: 20px 70px;  /* Aumentar el espaciado horizontal (margin-left y margin-right) */
+    /* También puedes ajustar el espaciado vertical (margin-top y margin-bottom) si es necesario */
+  }
+  
+  
+  .social-media a {
+    display: inline-block;
+    text-decoration: none;
+  }
+  
+  .social-media img {
+    width: 24px;
+    height: 24px;
   }
   
