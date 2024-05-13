@@ -1,0 +1,32 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary custom-navbar">
+  <div class="container-fluid">
+    <a routerLink="/" class="navbar-brand"> <img src="../assets/Logo_Aymara-removebg-preview.png" alt="Logotipo de tu empresa" class="logo-img">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="" [ngClass]="{active: menuOption == 'home'}" (click)="onOption('home')">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="products" [ngClass]="{active: menuOption == 'products'}" (click)="onOption('products')">Productos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="contact" [ngClass]="{active: menuOption == 'contact'}" (click)="onOption('contact')">Contacto</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="login" [ngClass]="{active: menuOption == 'login'}" (click)="onOption('login')">Login</a>
+        </li>
+      </ul>
+    </div>
+    <a href="#" class="carrito-link">
+      <img src="assets/carrito.png" alt="Carrito de Compras" class="carrito-icon">
+    </a>
+  </div>
+</nav>
+
+
+<router-outlet />
+<app-footer></app-footer>

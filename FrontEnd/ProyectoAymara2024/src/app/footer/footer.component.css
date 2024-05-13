@@ -1,0 +1,42 @@
+.footer {
+    text-align: center;
+    margin-left: 0px;
+    margin-right: 0%;
+    margin-top: 5%;
+    color: #fff;
+    padding: 1px 0;
+    background-color: rgb(68, 157, 68);
+    background-size: cover;
+    background-image: linear-gradient(rgba(56, 85, 57, 0.75), rgba(169, 194, 170, 0.75));
+  }
+  
+    
+  .social-media {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .social-media ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .social-media li {
+    display: inline-block;
+    margin: 20px 70px;  /* Aumentar el espaciado horizontal (margin-left y margin-right) */
+    /* También puedes ajustar el espaciado vertical (margin-top y margin-bottom) si es necesario */
+  }
+  
+  
+  .social-media a {
+    display: inline-block;
+    text-decoration: none;
+  }
+  
+  .social-media img {
+    width: 24px;
+    height: 24px;
+  }
+  
