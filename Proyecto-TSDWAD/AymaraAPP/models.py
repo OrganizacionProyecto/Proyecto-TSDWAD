@@ -82,6 +82,22 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido #{self.id_pedido} (Fecha: {self.fecha_pedido}, Estado: {self.estado})"
 
+class ItemCarrito(models.Model):
+    productos = models.ManyToManyField(Producto, through='ProductoEnCarrito')
+    cantidad = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.cantidad} productos'
+    
+class ProductoEnCarrito(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    item_carrito = models.ForeignKey(ItemCarrito, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f'{self.cantidad} x {self.producto.nombre}'
+
+
 
 #Modelo de la tabla Carrito
 class Carrito(models.Model):
