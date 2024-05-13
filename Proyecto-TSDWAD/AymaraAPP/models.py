@@ -73,10 +73,10 @@ class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True)
     fecha_pedido = models.DateField(blank=False)
     estado = models.CharField(max_length=45, blank=False)
-    direccion_envio = models.CharField(max_length=200, blank=False)
+    direccion_envio = models.CharField(max_length=200, blank=False, default= "")
     total = models.DecimalField(blank=False, default=2000, decimal_places = 2, max_digits=10)
     id_usuario = models.ForeignKey('Usuario', to_field= "id_usuario", on_delete=models.CASCADE)
-    id_metodo_pago = models.ForeignKey('Metodo_pago', to_field= "id_metodo_pago", on_delete=models.CASCADE)
+    id_metodo_pago = models.ForeignKey('Metodo_pago', to_field= "id_metodo_pago", on_delete=models.CASCADE, default= 1)
 
     class Meta:
         db_table = "Pedido"
