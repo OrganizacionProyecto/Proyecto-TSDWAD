@@ -8,13 +8,13 @@
 
 JoaquinCamino12 - Camino Alonso Joaquin Nicolas - joaquincamino09@gmail.com [Backend] [Scrum Master]
 
-IamPurpleBoy - Nicolás Emanuel Martin - nicolas.emanuel.martin@gmail.com [Backend]
+Nico2384 - Nicolás Emanuel Martin - nicolas.emanuel.martin@gmail.com [Backend]
 
 Nico2384 - Figueroa Damián Nicolás - damiannicolasfigueroa2024@gmail.com 
 
 19021976maria - María Coronel - coronelsuarezmaria@gmail.com [Backend]
 
-waltercamino - Camino Walter Daniel - waltercamino@hotmail.com [Frontend]-
+waltercamino - Camino Walter Daniel - waltercamino@hotmail.com [Frontend]
 
 CeCogot - Cecilia Edith Cogot - ceciliacogot@gmail.com [Frontend]
 
