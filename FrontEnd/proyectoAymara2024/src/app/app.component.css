@@ -32,11 +32,11 @@
     -moz-osx-font-smoothing: grayscale;
   }
   
-  /* ... Resto del código ... */
+ 
   
   .pill-group .pill {
     --pill-accent: var(--bright-yellow);
   }
   
-  /* ... Resto del código ... */
+  
   
