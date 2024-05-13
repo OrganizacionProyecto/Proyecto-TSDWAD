@@ -19,10 +19,10 @@ class ProductoAdmin(admin.ModelAdmin):
     list_display = ('id_producto', 'nombre', 'descripcion', 'precio', 'disponibilidad', 'imagen', 'id_categoria')
 
 class CarritoAdmin(admin.ModelAdmin):
-    list_display = ("id_carrito", "cantidad", "precio_unitario", "id_pedido", "id_producto", "id_usuario")
+    list_display = ("id_carrito", "cantidad", "precio_unitario", "id_pedido", "id_producto")
 
 class PedidoAdmin(admin.ModelAdmin):
-    list_display = ("id_pedido", "fecha_pedido", "estado", "id_usuario")
+    list_display = ("id_pedido", "fecha_pedido", "estado", "id_usuario", "id_metodo_pago", "direccion_envio", "total")
     	
 class UsuarioAdmin(admin.ModelAdmin):
     list_display = ("id_usuario", "nombre", "apellido", "correo_electronico", "contrasena", "direccion", "tipo_usuario")
