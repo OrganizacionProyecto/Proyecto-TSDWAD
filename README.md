@@ -8,7 +8,7 @@
 
 JoaquinCamino12 - Camino Alonso Joaquin Nicolas - joaquincamino09@gmail.com [Backend] [Scrum Master]
 
-Nico2384 - Nicolás Emanuel Martin - nicolas.emanuel.martin@gmail.com [Backend]
+IamPurpleBoy - Nicolás Emanuel Martin - nicolas.emanuel.martin@gmail.com [Backend]
 
 Nico2384 - Figueroa Damián Nicolás - damiannicolasfigueroa2024@gmail.com 
 
@@ -46,6 +46,7 @@ Requisitos
 
 # Casos de Uso
 ```bash
+
 
 ```
 
