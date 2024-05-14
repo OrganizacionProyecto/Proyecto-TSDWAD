@@ -1,39 +1,42 @@
-/* navigation-bar.component.css */
-.custom-navbar {
-    display: flex; /* Enable flexbox layout */
-    align-items: center;
-    justify-content: flex-start; /* Align items to the left */
-    padding-top: 20px;
-    padding-left: 20px; /* Add left padding */
-    padding-right: 5%;
-    font-weight: bold;
+:host {
+    
+
+    --bright-yellow: #FFD700;
+    --electric-lime: #CCFF00;
+    --french-lime: #9ACD32;
+    --vivid-green: #008000;
+    --hot-green: #006400;
+    --lime-brown: #8B4513;
+  
+    --gray-900: #333333;
+    --gray-700: #666666;
+    --gray-400: #999999;
+  
+    --yellow-to-green-vertical-gradient: linear-gradient(
+      180deg,
+      var(--lime-brown) 0%, var(--vivid-green) 50%, var(--electric-lime) 100%
+    );
+  
+    --yellow-to-green-horizontal-gradient: linear-gradient(
+      90deg,
+      var(--lime-brown) 0%, var(--vivid-green) 50%, var(--electric-lime) 100%
+    );
+  
+    --pill-accent: var(--bright-yellow);
+  
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol";
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
-  .custom-navbar h1 {
-    color: #131212;
-    font-size: 2px !important;
+ 
+  
+  .pill-group .pill {
+    --pill-accent: var(--bright-yellow);
   }
   
-  .custom-navbar ul li {
-    display: inline-block;
-    padding: 0px 20px;
-  }
   
-  .custom-navbar ul li a {
-    font-size: 18px;
-    color: #0c0c0c;
-    text-decoration: none;
-  }
-  
-  .custom-navbar .a:hover {
-    color: rgb(4, 31, 13);
-  }
-  
-  .carrito-icon {
-    margin-right: 20px;
-  }
-  
-  .carrito-icon img {
-    width: 30px;
-  }
   
