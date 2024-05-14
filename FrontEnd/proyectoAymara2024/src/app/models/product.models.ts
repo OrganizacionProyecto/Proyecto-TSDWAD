@@ -1,18 +1,14 @@
 export interface IProduct {
-    id:          number;
-    title:       string;
-    price:       number;
+    id: number;
+    title: string;
+    price: number;
     description: string;
-    category:    Category;
-    image:       string;
-    rating:      Rating;
-}
+    category: string;
+    image: string;
+    rating: {
+      rate: number;
+      count: number;
+    };
+  }
+  
 
-export enum Category {
-    SuplementoDietario = "suplemento dietario",
-
-}
-export interface Rating {
-    rate:  number;
-    count: number;
-}

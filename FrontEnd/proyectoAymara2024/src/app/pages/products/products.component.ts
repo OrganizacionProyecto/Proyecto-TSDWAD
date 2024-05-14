@@ -26,12 +26,10 @@ export class ProductsComponent implements OnInit{
     );
   }
 
-    navegate(id: number): void(
-      this._rouuter.navigate(['/products',id])
-    )
+    navegate(id: number): void{(
+      this._router.navigate(['/products',id])
+    )}
 
   }
 
 
-
-}
