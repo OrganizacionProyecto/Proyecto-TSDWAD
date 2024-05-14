@@ -1,0 +1,39 @@
+/* navigation-bar.component.css */
+.custom-navbar {
+    display: flex; /* Enable flexbox layout */
+    align-items: center;
+    justify-content: flex-start; /* Align items to the left */
+    padding-top: 20px;
+    padding-left: 20px; /* Add left padding */
+    padding-right: 5%;
+    font-weight: bold;
+  }
+  
+  .custom-navbar h1 {
+    color: #131212;
+    font-size: 2px !important;
+  }
+  
+  .custom-navbar ul li {
+    display: inline-block;
+    padding: 0px 20px;
+  }
+  
+  .custom-navbar ul li a {
+    font-size: 18px;
+    color: #0c0c0c;
+    text-decoration: none;
+  }
+  
+  .custom-navbar .a:hover {
+    color: rgb(4, 31, 13);
+  }
+  
+  .carrito-icon {
+    margin-right: 20px;
+  }
+  
+  .carrito-icon img {
+    width: 30px;
+  }
+  
