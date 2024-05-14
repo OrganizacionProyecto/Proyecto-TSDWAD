@@ -43,3 +43,40 @@
   }
 
 
+
+
+.comprar-btn {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.comprar-btn:hover {
+    background-color: #0056b3;
+}
+
+.cantidad-input {
+    padding: 10px;
+    margin-left: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.precio {
+    font-size: 18px;
+    color: #333;
+}
+
+.precio-marco {
+    text-align: center;
+    margin-top: 20px;
+    border: 2px solid #28a745; /* Color del borde verde */
+    padding: 3px; /* Reducción del relleno */
+    border-radius: 50px; /* Reducción del radio de borde */
+    background-color: #049b27; /* Color de fondo verde */
+}
