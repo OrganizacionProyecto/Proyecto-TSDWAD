@@ -1,0 +1,33 @@
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 20px;
+    padding-left: 1%;
+    padding-right: 5%;
+    font-weight: bold;
+  }
+  .nav h1 {
+    color: #fff;
+    font-size: 45px;
+  }
+  .nav ul li {
+    display: inline-block;
+    padding: 0px 20px;
+  }
+  .a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .a:hover {
+    color: rgb(4, 31, 13);
+  }
+  
+  .header {
+    background-color: rgb(68, 157, 68);
+    background-size: cover;
+    background-image: linear-gradient(
+      rgba(56, 85, 57, 0.75),
+      rgba(169, 194, 170, 0.75)
+    );
+  }
