@@ -1,11 +1,16 @@
-<div class="container-ingresar" id="registerContainer">
-           
-    <form class="registroForm" id="registroForm">
-        <h3>Regístrate</h3>
-        <input type="text" class="box-ingresar" id="regNombreUsuario" placeholder="Nombre de Usuario" required>
-        <input type="password" class="box-ingresar"  id="regPassword" placeholder="Contraseña" required>
-        <input type="email" class="box-ingresar"  id="regEmail" placeholder="Dirección de Correo" required>
-        <button type="submit" class="submit-ingresar">Registrarse</button>
-        <p id="loginLink">¿Ya tienes una cuenta? <a href="ingresar.html" id="showLogin">Inicia Sesión</a></p>
-    </form>
+<div class="container-ingresar">
+  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="registroForm container-ingresar_formulario">
+    <h3>Registro</h3>
+    <input formControlName="Nombre" type="text" placeholder="Nombre" class="box-ingresar" />
+    <input formControlName="Apellido" type="text" placeholder="Apellido" class="box-ingresar" />
+    <input formControlName="Correo_electronico" type="email" placeholder="Correo electrónico" class="box-ingresar" />
+    <input formControlName="Contrasena" type="password" placeholder="Contraseña" class="box-ingresar" />
+    <input formControlName="Direccion" type="text" placeholder="Dirección" class="box-ingresar" />
+    <select formControlName="TipoUsuario" class="box-ingresar">
+      <option value="" disabled selected>Tipo de Usuario</option>
+      <option value="admin">Admin</option>
+      <option value="user">User</option>
+    </select>
+    <button type="submit" class="submit-ingresar" [disabled]="!registroForm.valid">Registrar</button>
+  </form>
 </div>
