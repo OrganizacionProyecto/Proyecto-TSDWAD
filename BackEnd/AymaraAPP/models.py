@@ -1,4 +1,6 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 
 # Create your models here  
 
@@ -73,11 +75,7 @@ class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True)
     fecha_pedido = models.DateField(blank=False)
     estado = models.CharField(max_length=45, blank=False)
-    direccion_envio = models.CharField(max_length=200, blank=False, default= "")
-    total = models.DecimalField(blank=False, default=2000, decimal_places = 2, max_digits=10)
     id_usuario = models.ForeignKey('Usuario', to_field= "id_usuario", on_delete=models.CASCADE)
-    id_metodo_pago = models.ForeignKey('Metodo_pago', to_field= "id_metodo_pago", on_delete=models.CASCADE, default= 1)
-
     class Meta:
         db_table = "Pedido"
         verbose_name = "Pedido"
@@ -94,6 +92,7 @@ class Carrito(models.Model):
     precio_unitario = models.DecimalField(blank=False, default=2000, decimal_places = 2, max_digits=10)
     id_pedido = models.ForeignKey(Pedido, to_field= "id_pedido", on_delete=models.CASCADE)
     id_producto = models.ForeignKey(Producto, to_field= "id_producto", on_delete=models.CASCADE)
+    id_usuario = models.ForeignKey(Usuario, to_field= "id_usuario", on_delete=models.CASCADE)
     class Meta:
         db_table = "Carrito"
         verbose_name = "Carrito"
@@ -103,3 +102,8 @@ class Carrito(models.Model):
     def __str__(self):
         return self.id_carrito
     
+class CustomUser(AbstractUser):
+    email = models.EmailField(max_length=150, unique=True)
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'password']
