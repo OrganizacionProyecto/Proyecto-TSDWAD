@@ -11,7 +11,7 @@ import { ProductosComponent } from './pages/productos/productos.component';
   standalone: true,
   imports: [RouterOutlet, CommonModule, HeaderComponent, FooterComponent, HomeComponent, ProductosComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'proyectoAymara';
