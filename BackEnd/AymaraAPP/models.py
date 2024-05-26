@@ -1,4 +1,6 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 
 # Create your models here  
 
@@ -103,3 +105,8 @@ class Carrito(models.Model):
     def __str__(self):
         return self.id_carrito
     
+class CustomUser(AbstractUser):
+    email = models.EmailField(max_length=150, unique=True)
+    
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'password']
