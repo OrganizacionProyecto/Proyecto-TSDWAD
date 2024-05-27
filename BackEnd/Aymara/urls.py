@@ -25,4 +25,5 @@ urlpatterns = [
     path('Admin/', admin.site.urls),
     path('api/', include(AymaraAPP.urls)),
     path('api/', include(router.urls)),
+
 ]
