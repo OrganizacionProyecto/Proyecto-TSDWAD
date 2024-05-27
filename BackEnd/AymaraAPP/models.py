@@ -62,6 +62,41 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
+# Modelo de la tabla Agregar_producto
+
+class Agregar_producto(models.Model):
+    id_agregar_producto = models.AutoField(primary_key=True)
+    cantidad = models.IntegerField(blank=False, default=2000)
+    precio_unitario = models.DecimalField(
+        blank=False, default=2000, decimal_places=2, max_digits=10
+    )
+    id_producto = models.ForeignKey(Producto, to_field="id_producto", on_delete=models.CASCADE
+    )
+    
+    class meta :
+        db_table = "Agregar_producto"
+        verbose_name = "Agregar Producto"
+        verbose_name_plural = "Agregar Productos"
+
+    def __unicode__(self):
+        return f"Producto #{self.id_producto} (Cantidad agregada: {self.cantidad})"
+
+    def __str__(self):
+        return f"Producto #{self.id_producto} (Cantidad agregada: {self.cantidad})"
+# Modelo de la tabla Stock
+class Stock:
+    id_stock = models.AutoField(primary_key=True)
+    cantidad = models.IntegerField(blank=False, default=2000)
+    id_producto = models.ForeignKey(Producto, to_field="id_producto", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        db_table = "Stock"
+        verbose_name = "Stock"
+        verbose_name_plural = "Stocks"
+
+    def __str__(self):
+        return f"Producto #{self.id_producto} (Stock agregado: {self.cantidad})"
 
 # Modelo de la tabla Pedido
 class Pedido(models.Model):
@@ -114,3 +149,14 @@ class Carrito(models.Model):
 
     def __str__(self):
         return self.id_carrito
+
+# Modelo de la tabla Datos_envio
+class Datos_envio:
+    id_datos_envio = models.AutoField(primary_key=True)
+    empresa = models.CharField(max_length=45, blank=False)
+    traking = models.CharField(max_length=45, blank=False)
+    
+    class meta:
+        db_table = "Datos_envio"
+        verbose_name = "Dato de envio"
+        verbose_name_plural = "Datos de envio"
