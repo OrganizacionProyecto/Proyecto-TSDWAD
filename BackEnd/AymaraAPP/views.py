@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, ProductoSerializer, CategoriaSerializer
-from .models import Producto, Categoria
+from .serializers import UserSerializer, ProductoSerializer, CategoriaSerializer, DatosEnvioSerializer, PedidoSerializer, StockSerializer, MetodoPagoSerializer, CarritoSerializer, AgregarProductoSerializer
+from .models import Producto, Categoria, Datos_envio, Pedido, Stock, Metodo_pago, Carrito, Agregar_producto
 
 
 class LoginView(APIView):
@@ -34,7 +34,7 @@ class SignupView(generics.CreateAPIView):
 
 
 # Producto View
-class ProductoList(APIView):
+"""class ProductoList(APIView):
     def get(self, request, format=None):
         productos = Producto.objects.all()
         serializer = ProductoSerializer(productos, many=True)
@@ -46,10 +46,10 @@ class ProductoList(APIView):
             serializer.save()
             return Response(serializer.data, status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
 
 
-class CategoriaList(APIView):
+"""class CategoriaList(APIView):
     def get(self, request, format=None):
         categorias = Categoria.objects.all()
         serializer = CategoriaSerializer(categorias, many=True)
@@ -61,4 +61,37 @@ class CategoriaList(APIView):
             serializer.save()
             return Response(serializer.data, status.HTTP_201_CREATED)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
+
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+class MetodoPagoViewSet(viewsets.ModelViewSet):
+    queryset = Metodo_pago.objects.all()
+    serializer_class = MetodoPagoSerializer
+
+class StockViewSet(viewsets.ModelViewSet):
+    queryset = Stock.objects.all()
+    serializer_class = StockSerializer
+
+class ProductoViewSet(viewsets.ModelViewSet):
+    queryset = Producto.objects.all()
+    serializer_class = ProductoSerializer
+
+class AgregarProductoViewSet(viewsets.ModelViewSet):
+    queryset = Agregar_producto.objects.all()
+    serializer_class = AgregarProductoSerializer
+
+class DatosEnvioViewSet(viewsets.ModelViewSet):
+    queryset = Datos_envio.objects.all()
+    serializer_class = DatosEnvioSerializer
+
+class PedidoViewSet(viewsets.ModelViewSet):
+    queryset = Pedido.objects.all()
+    serializer_class = PedidoSerializer
+
+class CarritoViewSet(viewsets.ModelViewSet):
+    queryset = Carrito.objects.all()
+    serializer_class = CarritoSerializer
+
