@@ -8,6 +8,7 @@ class AymaraappConfig(AppConfig):
 
     def ready(self):
         from .models import CustomUser
+        import AymaraAPP.signals
 
 
 

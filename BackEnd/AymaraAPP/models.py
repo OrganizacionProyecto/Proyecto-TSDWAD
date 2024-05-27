@@ -84,11 +84,10 @@ class Agregar_producto(models.Model):
     def __str__(self):
         return f"Producto #{self.id_producto} (Cantidad agregada: {self.cantidad})"
 # Modelo de la tabla Stock
-class Stock:
+class Stock(models.Model): 
     id_stock = models.AutoField(primary_key=True)
     cantidad = models.IntegerField(blank=False, default=2000)
-    id_producto = models.ForeignKey(Producto, to_field="id_producto", on_delete=models.CASCADE
-    )
+    id_producto = models.ForeignKey(Producto, to_field="id_producto", on_delete=models.CASCADE)
 
     class Meta:
         db_table = "Stock"
@@ -97,7 +96,6 @@ class Stock:
 
     def __str__(self):
         return f"Producto #{self.id_producto} (Stock agregado: {self.cantidad})"
-
 # Modelo de la tabla Pedido
 class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True)
@@ -151,7 +149,7 @@ class Carrito(models.Model):
         return self.id_carrito
 
 # Modelo de la tabla Datos_envio
-class Datos_envio:
+class Datos_envio (models.Model):
     id_datos_envio = models.AutoField(primary_key=True)
     empresa = models.CharField(max_length=45, blank=False)
     traking = models.CharField(max_length=45, blank=False)
