@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../pages/auth/login/login/auth.service';
+import { AuthService } from '../../pages/services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -20,5 +20,9 @@ export class HeaderComponent {
 
   navigateHome(): void {
     this.router.navigate(['/Home']);
+  }
+
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
   }
 }

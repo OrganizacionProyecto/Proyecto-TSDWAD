@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 
 @Component({
@@ -29,9 +29,8 @@ export class LoginComponent {
     if (this.loginForm.valid) {
       const email = this.loginForm.get('email')?.value;
       const password = this.loginForm.get('password')?.value;
-      this.authService.login(email, password).subscribe({
-        next: (response) => {
-          localStorage.setItem('token', response.token);
+      this.authService.login({email, password}).subscribe({
+        next: () => {
           this.router.navigate(['/']);
         },
         error: (err) => {
@@ -41,3 +40,4 @@ export class LoginComponent {
     }
   }
 }
+

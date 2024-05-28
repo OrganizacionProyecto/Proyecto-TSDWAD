@@ -3,15 +3,11 @@
     <img src="../../../assets/img/Logo_Aymara-removebg-preview.png" alt="Logo" (click)="navigateHome()">
   </div>
   <ul>
-    <li><a class="a" routerLink="/Home">Inicio</a></li>
-    <li><a class="a" routerLink="/productos">Productos</a></li>
-    <li><a class="a" routerLink="/contacto">Contacto</a></li>
-    <li><a class="a" routerLink="/login">Ingresar</a></li>
-    <li><a class="a" routerLink="/registro">Registro</a></li>
+    <li><a (click)="navigateTo('/Home')">Inicio</a></li>
+    <li><a (click)="navigateTo('/productos')">Productos</a></li>
+    <li><a (click)="navigateTo('/contacto')">Contacto</a></li>
+    <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/login')">Ingresar</a></li>
+    <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/registro')">Registro</a></li>
+    <li *ngIf="authService.isLoggedIn()"><a (click)="logout()">Salir</a></li>
   </ul>
 </nav>
-
-
-  
-
-

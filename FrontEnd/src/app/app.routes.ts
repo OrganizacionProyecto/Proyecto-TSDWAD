@@ -6,15 +6,16 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { LoginComponent } from './pages/auth/login/login/login.component';
 import { RegistroComponent } from './pages/auth/registro/registro/registro.component';
 import { ContactoComponent } from './pages/contacto/contacto.component';
+import { authGuard } from './pages/auth/login/auth.guard'; // Importa el authGuard
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'Home', component: HomeComponent },
   { path: 'header', component: HeaderComponent },
   { path: 'footer', component: FooterComponent },
-  { path: 'productos', component: ProductosComponent },
+  { path: 'productos', component: ProductosComponent}, 
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
-  { path: 'contacto', component: ContactoComponent },
-  { path: '**', redirectTo: '', pathMatch: 'full' }
+  { path: 'contacto', component: ContactoComponent},
+  { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
