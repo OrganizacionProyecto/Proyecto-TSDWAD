@@ -16,14 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework import routers
-import AymaraAPP.urls
+
 
 #API router
-router = routers.DefaultRouter()
+
 urlpatterns = [
+
     path('Admin/', admin.site.urls),
-    path('api/', include(AymaraAPP.urls)),
-    path('api/', include(router.urls)),
+    path('api/', include('AymaraAPP.urls')),    
 
 ]

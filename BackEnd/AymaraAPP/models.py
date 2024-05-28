@@ -21,12 +21,12 @@ class Categoria(models.Model):
 
 
 # Modelo de la tabla Metodo de Pago
-class Metodo_pago(models.Model):
+class MetodoPago(models.Model):
     id_metodo_pago = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=45, blank=False)
 
     class Meta:
-        db_table = "Metodo_pago"
+        db_table = "MetodoPago"
         verbose_name = "Metodo de Pago"
         verbose_name_plural = "Metodos de Pagos"
 
@@ -64,7 +64,7 @@ class Producto(models.Model):
 
 # Modelo de la tabla Agregar_producto
 
-class Agregar_producto(models.Model):
+class AgregarProducto(models.Model):
     id_agregar_producto = models.AutoField(primary_key=True)
     cantidad = models.IntegerField(blank=False, default=2000)
     precio_unitario = models.DecimalField(
@@ -74,7 +74,7 @@ class Agregar_producto(models.Model):
     )
     
     class meta :
-        db_table = "Agregar_producto"
+        db_table = "AgregarProducto"
         verbose_name = "Agregar Producto"
         verbose_name_plural = "Agregar Productos"
 
@@ -96,6 +96,7 @@ class Stock(models.Model):
 
     def __str__(self):
         return f"Producto #{self.id_producto} (Stock agregado: {self.cantidad})"
+
 # Modelo de la tabla Pedido
 class Pedido(models.Model):
     id_pedido = models.AutoField(primary_key=True)
@@ -149,12 +150,12 @@ class Carrito(models.Model):
         return self.id_carrito
 
 # Modelo de la tabla Datos_envio
-class Datos_envio (models.Model):
+class DatosEnvio (models.Model):
     id_datos_envio = models.AutoField(primary_key=True)
     empresa = models.CharField(max_length=45, blank=False)
     traking = models.CharField(max_length=45, blank=False)
     
     class meta:
-        db_table = "Datos_envio"
+        db_table = "DatosEnvio"
         verbose_name = "Dato de envio"
         verbose_name_plural = "Datos de envio"

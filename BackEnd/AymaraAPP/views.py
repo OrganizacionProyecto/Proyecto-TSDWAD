@@ -3,11 +3,15 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .serializers import UserSerializer, ProductoSerializer, CategoriaSerializer, DatosEnvioSerializer, PedidoSerializer, StockSerializer, MetodoPagoSerializer, CarritoSerializer, AgregarProductoSerializer
-from .models import Producto, Categoria, Datos_envio, Pedido, Stock, Metodo_pago, Carrito, Agregar_producto
+from rest_framework.permissions import IsAuthenticated
+from .serializers import *
+from .models import *
+from .permissions import *
 
 
 class LoginView(APIView):
+    permission_classes=[IsUsuarioUser, IsSuperAdminUser, IsUsuarioAdminUser]
+    
     def post(self, request):
         email = request.data.get("email", None)
         password = request.data.get("password", None)
@@ -23,6 +27,8 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    
     def post(self, request):
         # Borrar request
         logout(request)
@@ -30,68 +36,46 @@ class LogoutView(APIView):
 
 
 class SignupView(generics.CreateAPIView):
+    permission_classes = [IsSuperAdminUser]
     serializer_class = UserSerializer
-
-
-# Producto View
-"""class ProductoList(APIView):
-    def get(self, request, format=None):
-        productos = Producto.objects.all()
-        serializer = ProductoSerializer(productos, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = ProductoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
-
-
-"""class CategoriaList(APIView):
-    def get(self, request, format=None):
-        categorias = Categoria.objects.all()
-        serializer = CategoriaSerializer(categorias, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = CategoriaSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)"""
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
 class MetodoPagoViewSet(viewsets.ModelViewSet):
-    queryset = Metodo_pago.objects.all()
+    queryset = MetodoPago.objects.all()
     serializer_class = MetodoPagoSerializer
+    permission_classes = [IsSuperAdminUser]
 
 class StockViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
+    permission_classes = [IsSuperAdminUser]
 
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
 class AgregarProductoViewSet(viewsets.ModelViewSet):
-    queryset = Agregar_producto.objects.all()
+    queryset = AgregarProducto.objects.all()
     serializer_class = AgregarProductoSerializer
+    permission_classes = [IsUsuarioAdminUser]
 
 class DatosEnvioViewSet(viewsets.ModelViewSet):
-    queryset = Datos_envio.objects.all()
+    queryset = DatosEnvio.objects.all()
     serializer_class = DatosEnvioSerializer
+    permission_classes = [IsSuperAdminUser]
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
+    permission_classes = [IsSuperAdminUser, IsUsuarioAdminUser, IsUsuarioUser]
 
 class CarritoViewSet(viewsets.ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
+    permission_classes = [IsSuperAdminUser, IsUsuarioAdminUser, IsUsuarioUser]
 

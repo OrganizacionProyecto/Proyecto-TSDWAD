@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
-from .models import Producto, Categoria, Datos_envio, Stock, Pedido, Metodo_pago, Carrito, Agregar_producto
+from .models import Producto, Categoria, DatosEnvio, Stock, Pedido
+from .models import MetodoPago, Carrito, AgregarProducto
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -30,7 +31,7 @@ class CategoriaSerializer(serializers.ModelSerializer):
 
 class MetodoPagoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Metodo_pago
+        model = MetodoPago
         fields = '__all__'
 
 class StockSerializer(serializers.ModelSerializer):
@@ -40,12 +41,12 @@ class StockSerializer(serializers.ModelSerializer):
 
 class AgregarProductoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Agregar_producto
+        model = AgregarProducto
         fields = '__all__'
 
 class DatosEnvioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Datos_envio
+        model = DatosEnvio
         fields = '__all__'
 
 class PedidoSerializer(serializers.ModelSerializer):
