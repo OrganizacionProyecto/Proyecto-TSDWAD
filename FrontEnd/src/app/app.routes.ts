@@ -6,6 +6,7 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { LoginComponent } from './pages/auth/login/login/login.component';
 import { RegistroComponent } from './pages/auth/registro/registro/registro.component';
 import { ContactoComponent } from './pages/contacto/contacto.component';
+import { CarritoComponent } from './pages/carrito/carrito.component';
 
 
 export const routes: Routes = [
@@ -17,6 +18,9 @@ export const routes: Routes = [
 {path: 'login', component: LoginComponent},
 {path:"registro", component:RegistroComponent},
 {path:"contacto", component:ContactoComponent},
+{path: "carrito", component: CarritoComponent},
+
 // {path: 'products/: id', component: ProductsDetailComponent},
 {path: '**', redirectTo: '',pathMatch: 'full'},
 ];
+
