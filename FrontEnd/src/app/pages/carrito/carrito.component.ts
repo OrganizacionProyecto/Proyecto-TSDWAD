@@ -25,6 +25,7 @@ export class CarritoComponent implements OnInit {
 export interface Carrito {
   idProducto: number,
   cantidad: number,
-  precio: number
+  precio: number,
+  nombre: string
   
 }

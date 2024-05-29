@@ -12,6 +12,7 @@ interface Carrito {
   idProducto: number;
   cantidad: number;
   precio: number;
+  nombre: string
 }
 
 @Injectable({
@@ -23,6 +24,7 @@ export class CarritoService {
       idProducto:1,
       cantidad: 1,
       precio: 11500,
+      nombre: "Aceite de coco organico",
     },
    /* {
       idProducto:2,
@@ -38,10 +40,10 @@ export class CarritoService {
 
   constructor() { }
 
-  agregarProducto(idProducto: number, cantidad:number, precio:number){
+  agregarProducto(idProducto: number, cantidad:number, precio:number, nombre: string){
     const i = this.carrito.findIndex( (producto) => producto.idProducto === idProducto);
     if (i ===-1){
-      const nuevoProducto = {idProducto:idProducto, cantidad:cantidad, precio:precio };
+      const nuevoProducto = {idProducto:idProducto, cantidad:cantidad, precio:precio, nombre:nombre };
       this.carrito.push(nuevoProducto);
     } else{
       this.carrito[i].cantidad+=cantidad;

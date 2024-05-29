@@ -11,10 +11,14 @@
                               <img src="https://raw.githubusercontent.com/OrganizacionProyecto/Proyecto-TSDWAD/8d47d8ee64debe3d26b0f208633d43e19b507a13/FrontEnd/src/assets/img/aceite_coco.jpeg"
                                   class="img-fluid" alt="Producto imagen">
                           </div>
-                          <div class="col-md-3">
+                          <div class="col-md-2">
                               <p class="small text-muted mb-1">ID</p>
                               <p class="mb-0">{{ producto.idProducto }}</p>
                           </div>
+                          <div class="col-md-2">
+                            <p class="small text-muted mb-1">Nombre</p>
+                            <p class="mb-0">{{ producto.nombre }}</p>
+                        </div>
                           <div class="col-md-2">
                               <p class="small text-muted mb-1">Unidades</p>
                               <p class="mb-0">{{ producto.cantidad }}</p>
@@ -23,7 +27,7 @@
                               <p class="small text-muted mb-1">Precio</p>
                               <p class="mb-0">${{ producto.precio }}</p>
                           </div>
-                          <div class="col-md-3">
+                          <div class="col-md-2">
                               <p class="small text-muted mb-1">Total</p>
                               <p class="lead fw-normal mb-0">${{ producto.cantidad * producto.precio }}</p>
                           </div>

@@ -16,6 +16,7 @@ export class ProductosComponent implements OnInit{
     idProducto: number = 1; // Valor de ejemplo (cambia según tus necesidades)
     cantidad: number = 1;
     precio: number = 11500;
+    nombre: string= "Aceite de coco organico";
   
   constructor(
     private carritoService: CarritoService, // Inyecta el servicio CarritoService
@@ -29,7 +30,7 @@ export class ProductosComponent implements OnInit{
 
   agregarAlCarrito(){
     if (!this.idProducto) return;
-    this.carritoService.agregarProducto(this.idProducto,this.cantidad, this.precio);
+    this.carritoService.agregarProducto(this.idProducto,this.cantidad, this.precio, this.nombre);
     this.router.navigate (["carrito"]);
   }
 
