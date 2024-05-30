@@ -7,6 +7,7 @@ import { LoginComponent } from './pages/auth/login/login/login.component';
 import { RegistroComponent } from './pages/auth/registro/registro/registro.component';
 import { ContactoComponent } from './pages/contacto/contacto.component';
 import { authGuard } from './pages/auth/login/auth.guard'; // Importa el authGuard
+import { DashboardComponent } from './pages/dashboard/dashboard/dashboard.component'
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -17,5 +18,6 @@ export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'registro', component: RegistroComponent },
   { path: 'contacto', component: ContactoComponent},
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];

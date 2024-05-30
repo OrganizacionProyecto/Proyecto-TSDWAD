@@ -2,21 +2,21 @@
   <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="registroForm container-ingresar_formulario">
     <h3>Registro</h3>
     <div>
-      <input formControlName="Nombre" type="text" placeholder="Nombre" class="box-ingresar" />
+      <input id="nombre" name="nombre" formControlName="Nombre" type="text" placeholder="Nombre" class="box-ingresar" />
       <div *ngIf="registroForm.get('Nombre')?.touched && registroForm.get('Nombre')?.errors?.['required']">
         <small class="warning">El nombre es requerido</small>
       </div>
     </div>
 
     <div>
-      <input formControlName="Apellido" type="text" placeholder="Apellido" class="box-ingresar" />
+      <input id="apellido" name="apellido" formControlName="Apellido" type="text" placeholder="Apellido" class="box-ingresar" />
       <div *ngIf="registroForm.get('Apellido')?.touched && registroForm.get('Apellido')?.errors?.['required']">
         <small class="warning">El apellido es requerido</small>
       </div>
     </div>
 
     <div>
-      <input formControlName="Correo_electronico" type="email" placeholder="Correo electrónico" class="box-ingresar" />
+      <input id="correo_electronico" name="correo_electronico" formControlName="Correo_electronico" type="email" placeholder="Correo electrónico" class="box-ingresar" />
       <div *ngIf="registroForm.get('Correo_electronico')?.touched && registroForm.get('Correo_electronico')?.errors?.['required']">
         <small class="warning">El correo electrónico es requerido</small>
       </div>
@@ -26,7 +26,7 @@
     </div>
 
     <div>
-      <input formControlName="Contrasena" type="password" placeholder="Contraseña" class="box-ingresar" />
+      <input id="contrasena" name="contrasena" formControlName="Contrasena" type="password" placeholder="Contraseña" class="box-ingresar" />
       <div *ngIf="registroForm.get('Contrasena')?.touched && registroForm.get('Contrasena')?.errors?.['required']">
         <small class="warning">La contraseña es requerida</small>
       </div>
@@ -36,23 +36,19 @@
     </div>
 
     <div>
-      <input formControlName="Direccion" type="text" placeholder="Dirección" class="box-ingresar" />
+      <input id="direccion" name="direccion" formControlName="Direccion" type="text" placeholder="Dirección" class="box-ingresar" />
       <div *ngIf="registroForm.get('Direccion')?.touched && registroForm.get('Direccion')?.errors?.['required']">
         <small class="warning">La dirección es requerida</small>
       </div>
     </div>
 
-    <div>
-      <select formControlName="TipoUsuario" class="box-ingresar">
-        <option value="" disabled selected>Tipo de Usuario</option>
-        <option value="admin">Admin</option>
-        <option value="user">User</option>
-      </select>
-      <div *ngIf="registroForm.get('TipoUsuario')?.touched && registroForm.get('TipoUsuario')?.errors?.['required']">
-        <small class="warning">El tipo de usuario es requerido</small>
-      </div>
-    </div>
-
     <button type="submit" class="submit-ingresar" [disabled]="!registroForm.valid">Registrar</button>
+
+    <div *ngIf="submitted && registroForm.valid">
+      <p>Registro exitoso! Redirigiendo a la página de inicio de sesión...</p>
+    </div>
+    <div *ngIf="errorMessage">
+      <p class="error-message">{{ errorMessage }}</p>
+    </div>
   </form>
 </div>

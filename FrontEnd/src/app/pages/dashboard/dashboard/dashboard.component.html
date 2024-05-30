@@ -1,0 +1,10 @@
+<div class="dashboard-container">
+    <h2>Bienvenido, {{ user?.Nombre }}</h2>
+    <p><strong>Nombre:</strong> {{ user?.Nombre }}</p>
+    <p><strong>Apellido:</strong> {{ user?.Apellido }}</p>
+    <p><strong>Correo Electrónico:</strong> {{ user?.Correo_electronico }}</p>
+    <p><strong>Dirección:</strong> {{ user?.Direccion }}</p>
+    <p><strong>Tipo de Usuario:</strong> {{ user?.TipoUsuario }}</p>
+    <button (click)="logout()">Salir</button>
+</div>
+  
