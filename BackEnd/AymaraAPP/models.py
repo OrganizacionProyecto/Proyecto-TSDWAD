@@ -129,21 +129,27 @@ class CustomUser(AbstractUser):
     direccion = models.CharField(max_length=200, blank=False, default="Desconocido")
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username", "password"]
+    REQUIRED_FIELDS = ["username", "password", "first_name", "last_name"]
 
 
 # Modelo de la tabla Carrito
 class Carrito(models.Model):
     id_carrito = models.AutoField(primary_key=True)
-    cantidad = models.IntegerField(blank=False)
-    precio_unitario = models.DecimalField(
-        blank=False, default=0, decimal_places=2, max_digits=10
-    )
-    total = models.DecimalField(blank=False, default=0, decimal_places=2, max_digits=10)
+    direccion_envio = models.CharField(max_length=200,default="Desconocido", blank=False)
     id_producto = models.ForeignKey(
         Producto, to_field="id_producto", on_delete=models.CASCADE
     )
+    cantidad = models.IntegerField(blank=False)
+    total = models.DecimalField(blank=False, decimal_places=2, max_digits=10)
+
     id_usuario = models.ForeignKey(CustomUser, to_field="id", on_delete=models.CASCADE)
+    id_datos_envio = models.ForeignKey(
+        "DatosEnvio", to_field="id_datos_envio", on_delete=models.CASCADE
+    )
+    id_metodo_pago = models.ForeignKey(
+        "MetodoPago", to_field="id_metodo_pago", on_delete=models.CASCADE
+    )
+
 
     class Meta:
         db_table = "Carrito"
