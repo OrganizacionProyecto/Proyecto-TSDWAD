@@ -1,4 +1,5 @@
-__pycache__
+.\BackEnd\Aymara\__pycache__\
+.\BackEnd\AymaraAPP\__pycache__\
 *.pyc
 *.pyo
 env/

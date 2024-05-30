@@ -10,7 +10,7 @@ from .permissions import *
 
 
 class LoginView(APIView):
-    permission_classes=[IsUsuarioUser, IsSuperAdminUser, IsUsuarioAdminUser]
+   #permission_classes=[IsUsuarioUser, IsSuperAdminUser, IsUsuarioAdminUser]
     
     def post(self, request):
         email = request.data.get("email", None)
@@ -78,4 +78,3 @@ class CarritoViewSet(viewsets.ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
     permission_classes = [IsSuperAdminUser, IsUsuarioAdminUser, IsUsuarioUser]
-
