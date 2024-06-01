@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+# MODELS.PY
+from django.contrib.auth.models import User
+
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100, blank=False)
@@ -42,6 +45,12 @@ class Producto(models.Model):
 
     def __str__(self):
         return self.nombre
+# MODELS.PY
+class Producto(models.Model):
+    nombre = models.CharField(max_length=100)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    disponibilidad = models.IntegerField(default=0)
+
 
 class AgregarProducto(models.Model):
     id_agregar_producto = models.AutoField(primary_key=True)
@@ -106,6 +115,13 @@ class Carrito(models.Model):
 
     def __str__(self):
         return str(self.id_carrito)
+    
+# MODELS.PY
+class CarritoItem(models.Model):
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    cantidad = models.IntegerField(default=1)
+    total = models.DecimalField(max_digits=10, decimal_places=2)    
 
 class DatosEnvio(models.Model):
     id_datos_envio = models.AutoField(primary_key=True)
@@ -119,3 +135,7 @@ class DatosEnvio(models.Model):
 
     def __str__(self):
         return f"{self.empresa} - {self.traking}"
+
+
+
+
