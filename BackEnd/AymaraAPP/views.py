@@ -51,7 +51,7 @@ class LogoutView(APIView):
 class SignupView(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication]
     serializer_class = UserSerializer
-    permission_classes = [IsUsuarioUser]
+    #permission_classes = [IsUsuarioUser]
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()

@@ -13,7 +13,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ("first_name", "last_name", "email", "password")
+        fields = ("username", "first_name", "last_name", "email", "password")
 
     def validate_password(self, value):
         return make_password(value)
