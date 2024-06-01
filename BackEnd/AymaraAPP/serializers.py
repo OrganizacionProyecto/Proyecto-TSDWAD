@@ -3,6 +3,9 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from .models import Producto, Categoria, DatosEnvio, Stock, Pedido, MetodoPago, Carrito, AgregarProducto
 
+# SERIALIZER.PY
+from .models import Producto, CarritoItem
+
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
     first_name = serializers.CharField(required=True)
@@ -21,6 +24,14 @@ class ProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Producto
         fields = "__all__"
+
+# SERIALIZER.PY
+
+class ProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Producto
+        fields = ['id', 'nombre', 'precio', 'disponibilidad']     
+
 
 class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,3 +67,11 @@ class CarritoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Carrito
         fields = '__all__'
+
+# SERIALIZER.PY
+class CarritoItemSerializer(serializers.ModelSerializer):
+    producto = ProductoSerializer()
+
+    class Meta:
+        model = CarritoItem
+        fields = ['id', 'producto', 'cantidad', 'total']
