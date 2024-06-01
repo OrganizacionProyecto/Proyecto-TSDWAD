@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -8,27 +7,23 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  user: any = null;
+  userData: any;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loadUserData();
-  }
-
-  loadUserData(): void {
     this.authService.getUserData().subscribe({
       next: (data) => {
-        this.user = data;
+        this.userData = data;
       },
       error: (err) => {
-        console.error('Error fetching user data', err);
+        console.error('Error al obtener datos del usuario', err);
       }
     });
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
   }
 }
+

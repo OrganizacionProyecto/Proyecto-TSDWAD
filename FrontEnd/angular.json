@@ -58,6 +58,7 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+         
           "configurations": {
             "production": {
               "buildTarget": "proyectoAymara:build:production"
@@ -99,3 +100,5 @@
     "analytics": false
   }
 }
+
+

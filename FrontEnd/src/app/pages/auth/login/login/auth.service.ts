@@ -7,7 +7,7 @@ import { tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://tudominio.com/api'; // Reemplaza con tu URL de la API
+  private apiUrl = 'http://127.0.0.1:8000/api/auth'; 
 
   constructor(private http: HttpClient) {}
 
