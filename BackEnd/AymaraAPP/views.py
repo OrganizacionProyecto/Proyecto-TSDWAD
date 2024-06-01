@@ -5,13 +5,18 @@ from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
-from .serializers import *
-from .models import *
+from .serializers import * 
+from .models import * # from .models import Producto, CarritoItem 
 from .permissions import *
 from rest_framework.decorators import action
 from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
+
+# VIEWS.PY
+from .serializers import CarritoItemSerializer
+from .permissions import IsUserOrAdminWithRestrictions
+
 
 class GetCSRFToken(APIView):
     authentication_classes = [SessionAuthentication]  # Asegura la autenticación de sesión
@@ -146,3 +151,60 @@ class CarritoViewSet(viewsets.ModelViewSet):
                 carrito_item.save()
 
         return Response({"detail": "Products added to cart successfully."}, status=status.HTTP_200_OK)
+
+
+
+
+# VIEWS.PY
+class CarritoViewSet(viewsets.ModelViewSet):
+    queryset = CarritoItem.objects.all()
+    serializer_class = CarritoItemSerializer
+    permission_classes = [IsUserOrAdminWithRestrictions]
+    authentication_classes = [SessionAuthentication]
+
+    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
+    def agregar_producto(self, request):
+        productos = request.data.get('productos')
+
+        if not productos or not isinstance(productos, list):
+            return Response({"detail": "A list of products is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = request.user
+
+        for producto_data in productos:
+            id_producto = producto_data.get('id_producto')
+            cantidad = producto_data.get('cantidad')
+
+            if not id_producto or not cantidad:
+                return Response({"detail": "Product ID and quantity are required for each product."},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                producto = Producto.objects.get(id=id_producto)
+            except Producto.DoesNotExist:
+                return Response({"detail": f"Product with ID {id_producto} does not exist."},
+                                status=status.HTTP_404_NOT_FOUND)
+
+            # Verificar disponibilidad del producto
+            if cantidad > producto.disponibilidad:
+                return Response({"detail": f"Not enough stock available for product {producto.nombre}."},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            # Crear o actualizar el elemento del carrito
+            carrito_item, created = CarritoItem.objects.get_or_create(
+                producto=producto,
+                usuario=user,
+                defaults={'cantidad': cantidad}
+            )
+
+            if not created:
+                carrito_item.cantidad += cantidad
+                carrito_item.save()
+
+        return Response({"detail": "Products added to cart successfully."}, status=status.HTTP_200_OK)
+#Configuración de URLs
+#No olvides configurar las URLs para tu CarritoViewSet:
+
+#python
+#Copy code
+
