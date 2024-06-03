@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from './auth.service';
+import { AuthService } from '../../../services/auth.service';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,8 @@ import { AuthService } from './auth.service';
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  submitted = false;
+  errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
@@ -26,18 +29,19 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
+    this.submitted = true;
+    this.errorMessage = '';
     if (this.loginForm.valid) {
-      const email = this.loginForm.get('email')?.value;
-      const password = this.loginForm.get('password')?.value;
-      this.authService.login({email, password}).subscribe({
+      const formData = this.loginForm.value;
+      this.authService.login(formData).subscribe({
         next: () => {
-          this.router.navigate(['/']);
+          this.router.navigate(['/dashboard']);
         },
-        error: (err) => {
-          console.error('Login error', err);
+        error: (err: any) => {
+          this.errorMessage = 'Ocurrió un error al iniciar sesión. Por favor, inténtelo de nuevo.';
+          console.error('Error al iniciar sesión', err);
         }
       });
     }
   }
 }
-

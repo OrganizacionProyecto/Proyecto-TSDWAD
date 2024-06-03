@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,23 +8,24 @@ import { AuthService } from '../../services/auth.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  userData: any;
+  userData: any = {
+    Nombre: 'John',
+    Apellido: 'Doe',
+    Correo_electronico: 'john.doe@example.com',
+    TipoUsuario: 'Administrador'
+  };
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.authService.getUserData().subscribe({
-      next: (data) => {
-        this.userData = data;
-      },
-      error: (err) => {
-        console.error('Error al obtener datos del usuario', err);
-      }
-    });
+    const storedUserData = localStorage.getItem('userData');
+    if (storedUserData) {
+      this.userData = JSON.parse(storedUserData);
+    }
   }
 
   logout(): void {
     this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
-

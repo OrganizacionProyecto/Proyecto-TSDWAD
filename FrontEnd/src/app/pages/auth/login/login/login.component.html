@@ -1,16 +1,21 @@
 <div class="container-ingresar">
-    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="registroForm container-ingresar_formulario">
-      <h3>Login</h3>
-      <input formControlName="email" type="email" placeholder="Correo electrónico" class="box-ingresar" required />
-      <div *ngIf="loginForm.controls['email'].invalid && (loginForm.controls['email'].dirty || loginForm.controls['email'].touched)">
-        <small *ngIf="loginForm.controls['email'].errors?.['required']">Correo electrónico es requerido</small>
-        <small *ngIf="loginForm.controls['email'].errors?.['email']">Correo electrónico no es válido</small>
-      </div>
-      <input formControlName="password" type="password" placeholder="Contraseña" class="box-ingresar" required />
-      <div *ngIf="loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)">
-        <small *ngIf="loginForm.controls['password'].errors?.['required']">Contraseña es requerida</small>
-      </div>
-      <button type="submit" class="submit-ingresar" [disabled]="!loginForm.valid">Ingresar</button>
-    </form>
-  </div>
-  
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="registroForm container-ingresar_formulario">
+    <h3>Login</h3>
+    <input formControlName="email" type="email" placeholder="Correo electrónico" class="box-ingresar" required />
+    <div *ngIf="loginForm.controls['email'].invalid && (loginForm.controls['email'].dirty || loginForm.controls['email'].touched)">
+      <small *ngIf="loginForm.controls['email'].errors?.['required']">Por favor, ingresa un correo electrónico.</small>
+      <small *ngIf="loginForm.controls['email'].errors?.['email']">El formato del correo electrónico no es válido.</small>
+    </div>
+    <input formControlName="password" type="password" placeholder="Contraseña" class="box-ingresar" required />
+    <div *ngIf="loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)">
+      <small *ngIf="loginForm.controls['password'].errors?.['required']">La contraseña es requerida.</small>
+      <small *ngIf="loginForm.controls['password'].errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</small>
+    </div>
+    
+    <input formControlName="confirmPassword" type="password" placeholder="Confirmar contraseña" class="box-ingresar" required />
+    <button type="submit" class="submit-ingresar" [disabled]="!loginForm.valid">Ingresar</button>
+    <div *ngIf="errorMessage">
+      <p class="error-message">{{ errorMessage }}</p>
+    </div>
+  </form>
+</div>

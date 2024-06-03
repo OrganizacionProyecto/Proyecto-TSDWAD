@@ -1,13 +1,5 @@
-<div class="dashboard">
-    <h1>Bienvenido al Dashboard</h1>
-    <div *ngIf="userData">
-      <p><strong>Nombre:</strong> {{ userData?.Nombre }}</p>
-      <p><strong>Apellido:</strong> {{ userData?.Apellido }}</p>
-      <p><strong>Correo electrónico:</strong> {{ userData?.Correo_electronico }}</p>
-      <p><strong>Tipo de Usuario:</strong> {{ userData?.TipoUsuario }}</p>
-      <button (click)="logout()">Cerrar sesión</button>
-    </div>
-    <div *ngIf="!userData">
-      <p>Cargando datos del usuario...</p>
-    </div>
-  </div>
+<p><strong>Nombre:</strong> {{ userData?.Nombre }}</p>
+<p><strong>Apellido:</strong> {{ userData?.Apellido }}</p>
+<p><strong>Correo electrónico:</strong> {{ userData?.Correo_electronico }}</p>
+<p><strong>Tipo de Usuario:</strong> {{ userData?.TipoUsuario }}</p>
+<button (click)="logout()">Cerrar sesión</button>

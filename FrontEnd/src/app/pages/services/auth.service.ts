@@ -7,27 +7,34 @@ import { tap } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  private isLoggedInSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  private apiUrl = 'http://127.0.0.1:8000/api/auth';
+  private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
+  public authStatus$ = this.authStatusSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
-  register(userData: any): Observable<any> {
-    return this.http.post<any>('http://127.0.0.1:8000/api/auth/signup/', userData).pipe(
-      tap(response => {
-        if (response && response.token) {
-          this.isLoggedInSubject.next(true);
-          localStorage.setItem('token', response.token);
+  private hasToken(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  login(credentials: { email: string, password: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login/`, credentials).pipe(
+      tap((res: any) => {
+        if (res.token) {
+          localStorage.setItem('token', res.token);
+          localStorage.setItem('userData', JSON.stringify(res.userData));
+          this.authStatusSubject.next(true);
         }
       })
     );
   }
 
-  login(credentials: any): Observable<any> {
-    return this.http.post<any>('http://127.0.0.1:8000/api/auth/login/', credentials).pipe(
-      tap(response => {
-        if (response && response.token) {
-          this.isLoggedInSubject.next(true);
-          localStorage.setItem('token', response.token);
+
+  register(user: { username: string, first_name: string, last_name: string, email: string, password: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/signup/`, user).pipe(
+      tap((res: any) => {
+        if (res.token) {
+          localStorage.setItem('token', res.token);
         }
       })
     );
@@ -35,17 +42,11 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
-    this.isLoggedInSubject.next(false);
+    localStorage.removeItem('userData');
+    this.authStatusSubject.next(false);
   }
 
   isLoggedIn(): boolean {
-    return this.isLoggedInSubject.value;
-  }
-
-  getUserData(): Observable<any> {
-    const token = localStorage.getItem('token');
-    return this.http.get<any>('http://127.0.0.1:8000/api/auth/user/', {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    return !!localStorage.getItem('token');
   }
 }
