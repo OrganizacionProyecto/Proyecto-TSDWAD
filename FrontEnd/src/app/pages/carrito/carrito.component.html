@@ -1,53 +1,63 @@
-
 <section class="vh-100">
-  <div class="container h-20">
+    <div class="container h-20">
       <div class="row d-flex justify-content-center align-items-center h-100 w-100">
-          <div class="col-md-10">
-              <div class="card mb-4">
-                  <div class="card-body p-4">
-                      <p class="h2">Carrito<span class="h4"></span></p>
-                      <div *ngFor="let producto of productosEnCarrito" class="row align-items-center mb-3">
-                          <div class="col-md-2">
-                              <img src="https://raw.githubusercontent.com/OrganizacionProyecto/Proyecto-TSDWAD/8d47d8ee64debe3d26b0f208633d43e19b507a13/FrontEnd/src/assets/img/aceite_coco.jpeg"
-                                  class="img-fluid" alt="Producto imagen">
-                          </div>
-                          <div class="col-md-2">
-                              <p class="small text-muted mb-1">ID</p>
-                              <p class="mb-0">{{ producto.idProducto }}</p>
-                          </div>
-                          <div class="col-md-2">
-                            <p class="small text-muted mb-1">Nombre</p>
-                            <p class="mb-0">{{ producto.nombre }}</p>
-                        </div>
-                          <div class="col-md-2">
-                              <p class="small text-muted mb-1">Unidades</p>
-                              <p class="mb-0">{{ producto.cantidad }}</p>
-                          </div>
-                          <div class="col-md-2">
-                              <p class="small text-muted mb-1">Precio</p>
-                              <p class="mb-0">${{ producto.precio }}</p>
-                          </div>
-                          <div class="col-md-2">
-                              <p class="small text-muted mb-1">Total</p>
-                              <p class="lead fw-normal mb-0">${{ producto.cantidad * producto.precio }}</p>
-                          </div>
-                      </div>
-                  </div>
+        <div class="col-md-10">
+          <div class="card mb-4">
+            <div class="card-body p-4">
+              <p class="h2">Carrito</p>
+  
+              <!-- Información del Carrito -->
+              <div class="mb-4">
+                <p><strong>Dirección de Envío:</strong> {{ carrito.direccion_envio }}</p>
+                <p><strong>Teléfono:</strong> {{ carrito.telefono }}</p>
+                <p><strong>ID Usuario:</strong> {{ carrito.id_usuario }}</p>
+                <p><strong>ID Datos Envío:</strong> {{ carrito.id_datos_envio }}</p>
+                <p><strong>ID Método de Pago:</strong> {{ carrito.id_metodo_pago }}</p>
               </div>
-
-              <div class="card mb-5">
-                  <div class="card-body p-4">
-                      <div class="float-end">
-                          <p class="mb-0 me-5 d-flex align-items-center">
-                              <span class="small text-muted me-2">Total:</span>
-                              <span class="lead fw-normal">
-                                
-                              </span>
-                          </p>
-                      </div>
-                  </div>
+  
+              <!-- Productos en el Carrito -->
+              <div *ngFor="let producto of carrito.productos" class="row align-items-center mb-3">
+                <div class="col-md-2">
+                  <img [src]="producto.imagen" class="img-fluid" [alt]="producto.nombre">
+                </div>
+                <div class="col-md-2">
+                  <p class="small text-muted mb-1">ID Producto</p>
+                  <p class="mb-0">{{ producto.idProducto }}</p>
+                </div>
+                <div class="col-md-2">
+                  <p class="small text-muted mb-1">Nombre</p>
+                  <p class="mb-0">{{ producto.nombre }}</p>
+                </div>
+                <div class="col-md-2">
+                  <p class="small text-muted mb-1">Unidades</p>
+                  <p class="mb-0">{{ producto.cantidad }}</p>
+                </div>
+                <div class="col-md-2">
+                  <p class="small text-muted mb-1">Precio</p>
+                  <p class="mb-0">${{ producto.precio }}</p>
+                </div>
+                <div class="col-md-2">
+                  <p class="small text-muted mb-1">Total</p>
+                  <p class="lead fw-normal mb-0">${{ producto.cantidad * producto.precio }}</p>
+                </div>
               </div>
+            </div>
           </div>
+  
+          <div class="card mb-5">
+            <div class="card-body p-4">
+              <div class="float-end">
+                <p class="mb-0 me-5 d-flex align-items-center">
+                  <span class="small text-muted me-2">Total del Carrito:</span>
+                  <span class="lead fw-normal">
+                    ${{ carrito.total }}
+                  </span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-  </div>
-</section>
+    </div>
+  </section>
+  
