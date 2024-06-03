@@ -1,73 +1,23 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable , inject} from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Carrito } from './carrito.service';
+import { Producto } from './productos.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-  private_http = inject(HttpClient);
-}
+  private carritoUrl = 'http://127.0.0.1:8000/api/tablas/carritos/';
+  private productoUrl = 'http://127.0.0.1:8000/api/tablas/productos/';
 
-interface Carrito {
-  idProducto: number;
-  cantidad: number;
-  precio: number;
-  nombre: string
-}
+  constructor(private http: HttpClient) {}
 
-@Injectable({
-  providedIn: 'root',
-})
-export class CarritoService {
-  carrito: Carrito[] = [
-    {
-      idProducto:1,
-      cantidad: 1,
-      precio: 11500,
-      nombre: "Aceite de coco organico",
-    },
-   /* {
-      idProducto:2,
-      cantidad: 1,
-      precio: 13500,
-    },
-    {
-      idProducto:3,
-      cantidad: 1,
-      precio: 12500,
-    }*/
-  ];
-
-  constructor() { }
-
-  agregarProducto(idProducto: number, cantidad:number, precio:number, nombre: string){
-    const i = this.carrito.findIndex( (producto) => producto.idProducto === idProducto);
-    if (i ===-1){
-      const nuevoProducto = {idProducto:idProducto, cantidad:cantidad, precio:precio, nombre:nombre };
-      this.carrito.push(nuevoProducto);
-    } else{
-      this.carrito[i].cantidad+=cantidad;
-      this.carrito[i].precio = precio;
-    }
+  obtenerCarritos(): Observable<Carrito[]> {
+    return this.http.get<Carrito[]>(this.carritoUrl);
   }
 
-  eliminarProducto(idProducto: number){
-    this.carrito = this.carrito.filter ((producto) => producto.idProducto !== idProducto);
+  obtenerProductos(): Observable<Producto[]> {
+    return this.http.get<Producto[]>(this.productoUrl);
   }
-
-  cambiarCantidadProducto(idProducto: number, cantidad:number){
-    this.carrito = this.carrito.map (producto =>{
-      const productoActual = producto;
-      if (productoActual.idProducto === idProducto) productoActual.cantidad = cantidad;
-      return productoActual;
-    })
-  }
-
 }
-
-
-
-
-
- 
-
