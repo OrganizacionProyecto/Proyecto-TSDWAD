@@ -1,39 +1,43 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
-import { CarritoService } from '../../../services/api.service';
+import { CarritoService } from '../../../services/carrito.service';
+import { ProductoService, Producto } from '../../../services/productos.service';
 import { CarritoComponent } from '../carrito/carrito.component';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, CommonModule, CarritoComponent, FormsModule ],
   templateUrl: './productos.component.html',
-  styleUrl: './productos.component.css'
+  styleUrls: ['./productos.component.css']
 })
-export class ProductosComponent implements OnInit{
-    idProducto: number = 1; // Valor de ejemplo (cambia según tus necesidades)
-    cantidad: number = 1;
-    precio: number = 11500;
-    nombre: string= "Aceite de coco organico";
-  
+export class ProductosComponent implements OnInit {
+  productos: Producto[] = [];
+
   constructor(
-    private carritoService: CarritoService, // Inyecta el servicio CarritoService
-    private router: Router // Inyecta el Router
+    private productoService: ProductoService,
+    private carritoService: CarritoService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Lógica de inicialización (si es necesario)
+    this.productoService.obtenerProductos().subscribe(
+      (data: Producto[]) => {
+        this.productos = data;
+      },
+      (error) => {
+        console.error('Error al obtener productos:', error);
+      }
+    );
   }
-  
 
-  agregarAlCarrito(){
-    if (!this.idProducto) return;
-    this.carritoService.agregarProducto(this.idProducto,this.cantidad, this.precio, this.nombre);
-    this.router.navigate (["carrito"]);
+  agregarAlCarrito(producto: Producto, cantidad: number) {
+    if (cantidad <= 0) return;
+    const productoConCantidad = { ...producto, cantidad };
+    this.carritoService.actualizarCarrito({ productos: [productoConCantidad] });
+    this.router.navigate(['carrito']);
   }
-
-
-
 }
