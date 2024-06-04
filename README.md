@@ -110,7 +110,7 @@ ng version
 
 para levantar el proyecto simplemente se ejecuta 
 ng serve
-
+ 
 
 # Uso (Rellenar Front)
 
