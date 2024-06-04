@@ -59,7 +59,7 @@ Requisitos
 * Python 11
 * Angular 17
 
-# Instalación (Rellenar Frontend)
+# Instalación 
 Para instalar y ejecutar este proyecto con Django APIRest localmente, sigue estos pasos:
 
 Clona este repositorio en tu máquina local:
@@ -87,6 +87,30 @@ Configura tu entorno de desarrollo:
 python manage.py makemigrations
 python manage.py migrate
 ```
+Para levantar el proyecto desde angular:
+
+Instalar Node.js y npm
+Angular necesita Node.js y npm (Node Package Manager) para funcionar.
+
+Descargar Node.js: Ve a la página oficial de Node.js https://nodejs.org/ y descarga la versión LTS (Long Term Support).
+Instalar Node.js: Sigue las instrucciones del instalador.
+Después de la instalación, verifica la instalación abriendo una terminal y escribiendo:
+node -v
+npm -v
+Deberías ver los números de versión de Node.js y npm.
+
+ Instalar Angular CLI
+Angular CLI (Command Line Interface) es una herramienta para crear y manejar proyectos Angular.
+
+En la terminal, ejecuta:
+npm install -g @angular/cli@17
+
+Verifica la instalación de Angular CLI:
+ng version
+
+para levantar el proyecto simplemente se ejecuta 
+ng serve
+
 
 # Uso (Rellenar Front)
 
