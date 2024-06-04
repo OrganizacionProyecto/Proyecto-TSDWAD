@@ -27,7 +27,7 @@ sinistri - Sebastian Balestri - balestri@gmail.com [Frontend]
 -----
 -----
 
-# Proyecto (Rellenar más)
+# Proyecto 
 
 ## Características Principales
 El objetivo principal de este documento es proporcionar una descripción completa y detallada del proyecto, dirigida a inspección por parte de profesores del ISPC, advirtiendo que el presente proyecto se trata de una tienda en línea especializada en la venta de productos naturales destinados al consumo. Contamos con un diseño integrado por clases que conectan tanto al administrador como al usuario con la base de datos para distintas finalidades ya sea de quien acceda. Entonces, el proyecto tiene como finalidad ofrecer a clientes, mediante una web, una plataforma intuitiva y segura para adquirir una amplia variedad de productos naturales, como alimentos orgánicos, suplementos dietéticos, productos de cuidado personal y más; y al administrador la seguridad en la recolección de datos.
@@ -112,7 +112,7 @@ para levantar el proyecto simplemente se ejecuta
 ng serve
  
 
-# Uso (Rellenar Front)
+# Uso 
 
 Para ejecutar el proyecto Django APIRest, sigue estos pasos:
 
@@ -126,6 +126,10 @@ Abre tu navegador web y ve a la siguiente dirección:
 http://localhost:8000/
 ```
 Ahora deberías poder ver y usar Django APIRest 
+
+para poder lanzar el proyecto de angular se utiliza el comando
+
+ng serve
 
 
 # Casos de Uso
@@ -174,7 +178,7 @@ Elimina un producto del catálogo si ya no está disponible o es discontinuado.
 
 ```
 
-# Backend (Rellenar)
+# Backend 
 ```bash
 La estructura Backend del proyecto se compone de las siguientes carpetas y archivos:
 
