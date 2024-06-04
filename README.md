@@ -82,7 +82,7 @@ Este se encuentra en BackEnd/BD/
 
 Configura tu entorno de desarrollo:
 - Configura la base de datos en el archivo settings.py de la carpeta Aymara según tus preferencias.
-- Realiza las migraciones (En caso de no usar el script "aymara_api_rest.sql"):
+- Realiza las migraciones :
 ```bash
 python manage.py makemigrations
 python manage.py migrate
