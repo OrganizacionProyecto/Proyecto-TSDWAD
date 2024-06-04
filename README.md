@@ -243,28 +243,68 @@ BackEnd:
 La estructura frontend del proyecto se compone de las siguientes carpetas y archivos:
 Frontend:
     .vscode: 
-        settings.json
-    Imag_contacto: (Carpeta que contiene las imagenes de redes sociales y de contacto)
-        correo.png
-        Face.webp
-        inst.png
-        tw.png
-        wsp.png
-    Imag_productos: (Carpeta que contiene las imagenes de productos)
-        aceite_coco.jpeg
-        cafe_verde.jpeg
-        garcimax.jpeg
-    Logos: (Logo de la marca)
-        icono1.ico
-        logoAymara.png
-    contacto.html (Pagina de contacto)
-    index.html (Landing page)
-    productos.html (Pagina de productos)
-    ingresar.html (Pagina de registro e inicio de sesion)
-    eventos.js
-    Proyecto.code-workspace
-    style.css
-    fondo.jpeg
+    src
+	   pages
+	        auth
+			    login/login
+				    login.component.css
+					login.component.html
+					login.component.ts
+				registro/registro
+				    registro.component.css
+					registro.component.html
+					registro.component.ts	
+			carrito
+			    carrito.component.css
+				carrito.component.html
+				carrito.component.ts	
+		    contacto
+			    contacto.component.css
+				contacto.component.html
+				contacto.component.ts
+			dashboard/dashboard
+			    dashboard.component.css
+				dashboard.component.html
+				dashboard.component.ts
+			home
+			    home.component.css
+				home.component.html
+				home.component.ts
+			nosotros
+			    nosotros.component.css
+				nosotros.component.html
+				nosotros.component.ts
+			productos
+			    productos.component.css
+				productos.component.html
+				productos.component.ts
+			services
+			    auth.guard.ts		
+				auth.service.ts
+		shared
+		    footer
+			    footer.component.css
+				footer.component.html
+				footer.component.ts
+			header
+			     header.component.css
+				 header.component.html
+				 header.component.ts
+			app.component.css
+			app.component.html
+			app.component.ts
+			app.config.ts
+			app.routes.ts
+...........
+      services
+	    api.service.ts
+		carrito.service.ts
+		productos.service.ts
+	favicon.ico
+	index.html
+	main.ts
+	styles.css				
+
 ```
 
 #Base de datos
