@@ -1,11 +1,54 @@
-<div class="container-ingresar" id="registerContainer">
-           
-    <form class="registroForm" id="registroForm">
-        <h3>Regístrate</h3>
-        <input type="text" class="box-ingresar" id="regNombreUsuario" placeholder="Nombre de Usuario" required>
-        <input type="password" class="box-ingresar"  id="regPassword" placeholder="Contraseña" required>
-        <input type="email" class="box-ingresar"  id="regEmail" placeholder="Dirección de Correo" required>
-        <button type="submit" class="submit-ingresar">Registrarse</button>
-        <p id="loginLink">¿Ya tienes una cuenta? <a href="ingresar.html" id="showLogin">Inicia Sesión</a></p>
-    </form>
+<div class="container-ingresar">
+  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" class="registroForm container-ingresar_formulario">
+    <h3>Registro</h3>
+    <div>
+      <input id="username" name="username" formControlName="username" type="text" placeholder="Username" class="box-ingresar" />
+      <div *ngIf="registroForm.get('username')?.touched && registroForm.get('username')?.errors?.['required']">
+        <small class="warning">El Username es requerido</small>
+      </div>
+    </div>
+
+    <div>
+      <input id="first_name" name="first_name" formControlName="first_name" type="text" placeholder="Nombre" class="box-ingresar" />
+      <div *ngIf="registroForm.get('first_name')?.touched && registroForm.get('first_name')?.errors?.['required']">
+        <small class="warning">El nombre es requerido</small>
+      </div>
+    </div>
+
+    <div>
+      <input id="last_name" name="last_name" formControlName="last_name" type="text" placeholder="Apellido" class="box-ingresar" />
+      <div *ngIf="registroForm.get('last_name')?.touched && registroForm.get('last_name')?.errors?.['required']">
+        <small class="warning">El apellido es requerido</small>
+      </div>
+    </div>
+
+    <div>
+      <input id="email" name="email" formControlName="email" type="email" placeholder="Correo electrónico" class="box-ingresar" />
+      <div *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.errors?.['required']">
+        <small class="warning">El correo electrónico es requerido</small>
+      </div>
+      <div *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.errors?.['email']">
+        <small class="warning">El correo electrónico no es válido</small>
+      </div>
+    </div>
+
+    <div>
+      <input id="password" name="password" formControlName="password" type="password" placeholder="Contraseña" class="box-ingresar" />
+      <div *ngIf="registroForm.get('password')?.touched && registroForm.get('password')?.errors?.['required']">
+        <small class="warning">La contraseña es requerida</small>
+      </div>
+      <div *ngIf="registroForm.get('password')?.touched && registroForm.get('password')?.errors?.['minlength']">
+        <small class="warning">La contraseña debe tener al menos 8 caracteres</small>
+      </div>
+    </div>
+    
+    <button type="submit" class="submit-ingresar" [disabled]="!registroForm.valid">Registrar</button>
+
+    <div *ngIf="submitted && registroForm.valid">
+      <p>Registro exitoso! Redirigiendo a la página de inicio de sesión...</p>
+    </div>
+    <div *ngIf="errorMessage">
+      <p class="error-message">{{ errorMessage }}</p>
+    </div>
+  </form>
 </div>
