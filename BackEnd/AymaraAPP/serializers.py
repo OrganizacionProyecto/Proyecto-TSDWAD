@@ -38,9 +38,11 @@ class StockSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AgregarProductoSerializer(serializers.ModelSerializer):
+    producto = ProductoSerializer(source='id_producto', read_only=True)
+
     class Meta:
         model = AgregarProducto
-        fields = '__all__'
+        fields = ['id_agregar_producto', 'cantidad', 'precio_unitario', 'producto']
 
 class DatosEnvioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,6 +55,10 @@ class PedidoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CarritoSerializer(serializers.ModelSerializer):
+    productos = AgregarProductoSerializer(many=True, source='agregarproducto_set', read_only=True)
+    
     class Meta:
         model = Carrito
         fields = '__all__'
+        
+

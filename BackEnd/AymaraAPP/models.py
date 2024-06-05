@@ -98,6 +98,7 @@ class Carrito(models.Model):
     id_usuario = models.ForeignKey(CustomUser, to_field="id", on_delete=models.CASCADE, related_name="carritos")
     id_datos_envio = models.ForeignKey("DatosEnvio", to_field="id_datos_envio", on_delete=models.CASCADE, related_name="carritos")
     id_metodo_pago = models.ForeignKey(MetodoPago, to_field="id_metodo_pago", on_delete=models.CASCADE, related_name="carritos")
+    productos = models.ManyToManyField(AgregarProducto, blank=True, related_name='carritos')
 
     class Meta:
         db_table = "Carrito"

@@ -11,6 +11,7 @@ router.register(r'agregar_productos', AgregarProductoViewSet)
 router.register(r'datos_envio', DatosEnvioViewSet)
 router.register(r'pedidos', PedidoViewSet)
 router.register(r'carritos', CarritoViewSet)
+#router.register(r'cargar_productos', CarritoViewSet.agregar_producto)
 
 urlpatterns = [
     path('auth/get_csrf_token/', GetCSRFToken.as_view(), name='get_csrf_token'),
