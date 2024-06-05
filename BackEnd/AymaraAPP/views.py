@@ -12,6 +12,7 @@ from rest_framework.decorators import action
 from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
+from django.db import transaction
 
 class GetCSRFToken(APIView):
     authentication_classes = [SessionAuthentication]  # Asegura la autenticación de sesión
@@ -80,7 +81,7 @@ class ProductoViewSet(viewsets.ModelViewSet):
 class AgregarProductoViewSet(viewsets.ModelViewSet):
     queryset = AgregarProducto.objects.all()
     serializer_class = AgregarProductoSerializer
-    permission_classes = [IsSuperAdminUser]
+    permission_classes = [IsUserOrAdmin]
     authentication_classes = [SessionAuthentication]
 
 class DatosEnvioViewSet(viewsets.ModelViewSet):
@@ -109,40 +110,48 @@ class CarritoViewSet(viewsets.ModelViewSet):
             return Response({"detail": "A list of products is required."}, status=status.HTTP_400_BAD_REQUEST)
 
         user = request.user
+        errores = []
 
-        for producto_data in productos:
-            id_producto = producto_data.get('id_producto')
-            cantidad = producto_data.get('cantidad')
+        with transaction.atomic():
+            for producto_data in productos:
+                id_producto = producto_data.get('id_producto')
+                cantidad = producto_data.get('cantidad')
 
-            if not id_producto or not cantidad:
-                return Response({"detail": "Product ID and quantity are required for each product."},
-                                status=status.HTTP_400_BAD_REQUEST)
+                if not id_producto or not cantidad:
+                    errores.append("Product ID and quantity are required for each product.")
+                    continue
 
-            try:
-                producto = Producto.objects.get(id_producto=id_producto)
-            except Producto.DoesNotExist:
-                return Response({"detail": f"Product with ID {id_producto} does not exist."},
-                                status=status.HTTP_404_NOT_FOUND)
+                try:
+                    producto = Producto.objects.get(id_producto=id_producto)
+                except Producto.DoesNotExist:
+                    errores.append(f"Product with ID {id_producto} does not exist.")
+                    continue
 
-            # Verificar disponibilidad del producto
-            if cantidad > producto.disponibilidad:
-                return Response({"detail": f"Not enough stock available for product {producto.nombre}."},
-                                status=status.HTTP_400_BAD_REQUEST)
+                # Verificar disponibilidad del producto
+                if cantidad > producto.disponibilidad:
+                    errores.append(f"Not enough stock available for product {producto.nombre}.")
+                    continue
 
-            # Calcular precio unitario y total
-            precio_unitario = producto.precio
-            total = precio_unitario * cantidad
+                # Calcular precio unitario y total
+                precio_unitario = producto.precio
+                total = precio_unitario * cantidad
 
-            # Crear o actualizar el elemento del carrito
-            carrito_item, created = Carrito.objects.get_or_create(
-                id_producto=producto,
-                id_usuario=user,
-                defaults={'cantidad': cantidad, 'total': total}
-            )
+                # Crear o actualizar el elemento del carrito
+                agregar_producto, created = AgregarProducto.objects.get_or_create(
+                    id_producto=producto,
+                    defaults={'cantidad': cantidad, 'precio_unitario': precio_unitario}
+                )
 
-            if not created:
-                carrito_item.cantidad += cantidad
-                carrito_item.total = carrito_item.cantidad * carrito_item.precio_unitario
-                carrito_item.save()
+                if not created:
+                    agregar_producto.cantidad += cantidad
+                    agregar_producto.precio_unitario = precio_unitario
+                    agregar_producto.save()
+
+                # Asociar el producto al carrito del usuario
+                carrito, created = Carrito.objects.get_or_create(id_usuario=user)
+                carrito.agregarproducto_set.add(agregar_producto)
+
+        if errores:
+            return Response({"detail": errores}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({"detail": "Products added to cart successfully."}, status=status.HTTP_200_OK)
