@@ -51,6 +51,16 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
+  getUserData(): any {
+    try {
+      const userData = localStorage.getItem('userData');
+      return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+      console.error('Error parsing user data from localStorage', error);
+      return null;
+    }
+  }
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

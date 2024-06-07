@@ -8,7 +8,10 @@
     <li><a (click)="navigateTo('/contacto')">Contacto</a></li>
     <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/login')">Ingresar</a></li>
     <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/registro')">Registro</a></li>
-    <li><a (click)="navigateTo('/carrito')" class="clickable">Carrito</a></li>
+    <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
     <li *ngIf="authService.isLoggedIn()"><a (click)="logout()">Salir</a></li>
   </ul>
+  <div *ngIf="authService.isLoggedIn() && userData">
+    Bienvenido, {{ userData?.first_name || '' }} {{ userData?.last_name || '' }}
+  </div>
 </nav>

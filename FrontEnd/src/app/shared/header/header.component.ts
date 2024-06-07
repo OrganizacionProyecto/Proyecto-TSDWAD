@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../pages/services/auth.service';
@@ -10,8 +10,14 @@ import { AuthService } from '../../pages/services/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
+  userData: any = {};
+
   constructor(public authService: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.userData = this.authService.getUserData();
+  }
 
   logout(): void {
     this.authService.logout();

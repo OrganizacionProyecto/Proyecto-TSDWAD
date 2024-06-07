@@ -1,5 +1,7 @@
-<p><strong>Nombre:</strong> {{ userData?.Nombre }}</p>
-<p><strong>Apellido:</strong> {{ userData?.Apellido }}</p>
-<p><strong>Correo electrónico:</strong> {{ userData?.Correo_electronico }}</p>
-<p><strong>Tipo de Usuario:</strong> {{ userData?.TipoUsuario }}</p>
-<button (click)="logout()">Cerrar sesión</button>
+<div>
+  <p><strong>Nombre:</strong> {{ userData?.first_name || 'N/A' }}</p>
+  <p><strong>Apellido:</strong> {{ userData?.last_name || 'N/A' }}</p>
+  <p><strong>Correo electrónico:</strong> {{ userData?.email || 'N/A' }}</p>
+  <p><strong>Tipo de Usuario:</strong> {{ userData?.user_type || 'N/A' }}</p>
+  <button (click)="logout()">Cerrar sesión</button>
+</div>

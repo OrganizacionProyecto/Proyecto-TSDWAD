@@ -5,6 +5,7 @@ from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
 from .serializers import *
 from .models import *
 from .permissions import *
@@ -12,6 +13,7 @@ from rest_framework.decorators import action
 from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
+from django.db import transaction
 
 class GetCSRFToken(APIView):
     authentication_classes = [SessionAuthentication]  # Asegura la autenticación de sesión
@@ -33,12 +35,11 @@ class LoginView(APIView):
         email = request.data.get("email", None)
         password = request.data.get("password", None)
         user = authenticate(email=email, password=password)
-
         if user:
             login(request, user)
-            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-
-        return Response(status=status.HTTP_404_NOT_FOUND)
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_404_NOT_FOUND)
 
 class LogoutView(APIView):
     authentication_classes = [SessionAuthentication]
