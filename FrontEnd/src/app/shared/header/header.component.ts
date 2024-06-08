@@ -16,9 +16,15 @@ export class HeaderComponent implements OnInit {
   constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.userData = this.authService.getUserData();
+    const userData = this.authService.getUserData();
+    if (userData) {
+      console.log('User data loaded in HeaderComponent:', userData);
+      this.userData = userData; // Asigna userData correctamente
+    } else {
+      console.warn('No user data found in HeaderComponent.');
+    }
   }
-
+  
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);

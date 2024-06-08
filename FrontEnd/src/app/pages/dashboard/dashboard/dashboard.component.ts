@@ -13,7 +13,16 @@ export class DashboardComponent implements OnInit {
   constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
+    this.loadUserData();
+  }
+  
+  loadUserData(): void {
     this.userData = this.authService.getUserData();
+    if (!this.userData) {
+      console.warn('No user data found in localStorage.');
+    } else {
+      console.log('Loaded user data in dashboard:', this.userData);
+    }
   }
 
   logout(): void {

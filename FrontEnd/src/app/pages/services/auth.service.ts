@@ -22,7 +22,12 @@ export class AuthService {
       tap((res: any) => {
         if (res.token) {
           localStorage.setItem('token', res.token);
-          localStorage.setItem('userData', JSON.stringify(res.userData));
+          if (res.userData) {
+            localStorage.setItem('userData', JSON.stringify(res.userData));
+            console.log('User data saved to localStorage:', res.userData);  // Verifica que los datos se guardan
+          } else {
+            console.warn('userData is not defined in the response.');
+          }
           this.authStatusSubject.next(true);
         }
       }),
@@ -53,21 +58,25 @@ export class AuthService {
 
   getUserData(): any {
     try {
-      const userData = localStorage.getItem('userData');
-      return userData ? JSON.parse(userData) : null;
+      const userDataString = localStorage.getItem('userData');
+      if (!userDataString) {
+        console.warn('No user data found in localStorage.');
+        return null;
+      }
+      return JSON.parse(userDataString);
     } catch (error) {
       console.error('Error parsing user data from localStorage', error);
       return null;
     }
   }
+  
+  
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
-      // Error del lado del cliente
       errorMessage = `Error: ${error.error.message}`;
     } else {
-      // Error del lado del servidor
       switch (error.status) {
         case 0:
           errorMessage = 'No se puede conectar con el servidor. Por favor, inténtelo de nuevo más tarde.';
