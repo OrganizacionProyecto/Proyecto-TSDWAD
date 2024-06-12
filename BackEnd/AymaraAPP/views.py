@@ -4,7 +4,8 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser 
+from rest_framework.authtoken.models import Token
 from .serializers import *
 from .models import *
 from .permissions import *
@@ -13,6 +14,7 @@ from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.db import transaction
+from rest_framework.exceptions import PermissionDenied
 
 class GetCSRFToken(APIView):
     authentication_classes = [SessionAuthentication]  # Asegura la autenticación de sesión
@@ -23,9 +25,42 @@ class GetCSRFToken(APIView):
         # Obtener el token CSRF
         csrf_token = get_token(request)
         # Devolver el token CSRF en la respuesta
-        return Response({'csrfToken': csrf_token})
+        return Response({'csrfToken': csrf_token})   
+#-----------------------------------------------------------   
+
+"""class UserProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        user = request.user
+
+        user_data = {
+
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'username': user.username,
+            'direccion': user.direccion,
+        }
+
+        return Response(user_data, status=200) """
+
+class UserListCreateView(generics.ListCreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAdminUser]
+
+class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAdminUser]
     
-#-----------------------------------------------------------    
+    def update(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            raise PermissionDenied("You are not allowed to perform this action.")
+        return super().update(request, *args, **kwargs)
 
 class LoginView(APIView):
     authentication_classes = [SessionAuthentication]
@@ -36,10 +71,10 @@ class LoginView(APIView):
         user = authenticate(email=email, password=password)
         if user:
             login(request, user)
-            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
-
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key}, status=status.HTTP_200_OK)
+        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_404_NOT_FOUND)
+    
 class LogoutView(APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
@@ -50,8 +85,22 @@ class LogoutView(APIView):
 
 class SignupView(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication]
-    serializer_class = UserSerializer
-    #permission_classes = [IsUsuarioUser]
+    serializer_class = CustomUserSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        request = self.request
+        if request.user.is_superuser:
+            serializer.save()
+        else:
+            serializer.save(is_staff=False, is_superuser=False)
+
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()

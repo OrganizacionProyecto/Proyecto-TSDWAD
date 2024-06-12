@@ -11,10 +11,13 @@ router.register(r'agregar_productos', AgregarProductoViewSet)
 router.register(r'datos_envio', DatosEnvioViewSet)
 router.register(r'pedidos', PedidoViewSet)
 router.register(r'carritos', CarritoViewSet)
+
 #router.register(r'cargar_productos', CarritoViewSet.agregar_producto)
 
 urlpatterns = [
     path('auth/get_csrf_token/', GetCSRFToken.as_view(), name='get_csrf_token'),
+    path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
+    #path('profile/', UserProfileView.as_view(), name='user-profile'),
     path('auth/login/', LoginView.as_view(), name='auth_login'),
     path('auth/logout/', LogoutView.as_view(), name='auth_logout'),
     path('auth/signup/', SignupView.as_view(), name='auth_signup'),
