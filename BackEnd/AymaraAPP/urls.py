@@ -17,7 +17,6 @@ router.register(r'carritos', CarritoViewSet)
 urlpatterns = [
     path('auth/get_csrf_token/', GetCSRFToken.as_view(), name='get_csrf_token'),
     path('users/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='user-detail'),
-    #path('profile/', UserProfileView.as_view(), name='user-profile'),
     path('auth/login/', LoginView.as_view(), name='auth_login'),
     path('auth/logout/', LogoutView.as_view(), name='auth_logout'),
     path('auth/signup/', SignupView.as_view(), name='auth_signup'),

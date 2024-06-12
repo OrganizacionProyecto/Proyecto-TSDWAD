@@ -14,6 +14,8 @@ from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.db import transaction
+from django.db import transaction
+from rest_framework.exceptions import PermissionDenied
 
 class GetCSRFToken(APIView):
     authentication_classes = [SessionAuthentication]  # Asegura la autenticación de sesión
@@ -48,13 +50,13 @@ class GetCSRFToken(APIView):
 
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-    permission_classes = [IsAdminUser]
+    serializer_class = UserSerializer
+    permission_classes = [IsSuperAdminUser]
 
 class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CustomUser.objects.all()
-    serializer_class = CustomUserSerializer
-    permission_classes = [IsAdminUser]
+    serializer_class = UserSerializer
+    permission_classes = [IsSuperAdminUser]
     
     def update(self, request, *args, **kwargs):
         if not request.user.is_superuser:
@@ -90,7 +92,7 @@ class LogoutView(APIView):
 
 class SignupView(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication]
-    serializer_class = CustomUserSerializer
+    serializer_class = UserSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

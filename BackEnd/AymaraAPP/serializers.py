@@ -4,10 +4,10 @@ from django.contrib.auth.hashers import make_password
 from .models import *
 
 
-class CustomUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'email', 'is_staff', 'is_superuser', 'is_active', 'password']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'is_superuser', 'is_active', 'password']
         extra_kwargs = {
             'password': {'write_only': True},
         }
@@ -20,6 +20,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         if request and request.user and request.user.is_superuser:
                 user = CustomUser.objects.create_user(
                 username=validated_data['username'],
+                first_name=validated_data['first_name'],
+                last_name=validated_data['last_name'],
                 email=validated_data['email'],
                 password=validated_data['password'],
                 is_staff=is_staff,
@@ -29,6 +31,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         else:
             user = CustomUser.objects.create_user(
                 username=validated_data['username'],
+                first_name=validated_data['first_name'],
+                last_name=validated_data['last_name'],
                 email=validated_data['email'],
                 password=validated_data['password'],
                 is_staff=False,
