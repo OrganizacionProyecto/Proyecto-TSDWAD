@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, IsAdminUser 
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from .serializers import *
 from .models import *
@@ -14,7 +14,6 @@ from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.db import transaction
-from rest_framework.exceptions import PermissionDenied
 
 class GetCSRFToken(APIView):
     authentication_classes = [SessionAuthentication]  # Asegura la autenticación de sesión
@@ -72,9 +71,15 @@ class LoginView(APIView):
         if user:
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+            user_data = {
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+                # Incluye cualquier otro dato que necesites
+            }
+            return Response({'token': token.key, 'userData': user_data}, status=status.HTTP_200_OK)
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_404_NOT_FOUND)
-    
+
 class LogoutView(APIView):
     authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
@@ -187,3 +192,16 @@ class CarritoViewSet(viewsets.ModelViewSet):
 
         serializer = CarritoSerializer(carrito)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UserDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user_data = {
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'user_type': 'Tipo de Usuario',  
+        }
+        return Response(user_data)

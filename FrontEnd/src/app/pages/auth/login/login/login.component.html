@@ -1,19 +1,40 @@
 <div class="container-ingresar">
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="registroForm container-ingresar_formulario">
     <h3>Login</h3>
-    <input formControlName="email" type="email" placeholder="Correo electrónico" class="box-ingresar" required />
-    <div *ngIf="loginForm.controls['email'].invalid && (loginForm.controls['email'].dirty || loginForm.controls['email'].touched)">
+    
+    <label for="email">Correo electrónico:</label>
+    <input
+      id="email"
+      name="email"
+      formControlName="email"
+      type="email"
+      placeholder="Correo electrónico"
+      class="box-ingresar"
+      autocomplete="email"
+      required
+    />
+    <div *ngIf="submitted && loginForm.controls['email'].invalid">
       <small *ngIf="loginForm.controls['email'].errors?.['required']">Por favor, ingresa un correo electrónico.</small>
       <small *ngIf="loginForm.controls['email'].errors?.['email']">El formato del correo electrónico no es válido.</small>
     </div>
-    <input formControlName="password" type="password" placeholder="Contraseña" class="box-ingresar" required />
-    <div *ngIf="loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)">
+    
+    <label for="password">Contraseña:</label>
+    <input
+      id="password"
+      name="password"
+      formControlName="password"
+      type="password"
+      placeholder="Contraseña"
+      class="box-ingresar"
+      autocomplete="current-password"
+      required
+    />
+    <div *ngIf="submitted && loginForm.controls['password'].invalid">
       <small *ngIf="loginForm.controls['password'].errors?.['required']">La contraseña es requerida.</small>
-      <small *ngIf="loginForm.controls['password'].errors?.['minlength']">La contraseña debe tener al menos 6 caracteres.</small>
     </div>
     
-    <input formControlName="confirmPassword" type="password" placeholder="Confirmar contraseña" class="box-ingresar" required />
-    <button type="submit" class="submit-ingresar" [disabled]="!loginForm.valid">Ingresar</button>
+    <button type="submit" class="submit-ingresar" [disabled]="loginForm.invalid">Ingresar</button>
+    
     <div *ngIf="errorMessage">
       <p class="error-message">{{ errorMessage }}</p>
     </div>

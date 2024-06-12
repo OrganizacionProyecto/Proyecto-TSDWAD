@@ -1,20 +1,20 @@
 <section id="productos" class="container">
-    <h2 class="titulo_prod">Nuestros Productos</h2>
-    <div class="row">
-      <div class="col-md-4" *ngFor="let producto of productos">
-        <div class="product-card">
-          <div class="product-image-container">
-            <img [src]="producto.imagen" [alt]="producto.nombre" class="imagen">
-          </div>
-          <h3 class="prod">{{ producto.nombre }}</h3>
-          <p class="prod_p">{{ producto.descripcion }}</p>
-          <input type="number" [(ngModel)]="producto.cantidad" class="cantidad-input" placeholder="Cantidad" min="1">
-          <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)">Comprar</button>
-          <div class="precio">
-            <div class="precio-marco">Precio: ${{ producto.precio }} ARS</div>
-          </div>
+  <h2 class="titulo_prod">Nuestros Productos</h2>
+  <div class="row">
+    <div class="col-md-4" *ngFor="let producto of productos">
+      <div class="product-card">
+        <div class="product-image-container">
+          <img [src]="producto.imagen" [alt]="producto.nombre" class="imagen">
+        </div>
+        <h3 class="prod">{{ producto.nombre }}</h3>
+        <p class="prod_p">{{ producto.descripcion }}</p>
+        <input type="number" [(ngModel)]="producto.cantidad" class="cantidad-input" placeholder="Cantidad" min="1">
+        <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)">Comprar</button>
+        <div class="precio">
+          <div class="precio-marco">Precio: ${{ producto.precio }} ARS</div>
         </div>
       </div>
     </div>
-  </section>
-  <router-outlet></router-outlet>
+  </div>
+</section>
+<router-outlet></router-outlet>

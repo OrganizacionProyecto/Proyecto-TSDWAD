@@ -6,11 +6,10 @@ import { ProductoService, Producto } from '../../../services/productos.service';
 import { CarritoComponent } from '../carrito/carrito.component';
 import { FormsModule } from '@angular/forms';
 
-
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [RouterOutlet, CommonModule, CarritoComponent, FormsModule ],
+  imports: [RouterOutlet, CommonModule, CarritoComponent, FormsModule],
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css']
 })

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from './api.service';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 export interface Producto {
   idProducto: number;
@@ -14,12 +15,23 @@ export interface Producto {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ProductoService {
-  constructor(private apiService: ApiService) {}
+  private baseUrl = 'http://127.0.0.1:8000/api/tablas/productos/';
+
+  constructor(private http: HttpClient) {}
 
   obtenerProductos(): Observable<Producto[]> {
-    return this.apiService.obtenerProductos();
+    return this.http.get<Producto[]>(this.baseUrl)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('Error al obtener productos:', error);
+    return throwError('Error al obtener productos. Por favor, inténtelo de nuevo más tarde.');
   }
 }
+
