@@ -1,5 +1,4 @@
-.\BackEnd\Aymara\__pycache__\
-.\BackEnd\AymaraAPP\__pycache__\
+# Ignorar archivos pycache
 *.pyc
 *.pyo
 env/

@@ -3,6 +3,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { Producto } from './productos.service';
+import { AuthService } from '../app/pages/services/auth.service';
 
 export interface Carrito {
   direccion_envio: string;
@@ -29,7 +30,9 @@ export class CarritoService {
   });
   carrito$ = this.carritoSubject.asObservable();
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private authService: AuthService) {
+    this.cargarCarritoDesdeApi();
+  }
 
   obtenerCarrito(): Observable<Producto[]> {
     return this.carrito$.pipe(map(carrito => carrito.productos || []));
@@ -37,29 +40,81 @@ export class CarritoService {
 
   actualizarCarrito(datos: Partial<Carrito>) {
     const currentCarrito = this.carritoSubject.value;
-    this.carritoSubject.next({ ...currentCarrito, ...datos });
+    const updatedCarrito = {
+      ...currentCarrito,
+      ...datos,
+      productos: [
+        ...(currentCarrito.productos || []),
+        ...(datos.productos || [])
+      ]
+    };
+    this.carritoSubject.next(updatedCarrito);
+    this.apiService.actualizarCarrito(updatedCarrito).subscribe({
+      next: (carritoActualizado: Carrito) => {
+        this.carritoSubject.next(carritoActualizado);
+      },
+      error: (error) => {
+        console.error('Error al actualizar el carrito:', error);
+      }
+    });
   }
 
-  agregarProducto(producto: Producto) {
-    const currentCarrito = this.carritoSubject.value;
-    const productos = currentCarrito.productos || [];
-    const productoExistente = productos.find(p => p.idProducto === producto.idProducto);
-
-    if (productoExistente) {
-      productoExistente.cantidad += producto.cantidad;
-    } else {
-      productos.push(producto);
+  agregarProductoAlCarrito(productoId: number, cantidad: number) {
+    const carritoId = this.carritoSubject.value.id_usuario; // Obtener el ID del usuario actual
+    if (carritoId === null) {
+      console.error('Carrito ID is not available');
+      return;
     }
 
-    const nuevoTotal = productos.reduce((acc, prod) => acc + (prod.precio * prod.cantidad), 0);
+    this.apiService.agregarProductoAlCarrito(carritoId, productoId, cantidad)
+      .subscribe({
+        next: (carritoActualizado: Carrito) => {
+          this.carritoSubject.next(carritoActualizado);
+        },
+        error: (error) => {
+          console.error('Error al agregar producto al carrito:', error);
+        }
+      });
+  }
 
-    this.carritoSubject.next({ ...currentCarrito, productos, total: nuevoTotal });
+  quitarProductoDelCarrito(productoId: number, cantidad: number) {
+    const carritoId = this.carritoSubject.value.id_usuario; // Obtener el ID del usuario actual
+    if (carritoId === null) {
+      console.error('Carrito ID is not available');
+      return;
+    }
+
+    this.apiService.quitarProductoDelCarrito(carritoId, productoId, cantidad)
+      .subscribe({
+        next: (carritoActualizado: Carrito) => {
+          this.carritoSubject.next(carritoActualizado);
+        },
+        error: (error) => {
+          console.error('Error al quitar producto del carrito:', error);
+        }
+      });
   }
 
   cargarCarritoDesdeApi() {
-    this.apiService.obtenerCarritos().subscribe((carritos: Carrito[]) => {
-      if (carritos.length > 0) {
-        this.carritoSubject.next(carritos[0]);
+    const userData = this.authService.getUserData();
+    if (!userData) {
+      console.error('User data is not available');
+      return;
+    }
+
+    this.apiService.obtenerCarritos().subscribe({
+      next: (carritos: Carrito[]) => {
+        if (carritos.length > 0) {
+          const userCarrito = carritos.find(carrito => carrito.id_usuario === userData.id);
+          if (userCarrito) {
+            this.carritoSubject.next(userCarrito);
+          } else {
+            console.warn('No carrito found for the user.');
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar el carrito desde la API:', error);
       }
     });
   }

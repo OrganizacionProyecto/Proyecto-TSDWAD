@@ -9,9 +9,11 @@
     <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/login')">Ingresar</a></li>
     <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/registro')">Registro</a></li>
     <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
-    <li *ngIf="authService.isLoggedIn()"><a (click)="logout()">Salir</a></li>
+   
   </ul>
   <div *ngIf="authService.isLoggedIn() && userData">
-    Bienvenido, {{ userData?.first_name || '' }} {{ userData?.last_name || '' }}
+    <a (click)="navigateTo('/dashboard')" class="welcome-message">
+      Bienvenido, {{ userData?.first_name || '' }} {{ userData?.last_name || '' }}
+    </a>
   </div>
 </nav>

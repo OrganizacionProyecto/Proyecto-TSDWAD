@@ -14,6 +14,8 @@ from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.db import transaction
+from django.db import transaction
+from rest_framework.exceptions import PermissionDenied
 
 class GetCSRFToken(APIView):
     authentication_classes = [SessionAuthentication]  # Asegura la autenticación de sesión
@@ -24,9 +26,42 @@ class GetCSRFToken(APIView):
         # Obtener el token CSRF
         csrf_token = get_token(request)
         # Devolver el token CSRF en la respuesta
-        return Response({'csrfToken': csrf_token})
+        return Response({'csrfToken': csrf_token})   
+#-----------------------------------------------------------   
+
+"""class UserProfileView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        user = request.user
+
+        user_data = {
+
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'username': user.username,
+            'direccion': user.direccion,
+        }
+
+        return Response(user_data, status=200) """
+
+class UserListCreateView(generics.ListCreateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsSuperAdminUser]
+
+class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsSuperAdminUser]
     
-#-----------------------------------------------------------    
+    def update(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            raise PermissionDenied("You are not allowed to perform this action.")
+        return super().update(request, *args, **kwargs)
 
 class LoginView(APIView):
     authentication_classes = [SessionAuthentication]
@@ -58,7 +93,21 @@ class LogoutView(APIView):
 class SignupView(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication]
     serializer_class = UserSerializer
-    #permission_classes = [IsUsuarioUser]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer):
+        request = self.request
+        if request.user.is_superuser:
+            serializer.save()
+        else:
+            serializer.save(is_staff=False, is_superuser=False)
+
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
