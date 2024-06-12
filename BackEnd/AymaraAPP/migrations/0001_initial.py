@@ -178,3 +178,4 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='agregados', to='AymaraAPP.producto'),
         ),
     ]
+

@@ -34,7 +34,6 @@ class LoginView(APIView):
         email = request.data.get("email", None)
         password = request.data.get("password", None)
         user = authenticate(email=email, password=password)
-
         if user:
             login(request, user)
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
@@ -52,6 +51,7 @@ class LogoutView(APIView):
 class SignupView(generics.CreateAPIView):
     authentication_classes = [SessionAuthentication]
     serializer_class = UserSerializer
+    #permission_classes = [IsUsuarioUser]
 
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
@@ -99,59 +99,42 @@ class PedidoViewSet(viewsets.ModelViewSet):
 class CarritoViewSet(viewsets.ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
-    permission_classes = [IsUserOrAdminWithRestrictions]
     authentication_classes = [SessionAuthentication]
-    
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated])
-    def agregar_producto(self, request):
-        productos = request.data.get('productos')
+    permission_classes = [IsAuthenticated]
 
-        if not productos or not isinstance(productos, list):
-            return Response({"detail": "A list of products is required."}, status=status.HTTP_400_BAD_REQUEST)
+    @action(detail=True, methods=['post'])
+    def agregar_producto(self, request, pk=None):
+        try:
+            carrito = self.get_object()
+        except Carrito.DoesNotExist:
+            return Response({'error': 'Carrito no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-        user = request.user
-        errores = []
+        producto_id = request.data.get('producto_id')
+        cantidad = request.data.get('cantidad', 1)
 
-        with transaction.atomic():
-            for producto_data in productos:
-                id_producto = producto_data.get('id_producto')
-                cantidad = producto_data.get('cantidad')
+        try:
+            producto = Producto.objects.get(id_producto=producto_id)
+        except Producto.DoesNotExist:
+            return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-                if not id_producto or not cantidad:
-                    errores.append("Product ID and quantity are required for each product.")
-                    continue
+        # Calcular el precio unitario
+        precio_unitario = producto.precio
 
-                try:
-                    producto = Producto.objects.get(id_producto=id_producto)
-                except Producto.DoesNotExist:
-                    errores.append(f"Product with ID {id_producto} does not exist.")
-                    continue
+        # Calcular el total del producto
+        total_producto = precio_unitario * cantidad
 
-                # Verificar disponibilidad del producto
-                if cantidad > producto.disponibilidad:
-                    errores.append(f"Not enough stock available for product {producto.nombre}.")
-                    continue
+        agregar_producto, created = AgregarProducto.objects.get_or_create(carrito=carrito, id_producto=producto)
 
-                # Calcular precio unitario y total
-                precio_unitario = producto.precio
-                total = precio_unitario * cantidad
+        if created:
+            agregar_producto.cantidad = cantidad
+        else:
+            agregar_producto.cantidad += cantidad
+        agregar_producto.precio_unitario = precio_unitario
+        agregar_producto.save()
 
-                # Crear o actualizar el elemento del carrito
-                agregar_producto, created = AgregarProducto.objects.get_or_create(
-                    id_producto=producto,
-                    defaults={'cantidad': cantidad, 'precio_unitario': precio_unitario}
-                )
+        # Actualizar el total del carrito
+        carrito.total += total_producto
+        carrito.save()
 
-                if not created:
-                    agregar_producto.cantidad += cantidad
-                    agregar_producto.precio_unitario = precio_unitario
-                    agregar_producto.save()
-
-                # Asociar el producto al carrito del usuario
-                carrito, created = Carrito.objects.get_or_create(id_usuario=user)
-                carrito.agregarproducto_set.add(agregar_producto)
-
-        if errores:
-            return Response({"detail": errores}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({"detail": "Products added to cart successfully."}, status=status.HTTP_200_OK)
+        serializer = CarritoSerializer(carrito)
+        return Response(serializer.data, status=status.HTTP_200_OK)
