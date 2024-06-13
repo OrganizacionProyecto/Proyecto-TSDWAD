@@ -81,12 +81,9 @@ class StockSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AgregarProductoSerializer(serializers.ModelSerializer):
-    producto = ProductoSerializer(source='id_producto', read_only=True)
-
     class Meta:
         model = AgregarProducto
-        fields = ['id_agregar_producto', 'cantidad', 'precio_unitario', 'producto']
-
+        fields = '__all__'
 class DatosEnvioSerializer(serializers.ModelSerializer):
     class Meta:
         model = DatosEnvio

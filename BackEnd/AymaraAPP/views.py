@@ -156,7 +156,7 @@ class CarritoViewSet(viewsets.ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
     authentication_classes = [SessionAuthentication]
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['post'])
     def agregar_producto(self, request, pk=None):
