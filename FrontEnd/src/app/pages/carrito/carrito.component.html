@@ -26,40 +26,37 @@
                 </div>
                 <div class="form-group">
                   <label for="metodo_pago"><strong>Método de Pago:</strong></label>
-                  <select class="form-control" id="metodo_pago" [(ngModel)]="carrito.id_metodo_pago" name="metodo_pago">
-                    <option value="1">Tarjeta de Crédito</option>
-                    <option value="2">Tarjeta de Débito</option>
-                    <option value="3">Transferencia Bancaria</option>
+                  <select class="form-control" id="metodo_pago" [(ngModel)]="carrito.id_metodo_pago_id" name="metodo_pago">
+                    <option *ngFor="let metodo of metodosPago" [value]="metodo.id_metodo_pago">{{ metodo.nombre }}</option>
                   </select>
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">Continuar</button>
+                <div *ngIf="errorMessage" class="alert alert-danger mt-3">{{ errorMessage }}</div>
               </form>
             </div>
 
-            <!-- Productos en el Carrito -->
-            <div *ngFor="let producto of carrito.productos" class="row align-items-center mb-3">
-              <div class="col-md-2">
-                <img [src]="producto.imagen" class="img-fluid" [alt]="producto.nombre">
+            <!-- Lista de Productos -->
+            <div *ngFor="let producto of carrito.productos" class="d-flex justify-content-between align-items-center mb-4">
+              <div class="d-flex align-items-center">
+                <img src="{{ producto.imagen }}" class="img-fluid rounded-3" alt="Producto" style="width: 65px;">
+                <div class="ms-3">
+                  <h5 class="mb-0">{{ producto.nombre }}</h5>
+                </div>
               </div>
-              <div class="col-md-3">
-                <h5 class="product-name"><strong>{{ producto.nombre }}</strong></h5>
+              <div class="d-flex align-items-center">
+                <button (click)="quitarProducto(producto.idProducto)" class="btn btn-secondary btn-sm me-2">-</button>
+                <p class="mb-0">{{ producto.cantidad }}</p>
+                <button (click)="agregarProducto(producto.idProducto)" class="btn btn-primary btn-sm ms-2">+</button>
+                <p class="mb-0 ms-4"><strong>{{ producto.precio }}</strong></p>
               </div>
-              <div class="col-md-2">
-                <h5 class="product-quantity">Cantidad: {{ producto.cantidad || 0 }}</h5>
-              </div>
-              <div class="col-md-2">
-                <h5 class="product-price">${{ producto.precio }}</h5>
-              </div>
-              <div class="col-md-3 d-flex justify-content-end">
-                <button class="btn btn-danger me-2" (click)="quitarProducto(producto.idProducto)">-</button>
-                <button class="btn btn-success" (click)="agregarProducto(producto.idProducto)">+</button>
-              </div>
+            </div>
+            
+            <!-- Total del Carrito -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <p class="h5 mb-0">Total:</p>
+              <p class="h5 mb-0"><strong>{{ carrito.total }}</strong></p>
             </div>
 
-            <!-- Total del Carrito -->
-            <div class="text-end mt-4">
-              <h4>Total del Carrito: ${{ carrito.total || 0 }}</h4>
-            </div>
           </div>
         </div>
       </div>

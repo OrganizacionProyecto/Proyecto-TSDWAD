@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CarritoService, Carrito } from '../../../services/carrito.service';
 import { AuthService } from '../services/auth.service';
+import { ApiService, MetodoPago } from '../../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -16,22 +17,35 @@ export class CarritoComponent implements OnInit {
     direccion_envio: '',
     telefono: '',
     total: null,
-    id_usuario: null,
-    id_datos_envio: null,
-    id_metodo_pago: null,
+    id_usuario_id: null,
+    id_datos_envio_id: null,
+    id_metodo_pago_id: null,
     productos: []
   };
   usuario: any;
   submitted = false;
   errorMessage = '';
+  metodosPago: MetodoPago[] = [];
 
-  constructor(private carritoService: CarritoService, private authService: AuthService) {}
+  constructor(private carritoService: CarritoService, private authService: AuthService, private apiService: ApiService) {}
 
   ngOnInit(): void {
     this.carritoService.carrito$.subscribe((carrito) => {
       this.carrito = carrito;
     });
     this.usuario = this.authService.getUserData();
+    this.obtenerMetodosPago();
+  }
+
+  obtenerMetodosPago() {
+    this.apiService.obtenerMetodosPago().subscribe(
+      (data: MetodoPago[]) => {
+        this.metodosPago = data;
+      },
+      (error) => {
+        console.error('Error al obtener métodos de pago:', error);
+      }
+    );
   }
 
   agregarProducto(idProducto: number) {
@@ -46,7 +60,7 @@ export class CarritoComponent implements OnInit {
     this.submitted = true;
     this.errorMessage = '';
 
-    if (this.carrito.direccion_envio && this.carrito.telefono && this.carrito.id_metodo_pago !== null) {
+    if (this.carrito.direccion_envio && this.carrito.telefono && this.carrito.id_metodo_pago_id !== null) {
       this.carritoService.actualizarCarrito(this.carrito).subscribe({
         next: () => {
           // Aquí puedes agregar la lógica que quieras al actualizar el carrito, como redireccionar o mostrar un mensaje
