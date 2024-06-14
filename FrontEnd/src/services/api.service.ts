@@ -21,15 +21,21 @@ export class ApiService {
     return this.http.get<Producto[]>(this.productoUrl);
   }
 
-  agregarProductoAlCarrito(carritoId: number, productoId: number, cantidad: number): Observable<Carrito> {
-    return this.http.post<Carrito>(`${this.carritoUrl}${carritoId}/agregar_producto/`, { producto_id: productoId, cantidad });
+  agregarProductoAlCarrito(carritoId: number, idProducto: number, cantidad: number): Observable<Carrito> {
+    return this.http.post<Carrito>(`${this.carritoUrl}${carritoId}/agregar_producto/`, { idProducto, cantidad });
   }
   
-  quitarProductoDelCarrito(carritoId: number, productoId: number, cantidad: number): Observable<Carrito> {
-    return this.http.post<Carrito>(`${this.carritoUrl}${carritoId}/quitar_producto/`, { producto_id: productoId, cantidad });
+  quitarProductoDelCarrito(carritoId: number, idProducto: number, cantidad: number): Observable<Carrito> {
+    return this.http.post<Carrito>(`${this.carritoUrl}${carritoId}/quitar_producto/`, { idProducto, cantidad });
   }
 
   actualizarCarrito(carrito: Carrito): Observable<Carrito> {
     return this.http.put<Carrito>(`${this.carritoUrl}${carrito.id_usuario}/`, carrito);
   }
+
+  obtenerCarrito(): Observable<Carrito> {
+    // Aquí debes ajustar el endpoint según sea necesario
+    return this.http.get<Carrito>(`${this.carritoUrl}/carritos/`);
+  }
 }
+

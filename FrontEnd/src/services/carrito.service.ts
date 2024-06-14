@@ -1,8 +1,9 @@
+
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ApiService } from './api.service';
-import { Producto } from './productos.service';
+import { Producto } from './productos.service'; 
 import { AuthService } from '../app/pages/services/auth.service';
 
 export interface Carrito {
@@ -38,7 +39,7 @@ export class CarritoService {
     return this.carrito$.pipe(map(carrito => carrito.productos || []));
   }
 
-  actualizarCarrito(datos: Partial<Carrito>) {
+  actualizarCarrito(datos: Partial<Carrito>): Observable<Carrito> {
     const currentCarrito = this.carritoSubject.value;
     const updatedCarrito = {
       ...currentCarrito,
@@ -49,26 +50,33 @@ export class CarritoService {
       ]
     };
     this.carritoSubject.next(updatedCarrito);
-    this.apiService.actualizarCarrito(updatedCarrito).subscribe({
-      next: (carritoActualizado: Carrito) => {
-        this.carritoSubject.next(carritoActualizado);
-      },
-      error: (error) => {
-        console.error('Error al actualizar el carrito:', error);
-      }
-    });
+
+    if (updatedCarrito.id_usuario !== null) {
+      return this.apiService.actualizarCarrito(updatedCarrito).pipe(
+        map((carritoActualizado: Carrito) => {
+          this.carritoSubject.next(carritoActualizado);
+          return carritoActualizado;
+        })
+      );
+    } else {
+      console.error('No se puede actualizar el carrito sin un ID de usuario.');
+      return new Observable<Carrito>((observer) => {
+        observer.error('No se puede actualizar el carrito sin un ID de usuario.');
+      });
+    }
   }
 
-  agregarProductoAlCarrito(productoId: number, cantidad: number) {
-    const carritoId = this.carritoSubject.value.id_usuario; // Obtener el ID del usuario actual
+  agregarProductoAlCarrito(idProducto: number, cantidad: number) {
+    const carritoId = this.carritoSubject.value.id_usuario;
     if (carritoId === null) {
       console.error('Carrito ID is not available');
       return;
     }
 
-    this.apiService.agregarProductoAlCarrito(carritoId, productoId, cantidad)
+    this.apiService.agregarProductoAlCarrito(carritoId, idProducto, cantidad)
       .subscribe({
         next: (carritoActualizado: Carrito) => {
+          this.actualizarTotalCarrito(carritoActualizado);
           this.carritoSubject.next(carritoActualizado);
         },
         error: (error) => {
@@ -77,16 +85,17 @@ export class CarritoService {
       });
   }
 
-  quitarProductoDelCarrito(productoId: number, cantidad: number) {
-    const carritoId = this.carritoSubject.value.id_usuario; // Obtener el ID del usuario actual
+  quitarProductoDelCarrito(idProducto: number, cantidad: number) {
+    const carritoId = this.carritoSubject.value.id_usuario;
     if (carritoId === null) {
       console.error('Carrito ID is not available');
       return;
     }
 
-    this.apiService.quitarProductoDelCarrito(carritoId, productoId, cantidad)
+    this.apiService.quitarProductoDelCarrito(carritoId, idProducto, cantidad)
       .subscribe({
         next: (carritoActualizado: Carrito) => {
+          this.actualizarTotalCarrito(carritoActualizado);
           this.carritoSubject.next(carritoActualizado);
         },
         error: (error) => {
@@ -95,22 +104,26 @@ export class CarritoService {
       });
   }
 
+  actualizarTotalCarrito(carrito: Carrito) {
+    const total = carrito.productos?.reduce((sum, producto) => sum + (producto.precio * (producto.cantidad || 0)), 0) || 0;
+    carrito.total = total;
+  }
+
   cargarCarritoDesdeApi() {
     const userData = this.authService.getUserData();
-    if (!userData) {
+    console.log('Datos del usuario:', userData);
+    if (!userData || !userData.id) {
       console.error('User data is not available');
       return;
     }
 
     this.apiService.obtenerCarritos().subscribe({
       next: (carritos: Carrito[]) => {
-        if (carritos.length > 0) {
-          const userCarrito = carritos.find(carrito => carrito.id_usuario === userData.id);
-          if (userCarrito) {
-            this.carritoSubject.next(userCarrito);
-          } else {
-            console.warn('No carrito found for the user.');
-          }
+        const userCarrito = carritos.find(carrito => carrito.id_usuario === userData.id);
+        if (userCarrito) {
+          this.carritoSubject.next(userCarrito);
+        } else {
+          console.warn('No carrito found for the user.');
         }
       },
       error: (error) => {

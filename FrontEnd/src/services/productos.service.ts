@@ -34,4 +34,3 @@ export class ProductoService {
     return throwError('Error al obtener productos. Por favor, inténtelo de nuevo más tarde.');
   }
 }
-
