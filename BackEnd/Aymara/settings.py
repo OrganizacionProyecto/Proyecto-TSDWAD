@@ -89,7 +89,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "aymara_api_rest",
         "USER": "root",
-        "PASSWORD": "",
+        "PASSWORD": "root",
         "HOST": "localhost",
         "PORT": "3306",
         "OPTIONS": {

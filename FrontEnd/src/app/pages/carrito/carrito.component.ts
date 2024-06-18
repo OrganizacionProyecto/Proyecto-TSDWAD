@@ -15,7 +15,7 @@ export class CarritoComponent implements OnInit {
   carrito: Carrito = {
     direccion_envio: '',
     telefono: '',
-    total: 0,
+    total: null,
     id_usuario: null,
     id_datos_envio: null,
     id_metodo_pago: null,
@@ -61,20 +61,4 @@ export class CarritoComponent implements OnInit {
       this.errorMessage = 'Por favor, complete todos los campos requeridos.';
     }
   }
-
-  regresarAProductos() {
-    // Implementa la lógica para navegar de regreso a la página de productos
-  }
-
-  enviarConfirmacion() {
-    // Implementa la lógica para enviar la confirmación de compra
-  }
-  guardarCompra() { 
-    // Aquí deberías implementar la lógica para guardar la compra 
-    // Puedes enviar los datos del carrito, usuario, dirección de envío, etc., al servidor 
-    // Por ejemplo, podrías hacer una solicitud HTTP POST para guardar la compra 
-    console.log('Compra guardada'); 
-    // Lógica adicional según sea necesario } 
-}
-
 }

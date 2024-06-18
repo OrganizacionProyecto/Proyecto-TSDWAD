@@ -6,7 +6,7 @@ class CustomUser(AbstractUser):
     direccion = models.CharField(max_length=200, blank=False, default="Desconocido")
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["id", "username", "password", "first_name", "last_name"]
+    REQUIRED_FIELDS = ["username", "password", "first_name", "last_name"]
 
 class Categoria(models.Model):
     id_categoria = models.AutoField(primary_key=True)
