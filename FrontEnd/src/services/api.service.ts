@@ -22,11 +22,13 @@ export class ApiService {
   }
 
   agregarProductoAlCarrito(carritoId: number, idProducto: number, cantidad: number): Observable<Carrito> {
-    return this.http.post<Carrito>(`${this.carritoUrl}${carritoId}/agregar_producto/`, { idProducto, cantidad });
+    const userId = this.getUserId();
+    return this.http.post<Carrito>(`${this.carritoUrl}${carritoId}/agregar_producto/`, { idProducto, cantidad, userId });
   }
   
   quitarProductoDelCarrito(carritoId: number, idProducto: number, cantidad: number): Observable<Carrito> {
-    return this.http.post<Carrito>(`${this.carritoUrl}${carritoId}/quitar_producto/`, { idProducto, cantidad });
+    const userId = this.getUserId();
+    return this.http.post<Carrito>(`${this.carritoUrl}${carritoId}/quitar_producto/`, { idProducto, cantidad, userId });
   }
 
   actualizarCarrito(carrito: Carrito): Observable<Carrito> {
@@ -37,5 +39,13 @@ export class ApiService {
     // Aquí debes ajustar el endpoint según sea necesario
     return this.http.get<Carrito>(`${this.carritoUrl}/carritos/`);
   }
-}
 
+  private getUserId(): number {
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      const user = JSON.parse(userData);
+      return user.id; // Asegúrate de que user.id existe y es el campo correcto
+    }
+    throw new Error('User ID not found in localStorage');
+  }
+}

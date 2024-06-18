@@ -24,7 +24,7 @@ export class AuthService {
           localStorage.setItem('token', res.token);
           if (res.userData) {
             localStorage.setItem('userData', JSON.stringify(res.userData));
-            console.log('User data saved to localStorage:', res.userData);  // Verifica que los datos se guardan
+            console.log('User data saved to localStorage:', res.userData);  
           } else {
             console.warn('userData is not defined in the response.');
           }
@@ -40,6 +40,13 @@ export class AuthService {
       tap((res: any) => {
         if (res.token) {
           localStorage.setItem('token', res.token);
+          if (res.userData) {
+            localStorage.setItem('userData', JSON.stringify(res.userData));
+            console.log('User data saved to localStorage:', res.userData);  
+          } else {
+            console.warn('userData is not defined in the response.');
+          }
+          this.authStatusSubject.next(true);
         }
       }),
       catchError(this.handleError)
@@ -70,8 +77,6 @@ export class AuthService {
     }
   }
   
-  
-
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
