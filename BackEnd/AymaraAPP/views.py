@@ -27,26 +27,7 @@ class GetCSRFToken(APIView):
         csrf_token = get_token(request)
         # Devolver el token CSRF en la respuesta
         return Response({'csrfToken': csrf_token})   
-#-----------------------------------------------------------   
 
-"""class UserProfileView(APIView):
-
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-
-        user = request.user
-
-        user_data = {
-
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email': user.email,
-            'username': user.username,
-            'direccion': user.direccion,
-        }
-
-        return Response(user_data, status=200) """
 
 class UserListCreateView(generics.ListCreateAPIView):
     queryset = CustomUser.objects.all()
@@ -74,6 +55,7 @@ class LoginView(APIView):
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
             user_data = {
+		        "id": user.id,
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "email": user.email,
