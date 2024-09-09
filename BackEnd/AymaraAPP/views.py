@@ -156,7 +156,7 @@ class CarritoViewSet(viewsets.ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
     authentication_classes = [SessionAuthentication]
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['post'])
     def agregar_producto(self, request, pk=None):
@@ -207,3 +207,63 @@ class UserDetailView(APIView):
             'user_type': 'Tipo de Usuario',  
         }
         return Response(user_data)
+
+class DeleteAccountView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        user.delete()
+        return Response({'detail': 'Cuenta eliminada con éxito.'}, status=status.HTTP_204_NO_CONTENT)
+    
+    
+class AddToFavoritesView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        id_producto = request.data.get('producto_id')
+        user = request.user
+
+        try:
+            producto = Producto.objects.get(id_producto=id_producto)
+        except Producto.DoesNotExist:
+            return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        favorito, created = Favorito.objects.get_or_create(usuario=user, producto=producto)
+
+        if created:
+            return Response({'message': 'Producto añadido a favoritos'}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({'message': 'Producto ya está en favoritos'}, status=status.HTTP_200_OK)
+
+class RemoveFromFavoritesView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        producto_id = request.data.get('producto_id')
+        user = request.user
+
+        try:
+            producto = Producto.objects.get(id_producto=producto_id)
+        except Producto.DoesNotExist:
+            return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            favorito = Favorito.objects.get(usuario=user, producto=producto)
+            favorito.delete()
+            return Response({'message': 'Producto eliminado de favoritos'}, status=status.HTTP_200_OK)
+        except Favorito.DoesNotExist:
+            return Response({'error': 'Producto no estaba en favoritos'}, status=status.HTTP_404_NOT_FOUND)
+
+class ListFavoritesView(APIView):
+    authentication_classes = [SessionAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        favoritos = Favorito.objects.filter(usuario=user).select_related('producto')
+        serializer = ProductoSerializer([favorito.producto for favorito in favoritos], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

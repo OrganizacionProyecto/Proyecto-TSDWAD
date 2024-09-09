@@ -12,6 +12,7 @@ router.register(r'datos_envio', DatosEnvioViewSet)
 router.register(r'pedidos', PedidoViewSet)
 router.register(r'carritos', CarritoViewSet)
 
+
 #router.register(r'cargar_productos', CarritoViewSet.agregar_producto)
 
 urlpatterns = [
@@ -22,4 +23,8 @@ urlpatterns = [
     path('auth/signup/', SignupView.as_view(), name='auth_signup'),
     path('auth/user/', UserDetailView.as_view(), name='user_detail'),  # Añade esta línea
     path('tablas/', include(router.urls)),
+    path('auth/delete_account/', DeleteAccountView.as_view(), name='delete_account'),
+    path('add_to_favorites/', AddToFavoritesView.as_view(), name='add_to_favorites'),
+    path('remove_from_favorites/', RemoveFromFavoritesView.as_view(), name='remove_from_favorites'),
+    path('list_favorites/', ListFavoritesView.as_view(), name='list_favorites'),
 ]

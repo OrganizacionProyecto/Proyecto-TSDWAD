@@ -1,5 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.conf import settings
+
 
 class CustomUser(AbstractUser):
     email = models.EmailField(max_length=150, unique=True)
@@ -120,3 +122,16 @@ class DatosEnvio(models.Model):
 
     def __str__(self):
         return f"{self.empresa} - {self.traking}"
+
+class Favorito(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favoritos')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='favoritos')
+    
+    class Meta:
+        unique_together = ('usuario', 'producto')
+        db_table = 'Favorito'
+        verbose_name = 'Favorito'
+        verbose_name_plural = 'Favoritos'
+
+    def __str__(self):
+        return f"Usuario {self.usuario} - Producto {self.producto}"
