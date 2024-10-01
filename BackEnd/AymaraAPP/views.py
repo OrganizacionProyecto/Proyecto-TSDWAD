@@ -3,8 +3,6 @@ from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 from .serializers import *
 from .models import *
@@ -14,21 +12,13 @@ from django.middleware.csrf import get_token
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.db import transaction
-from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
-
-class GetCSRFToken(APIView):
-    authentication_classes = [SessionAuthentication]  # Asegura la autenticación de sesión
-    permission_classes = [IsAuthenticated]
-
-    @method_decorator(csrf_protect)  # Protege la vista contra CSRF
-    def get(self, request, format=None):
-        # Obtener el token CSRF
-        csrf_token = get_token(request)
-        # Devolver el token CSRF en la respuesta
-        return Response({'csrfToken': csrf_token})   
-#-----------------------------------------------------------   
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import AllowAny
 """class UserProfileView(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -64,36 +54,38 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
         return super().update(request, *args, **kwargs)
 
 class LoginView(APIView):
-    authentication_classes = [SessionAuthentication]
+    permission_classes = [AllowAny]
 
     def post(self, request):
-        email = request.data.get("email", None)
-        password = request.data.get("password", None)
+        email = request.data.get("email")
+        password = request.data.get("password")
         user = authenticate(email=email, password=password)
+
         if user:
-            login(request, user)
-            token, created = Token.objects.get_or_create(user=user)
+            refresh = RefreshToken.for_user(user)
             user_data = {
                 "first_name": user.first_name,
                 "last_name": user.last_name,
                 "email": user.email,
-                # Incluye cualquier otro dato que necesites
             }
-            return Response({'token': token.key, 'userData': user_data}, status=status.HTTP_200_OK)
+            return Response({
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+                'userData': user_data
+            }, status=status.HTTP_200_OK)
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_404_NOT_FOUND)
 
 class LogoutView(APIView):
-    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_200_OK)
 
+# Signup con JWT
 class SignupView(generics.CreateAPIView):
-    authentication_classes = [SessionAuthentication]
     serializer_class = UserSerializer
-
+    permission_classes = [AllowAny]
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -108,54 +100,53 @@ class SignupView(generics.CreateAPIView):
         else:
             serializer.save(is_staff=False, is_superuser=False)
 
-
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
     permission_classes = [IsAdminOrReadOnly]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
 
 class MetodoPagoViewSet(viewsets.ModelViewSet):
     queryset = MetodoPago.objects.all()
     serializer_class = MetodoPagoSerializer
     permission_classes = [IsAdminOrReadOnly]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
 
 
 class StockViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
     permission_classes = [IsSuperAdminUser]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
 
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     permission_classes = [IsAdminOrReadOnly]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
 
 class AgregarProductoViewSet(viewsets.ModelViewSet):
     queryset = AgregarProducto.objects.all()
     serializer_class = AgregarProductoSerializer
     permission_classes = [IsUserOrAdmin]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
 
 class DatosEnvioViewSet(viewsets.ModelViewSet):
     queryset = DatosEnvio.objects.all()
     serializer_class = DatosEnvioSerializer
     permission_classes = [IsAdminOrReadOnly]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
     permission_classes = [IsUserOrAdminWithRestrictions]
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
 
 class CarritoViewSet(viewsets.ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['post'])
@@ -196,8 +187,8 @@ class CarritoViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class UserDetailView(APIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
         user = request.user
         user_data = {
@@ -209,7 +200,7 @@ class UserDetailView(APIView):
         return Response(user_data)
 
 class DeleteAccountView(APIView):
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, *args, **kwargs):
@@ -218,52 +209,98 @@ class DeleteAccountView(APIView):
         return Response({'detail': 'Cuenta eliminada con éxito.'}, status=status.HTTP_204_NO_CONTENT)
     
     
+# Vista para añadir a favoritos
 class AddToFavoritesView(APIView):
-    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request, *args, **kwargs):
         id_producto = request.data.get('producto_id')
         user = request.user
-
-        try:
-            producto = Producto.objects.get(id_producto=id_producto)
-        except Producto.DoesNotExist:
-            return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
-
+        producto = Producto.objects.get(id_producto=id_producto)
         favorito, created = Favorito.objects.get_or_create(usuario=user, producto=producto)
-
         if created:
             return Response({'message': 'Producto añadido a favoritos'}, status=status.HTTP_201_CREATED)
-        else:
-            return Response({'message': 'Producto ya está en favoritos'}, status=status.HTTP_200_OK)
+        return Response({'message': 'Producto ya está en favoritos'}, status=status.HTTP_200_OK)
 
+# Vista para eliminar de favoritos
 class RemoveFromFavoritesView(APIView):
-    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def post(self, request, *args, **kwargs):
         producto_id = request.data.get('producto_id')
         user = request.user
+        producto = Producto.objects.get(id_producto=producto_id)
+        favorito = Favorito.objects.get(usuario=user, producto=producto)
+        favorito.delete()
+        return Response({'message': 'Producto eliminado de favoritos'}, status=status.HTTP_200_OK)
+#{
+#  "producto_id": 1  // Reemplaza con el ID del producto que deseas sacar de favoritos
+#}
 
-        try:
-            producto = Producto.objects.get(id_producto=producto_id)
-        except Producto.DoesNotExist:
-            return Response({'error': 'Producto no encontrado'}, status=status.HTTP_404_NOT_FOUND)
-
-        try:
-            favorito = Favorito.objects.get(usuario=user, producto=producto)
-            favorito.delete()
-            return Response({'message': 'Producto eliminado de favoritos'}, status=status.HTTP_200_OK)
-        except Favorito.DoesNotExist:
-            return Response({'error': 'Producto no estaba en favoritos'}, status=status.HTTP_404_NOT_FOUND)
-
+# Vista para listar los favoritos
 class ListFavoritesView(APIView):
-    authentication_classes = [SessionAuthentication]
     permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request, *args, **kwargs):
         user = request.user
         favoritos = Favorito.objects.filter(usuario=user).select_related('producto')
         serializer = ProductoSerializer([favorito.producto for favorito in favoritos], many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class UpdateDireccionView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def patch(self, request, *args, **kwargs):
+        user = request.user
+        serializer = UpdateDireccionSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Dirección actualizada con éxito.'}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#Json
+#{
+# "direccion": "Nueva Dirección Actualizada"
+#}
+
+class ChangePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        serializer = ChangePasswordSerializer(data=request.data)
+
+        if serializer.is_valid():
+            # Verificar si la contraseña antigua es correcta
+            if not user.check_password(serializer.data.get("old_password")):
+                return Response({'old_password': 'Contraseña antigua incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Si la contraseña antigua es correcta, cambiar a la nueva
+            user.set_password(serializer.data.get("new_password"))
+            user.save()
+            return Response({'message': 'Contraseña cambiada con éxito.'}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#Json
+#{
+#  "old_password": "tu_contraseña_antigua",
+#  "new_password": "tu_nueva_contraseña"
+#}
+
+class ListFavoritesView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        favoritos = Favorito.objects.filter(usuario=user).select_related('producto')
+        serializer = ProductoSerializer([favorito.producto for favorito in favoritos], many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+#{
+#  "producto_id": 1  // Reemplaza con el ID del producto que deseas agregar a favoritos
+#}
