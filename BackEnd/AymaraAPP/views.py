@@ -239,28 +239,22 @@ class RemoveFromFavoritesView(APIView):
 #  "producto_id": 1  // Reemplaza con el ID del producto que deseas sacar de favoritos
 #}
 
-# Vista para listar los favoritos
-class ListFavoritesView(APIView):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication]
 
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        favoritos = Favorito.objects.filter(usuario=user).select_related('producto')
-        serializer = ProductoSerializer([favorito.producto for favorito in favoritos], many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-class UpdateDireccionView(APIView):
+class ChangeDireccionView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
     def patch(self, request, *args, **kwargs):
         user = request.user
-        serializer = UpdateDireccionSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'Dirección actualizada con éxito.'}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        new_direccion = request.data.get('direccion')
+
+        if not new_direccion:
+            return Response({'error': 'El campo "direccion" es requerido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.direccion = new_direccion
+        user.save()
+        return Response({'message': 'Dirección actualizada con éxito.'}, status=status.HTTP_200_OK)
+
 #Json
 #{
 # "direccion": "Nueva Dirección Actualizada"
@@ -272,19 +266,21 @@ class ChangePasswordView(APIView):
 
     def post(self, request, *args, **kwargs):
         user = request.user
-        serializer = ChangePasswordSerializer(data=request.data)
+        
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
 
-        if serializer.is_valid():
-            # Verificar si la contraseña antigua es correcta
-            if not user.check_password(serializer.data.get("old_password")):
-                return Response({'old_password': 'Contraseña antigua incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
+        if not old_password or not new_password:
+            return Response({'error': 'Debes proporcionar la contraseña antigua y la nueva.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Si la contraseña antigua es correcta, cambiar a la nueva
-            user.set_password(serializer.data.get("new_password"))
-            user.save()
-            return Response({'message': 'Contraseña cambiada con éxito.'}, status=status.HTTP_200_OK)
+        if not user.check_password(old_password):
+            return Response({'old_password': 'Contraseña antigua incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        user.set_password(new_password)
+        user.save()
+        
+        return Response({'message': 'Contraseña cambiada con éxito.'}, status=status.HTTP_200_OK)
+
 #Json
 #{
 #  "old_password": "tu_contraseña_antigua",
@@ -303,4 +299,48 @@ class ListFavoritesView(APIView):
 
 #{
 #  "producto_id": 1  // Reemplaza con el ID del producto que deseas agregar a favoritos
+#}
+
+class ChangeUsernameView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def patch(self, request, *args, **kwargs):
+        user = request.user
+        new_username = request.data.get('username')
+
+        if not new_username:
+            return Response({'error': 'El campo "username" es requerido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if CustomUser.objects.filter(username=new_username).exclude(id=user.id).exists():
+            return Response({'error': 'Este nombre de usuario ya está en uso.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.username = new_username
+        user.save()
+        return Response({'message': 'Nombre de usuario actualizado con éxito.'}, status=status.HTTP_200_OK)
+
+#{
+# "username": "nuevo_username"
+#}
+
+class ChangeEmailView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def patch(self, request, *args, **kwargs):
+        user = request.user
+        new_email = request.data.get('email')
+
+        if not new_email:
+            return Response({'error': 'El campo "email" es requerido.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if CustomUser.objects.filter(email=new_email).exclude(id=user.id).exists():
+            return Response({'error': 'Este email ya está en uso.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.email = new_email
+        user.save()
+        return Response({'message': 'Email actualizado con éxito.'}, status=status.HTTP_200_OK)
+
+#{
+#  "email": "nuevoemail@example.com"
 #}

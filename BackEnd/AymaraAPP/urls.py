@@ -44,6 +44,8 @@ urlpatterns = [
     path('list_favorites/', ListFavoritesView.as_view(), name='list_favorites'),
     
     #Actualizar direccion y password
-    path('update-direccion/', UpdateDireccionView.as_view(), name='update-direccion'),
+    path('change-direccion/', ChangeDireccionView.as_view(), name='change-direccion'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('change-username/', ChangeUsernameView.as_view(), name='change-username'),
+    path('change-email/', ChangeEmailView.as_view(), name='change-email')
 ]
