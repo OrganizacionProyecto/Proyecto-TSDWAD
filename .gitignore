@@ -1,4 +1,0 @@
-# Ignorar archivos pycache
-*.pyc
-*.pyo
-env/
