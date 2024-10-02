@@ -102,3 +102,9 @@ class CarritoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
 
+class FavoritoSerializer(serializers.ModelSerializer):
+    producto = ProductoSerializer()
+
+    class Meta:
+        model = Favorito
+        fields = ['usuario', 'producto']
