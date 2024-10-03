@@ -74,6 +74,8 @@ class LoginView(APIView):
                 'userData': user_data
             }, status=status.HTTP_200_OK)
         return Response({'detail': 'Invalid credentials'}, status=status.HTTP_404_NOT_FOUND)
+    
+# { "email": "admin@admin.com", "password": "1234" }
 
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
@@ -81,6 +83,8 @@ class LogoutView(APIView):
     def post(self, request):
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+# { "email": "admin@admin.com", "password": "1234" }
 
 # Signup con JWT
 class SignupView(generics.CreateAPIView):
