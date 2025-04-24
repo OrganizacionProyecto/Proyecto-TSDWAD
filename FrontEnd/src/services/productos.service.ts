@@ -12,6 +12,13 @@ export interface Producto {
   imagen: string;
   id_categoria: number;
   cantidad: number;
+  id_stock?: number; // Agregar stock
+}
+
+export interface Stock {
+  id_stock: number;
+  cantidad: number;
+  id_producto: number;
 }
 
 @Injectable({
@@ -19,11 +26,27 @@ export interface Producto {
 })
 export class ProductoService {
   private baseUrl = 'http://127.0.0.1:8000/api/tablas/productos/';
-
+  private agregarProductosUrl = 'http://127.0.0.1:8000/api/tablas/agregar_productos/';
+  private stockUrl='http://127.0.0.1:8000/api/tablas/stocks/'
+  
   constructor(private http: HttpClient) {}
 
   obtenerProductos(): Observable<Producto[]> {
     return this.http.get<Producto[]>(this.baseUrl)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  obtenerStock(): Observable<Stock[]> {
+    return this.http.get<Stock[]>(this.stockUrl)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  agregarProducto(producto: Producto): Observable<Producto> {
+    return this.http.post<Producto>(this.agregarProductosUrl, producto)
       .pipe(
         catchError(this.handleError)
       );

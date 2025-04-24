@@ -10,7 +10,9 @@ export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api/auth';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
-
+  getAccessToken(): string | null {
+    return localStorage.getItem('access_token');  // Aquí obtenemos el token almacenado
+  }
   constructor(private http: HttpClient) { }
 
   private hasToken(): boolean {
@@ -20,11 +22,12 @@ export class AuthService {
   login(credentials: { email: string, password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login/`, credentials).pipe(
       tap((res: any) => {
-        if (res.token) {
-          localStorage.setItem('token', res.token);
+        if (res.access && res.refresh) {
+          localStorage.setItem('access_token', res.access);
+          localStorage.setItem('refresh_token', res.refresh);
           if (res.userData) {
             localStorage.setItem('userData', JSON.stringify(res.userData));
-            console.log('User data saved to localStorage:', res.userData);  
+            console.log('User data saved to localStorage:', res.userData);
           } else {
             console.warn('userData is not defined in the response.');
           }
@@ -40,13 +43,6 @@ export class AuthService {
       tap((res: any) => {
         if (res.token) {
           localStorage.setItem('token', res.token);
-          if (res.userData) {
-            localStorage.setItem('userData', JSON.stringify(res.userData));
-            console.log('User data saved to localStorage:', res.userData);  
-          } else {
-            console.warn('userData is not defined in the response.');
-          }
-          this.authStatusSubject.next(true);
         }
       }),
       catchError(this.handleError)
@@ -54,13 +50,14 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     localStorage.removeItem('userData');
     this.authStatusSubject.next(false);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('access_token');
   }
 
   getUserData(): any {
@@ -77,6 +74,8 @@ export class AuthService {
     }
   }
   
+  
+
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {

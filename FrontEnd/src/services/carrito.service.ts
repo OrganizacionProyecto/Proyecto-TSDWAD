@@ -1,7 +1,6 @@
-
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { ApiService } from './api.service';
 import { Producto } from './productos.service'; 
 import { AuthService } from '../app/pages/services/auth.service';
@@ -10,9 +9,9 @@ export interface Carrito {
   direccion_envio: string;
   telefono: string;
   total: number | null;
-  id_usuario: number | null;
-  id_datos_envio: number | null;
-  id_metodo_pago: number | null;
+  id_usuario_id: number | null;
+  id_datos_envio_id: number | null;
+  id_metodo_pago_id: number | null;
   productos?: Producto[];
 }
 
@@ -24,9 +23,9 @@ export class CarritoService {
     direccion_envio: '',
     telefono: '',
     total: null,
-    id_usuario: null,
-    id_datos_envio: null,
-    id_metodo_pago: null,
+    id_usuario_id: null,
+    id_datos_envio_id: null,
+    id_metodo_pago_id: null,
     productos: []
   });
   carrito$ = this.carritoSubject.asObservable();
@@ -51,11 +50,15 @@ export class CarritoService {
     };
     this.carritoSubject.next(updatedCarrito);
 
-    if (updatedCarrito.id_usuario !== null) {
+    if (updatedCarrito.id_usuario_id !== null) {
       return this.apiService.actualizarCarrito(updatedCarrito).pipe(
         map((carritoActualizado: Carrito) => {
           this.carritoSubject.next(carritoActualizado);
           return carritoActualizado;
+        }),
+        catchError((error) => {
+          console.error('Error al actualizar el carrito:', error);
+          throw error;
         })
       );
     } else {
@@ -65,9 +68,8 @@ export class CarritoService {
       });
     }
   }
-
   agregarProductoAlCarrito(idProducto: number, cantidad: number) {
-    const carritoId = this.carritoSubject.value.id_usuario;
+    const carritoId = this.carritoSubject.value.id_usuario_id;
     if (carritoId === null) {
       console.error('Carrito ID is not available');
       return;
@@ -86,7 +88,7 @@ export class CarritoService {
   }
 
   quitarProductoDelCarrito(idProducto: number, cantidad: number) {
-    const carritoId = this.carritoSubject.value.id_usuario;
+    const carritoId = this.carritoSubject.value.id_usuario_id;
     if (carritoId === null) {
       console.error('Carrito ID is not available');
       return;
@@ -119,7 +121,7 @@ export class CarritoService {
 
     this.apiService.obtenerCarritos().subscribe({
       next: (carritos: Carrito[]) => {
-        const userCarrito = carritos.find(carrito => carrito.id_usuario === userData.id);
+        const userCarrito = carritos.find(carrito => carrito.id_usuario_id === userData.id);
         if (userCarrito) {
           this.carritoSubject.next(userCarrito);
         } else {
