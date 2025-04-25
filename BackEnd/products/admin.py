@@ -1,51 +1,22 @@
-from django.utils.html import format_html
 from django.contrib import admin
-from .models import Carrito, ItemCarrito, Pedido, ItemPedido
-
-# Inline para ItemCarrito
-class ItemCarritoInline(admin.TabularInline):
-    model = ItemCarrito
-    extra = 1
-    fields = ['producto', 'cantidad']
-    readonly_fields = ['producto', 'cantidad']
-
-# Admin para Carrito
-class CarritoAdmin(admin.ModelAdmin):
-    list_display = ['usuario', 'id']
-    search_fields = ['usuario__username']
-    inlines = [ItemCarritoInline]
-    ordering = ['usuario']
-
-# Inline para ItemPedido
-class ItemPedidoInline(admin.TabularInline):
-    model = ItemPedido
-    extra = 1
-    fields = ['producto', 'cantidad']
-    readonly_fields = ['producto', 'cantidad']
-
-# Admin para Pedido
-class PedidoAdmin(admin.ModelAdmin):
-    list_display = ['usuario', 'direccion_entrega', 'telefono', 'metodo_pago', 'total', 'fecha_creacion']
-    search_fields = ['usuario__username', 'direccion_entrega', 'telefono']
-    inlines = [ItemPedidoInline]
-    list_filter = ['metodo_pago', 'fecha_creacion']
-    ordering = ['-fecha_creacion']
+from .models import Categoria, Producto, Favorito
 
 
-# Admin para ItemCarrito
-class ItemCarritoAdmin(admin.ModelAdmin):
-    list_display = ['carrito', 'producto', 'cantidad']
-    search_fields = ['carrito__usuario__username', 'producto__nombre']
-    list_filter = ['carrito']
+class ProductoAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'precio', 'stock', 'id_categoria', 'imagen')  # Campos que se mostrarán en la lista
+    list_filter = ('id_categoria',)  # Filtro por categoría
+    search_fields = ('nombre', 'descripcion')  # Búsqueda por nombre y descripción
+    list_per_page = 10  # Cantidad de elementos por página
+    ordering = ('nombre',)  
 
-# Admin para ItemPedido
-class ItemPedidoAdmin(admin.ModelAdmin):
-    list_display = ['pedido', 'producto', 'cantidad']
-    search_fields = ['pedido__usuario__username', 'producto__nombre']
-    list_filter = ['pedido']
+class CategoriaAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'descripcion')  
+    search_fields = ('nombre',)  
 
-# Registro en el admin de Django
-admin.site.register(Carrito, CarritoAdmin)
-admin.site.register(ItemCarrito, ItemCarritoAdmin)
-admin.site.register(Pedido, PedidoAdmin)
-admin.site.register(ItemPedido, ItemPedidoAdmin)
+class FavoritoAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'producto', 'fecha_agregado')  
+    list_filter = ('usuario', 'producto')  
+    search_fields = ('usuario__username', 'producto__nombre')  
+admin.site.register(Producto, ProductoAdmin)
+admin.site.register(Categoria, CategoriaAdmin)
+admin.site.register(Favorito, FavoritoAdmin)

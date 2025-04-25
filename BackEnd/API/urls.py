@@ -21,6 +21,9 @@ urlpatterns = [
     # API de carrito
     path('api/cart/', include('cart.urls')),
 
+    # Usuarios
+    path('api/users/', include('users.urls')),
+
     # Documentación automática con drf-spectacular
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
