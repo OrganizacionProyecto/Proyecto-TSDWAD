@@ -44,6 +44,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated(), IsAdminOrStaffUser()]
         elif self.action == 'me':  # Nueva acción para ver el perfil propio
             return [permissions.IsAuthenticated()]
+        elif self.action == 'deactivate_account':  # Nueva acción para desactivar la cuenta
+            return [permissions.IsAuthenticated()]
         else:
             return [permissions.IsAuthenticated()]
 
@@ -56,6 +58,17 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['delete'])
+    def deactivate_account(self, request):
+        """
+        Desactiva la cuenta del usuario autenticado.
+        """
+        user = request.user  # El usuario autenticado
+        user.is_active = False  # Cambia el estado de la cuenta a inactiva
+        user.save()
+
+        return Response({"detail": "Cuenta desactivada correctamente."})
+
     def get_queryset(self):
         """
         Solo se devuelven los usuarios para admins/superusuarios, o el propio usuario si no es admin.
@@ -63,4 +76,4 @@ class UserViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_staff or user.is_superuser:
             return CustomUser.objects.all()  # Admin puede ver todos
-        return CustomUser.objects.filter(id=user.id)
+        return CustomUser.objects.filter(id=user.id) 
