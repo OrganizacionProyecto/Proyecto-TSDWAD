@@ -68,7 +68,7 @@ export class CarritoService {
       });
     }
   }
-  agregarProductoAlCarrito(idProducto: number, cantidad: number) {
+  agregarProductoAlCarrito(idProducto: number, cantidad: number): void {
     const carritoId = this.carritoSubject.value.id_usuario_id;
     if (carritoId === null) {
       console.error('Carrito ID is not available');
@@ -78,7 +78,6 @@ export class CarritoService {
     this.apiService.agregarProductoAlCarrito(carritoId, idProducto, cantidad)
       .subscribe({
         next: (carritoActualizado: Carrito) => {
-          this.actualizarTotalCarrito(carritoActualizado);
           this.carritoSubject.next(carritoActualizado);
         },
         error: (error) => {
@@ -134,3 +133,4 @@ export class CarritoService {
     });
   }
 }
+

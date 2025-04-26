@@ -1,11 +1,9 @@
 from rest_framework import viewsets, permissions
 from rest_framework.permissions import BasePermission
-from .models import CustomUser
-from .serializers import UserSerializer
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
-
+from .models import CustomUser
+from .serializers import UserSerializer
 
 class IsAdminOrStaffUser(BasePermission):
     """
@@ -42,38 +40,47 @@ class UserViewSet(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated()]
         elif self.action == 'list':
             return [permissions.IsAuthenticated(), IsAdminOrStaffUser()]
-        elif self.action == 'me':  # Nueva acción para ver el perfil propio
+        elif self.action == 'me':  # Permitir la actualización de los datos del perfil propio
             return [permissions.IsAuthenticated()]
-        elif self.action == 'deactivate_account':  # Nueva acción para desactivar la cuenta
+        elif self.action == 'deactivate_account':  # Acción para desactivar la cuenta
             return [permissions.IsAuthenticated()]
         else:
             return [permissions.IsAuthenticated()]
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=['get', 'put'])
     def me(self, request):
         """
-        Devuelve el perfil del usuario autenticado.
+        Devuelve el perfil del usuario autenticado o actualiza los datos del usuario autenticado.
         """
-        # Serializa el usuario autenticado (request.user)
-        serializer = self.get_serializer(request.user)
-        return Response(serializer.data)
+        user = request.user
+        if request.method == 'GET':
+            # Serializa y devuelve los datos del usuario
+            serializer = self.get_serializer(user)
+            return Response(serializer.data)
+        
+        if request.method == 'PUT':
+            # Si la solicitud es PUT, actualizamos el perfil del usuario
+            serializer = self.get_serializer(user, data=request.data)
+            if serializer.is_valid():
+                serializer.save()  # Guarda los cambios
+                return Response(serializer.data)
+            return Response(serializer.errors, status=400)
 
     @action(detail=False, methods=['delete'])
     def deactivate_account(self, request):
         """
         Desactiva la cuenta del usuario autenticado.
         """
-        user = request.user  # El usuario autenticado
-        user.is_active = False  # Cambia el estado de la cuenta a inactiva
+        user = request.user
+        user.is_active = False
         user.save()
-
         return Response({"detail": "Cuenta desactivada correctamente."})
 
     def get_queryset(self):
         """
-        Solo se devuelven los usuarios para admins/superusuarios, o el propio usuario si no es admin.
+        Solo devuelve los usuarios para admins/superusuarios, o el propio usuario si no es admin.
         """
         user = self.request.user
         if user.is_staff or user.is_superuser:
             return CustomUser.objects.all()  # Admin puede ver todos
-        return CustomUser.objects.filter(id=user.id) 
+        return CustomUser.objects.filter(id=user.id)  # Solo se muestra el perfil del usuario autenticado
