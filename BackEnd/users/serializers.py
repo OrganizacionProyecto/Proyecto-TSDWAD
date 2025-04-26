@@ -5,37 +5,45 @@ from django.contrib.auth.password_validation import validate_password
 import re
 from rest_framework.exceptions import ValidationError
 
-
 def validate_strong_password(value):
-        if len(value) < 8:
-            raise ValidationError("La contraseña debe tener al menos 8 caracteres.")
-        if not re.search(r'[A-Z]', value):
-            raise ValidationError("La contraseña debe contener al menos una letra mayúscula.")
-        if not re.search(r'\d', value):
-            raise ValidationError("La contraseña debe contener al menos un número.")
-        return value 
+    if len(value) < 8:
+        raise ValidationError("La contraseña debe tener al menos 8 caracteres.")
+    if not re.search(r'[A-Z]', value):
+        raise ValidationError("La contraseña debe contener al menos una letra mayúscula.")
+    if not re.search(r'\d', value):
+        raise ValidationError("La contraseña debe contener al menos un número.")
+    return value 
 
 class UserSerializer(serializers.ModelSerializer):
     
     password = serializers.CharField(
-    write_only=True,
-    required=True,
-    validators=[validate_password, validate_strong_password],
-    style={'input_type': 'password'})
+        write_only=True,
+        required=False,  # No es obligatorio si no se quiere cambiar la contraseña
+        validators=[validate_password, validate_strong_password],
+        style={'input_type': 'password'}
+    )
 
     password2 = serializers.CharField(
-    write_only=True,
-    required=True,
-    style={'input_type': 'password'})
+        write_only=True,
+        required=False,  # No es obligatorio si no se quiere cambiar la contraseña
+        style={'input_type': 'password'}
+    )
+
+    current_password = serializers.CharField(
+        write_only=True,
+        required=False,
+        style={'input_type': 'password'}
+    )
 
     email = serializers.EmailField(
-    required=True,
-    validators=[UniqueValidator(queryset=CustomUser.objects.all(), 
-                 message="Este email ya está registrado.")])
+        required=True,
+        validators=[UniqueValidator(queryset=CustomUser.objects.all(), 
+                 message="Este email ya está registrado.")]
+    )
     
     class Meta:
         model = CustomUser
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'direccion', 'is_staff', 'is_superuser', 'is_active', 'password', 'password2', 'app_role']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'direccion', 'is_staff', 'is_superuser', 'is_active', 'password', 'password2', 'current_password', 'app_role']
         extra_kwargs = {
             'password': {'write_only': True},
             'is_staff': {'read_only': True},
@@ -51,7 +59,6 @@ class UserSerializer(serializers.ModelSerializer):
             self.fields.pop('app_role', None)    
 
     def create(self, validated_data):
-        
         validated_data.pop('password2')
         request = self.context.get('request')
     
@@ -73,18 +80,32 @@ class UserSerializer(serializers.ModelSerializer):
             direccion=direccion,
             is_staff=False,
             is_superuser=False,
-            is_active=True,)
+            is_active=True,
+        )
         return user
 
     def update(self, instance, validated_data):
         request = self.context.get('request', None)
 
+        # Actualizar los campos de usuario
         instance.username = validated_data.get('username', instance.username)
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
         instance.email = validated_data.get('email', instance.email)
         instance.direccion = validated_data.get('direccion', instance.direccion)
         instance.is_active = validated_data.get('is_active', instance.is_active)
+
+        # Validar si se desea cambiar la contraseña
+        current_password = validated_data.get('current_password', None)
+        new_password = validated_data.get('password', None)
+        if current_password and new_password:
+            if not instance.check_password(current_password):
+                raise serializers.ValidationError({"current_password": "La contraseña actual es incorrecta."})
+
+            if new_password != validated_data.get('password2'):
+                raise serializers.ValidationError({"password": "Las contraseñas no coinciden."})
+
+            instance.set_password(new_password)
 
         # Validar si puede cambiar app_role
         if 'app_role' in validated_data:
@@ -97,11 +118,6 @@ class UserSerializer(serializers.ModelSerializer):
         if request and request.user and (request.user.is_superuser or request.user.is_staff):
             instance.is_staff = validated_data.get('is_staff', instance.is_staff)
             instance.is_superuser = validated_data.get('is_superuser', instance.is_superuser)
-
-        # Cambio de contraseña (si se envía)
-        password = validated_data.get('password', None)
-        if password:
-            instance.set_password(password)
 
         instance.save()
         return instance
