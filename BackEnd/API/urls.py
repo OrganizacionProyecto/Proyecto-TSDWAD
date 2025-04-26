@@ -4,6 +4,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.conf import settings
 from django.conf.urls.static import static
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from users.views import UserViewSet
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +24,8 @@ urlpatterns = [
 
     # Usuarios
     path('api/users/', include('users.urls')),
+    path('api/users/me/', UserViewSet.as_view({'get': 'me'}), name='user-me'),  
+
 
     # Documentación automática con drf-spectacular
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
