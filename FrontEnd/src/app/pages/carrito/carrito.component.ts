@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+/*import { Component, OnInit } from '@angular/core';
 import { CarritoService, Carrito } from '../../../services/carrito.service';
 import { AuthService } from '../services/auth.service';
 import { ApiService, MetodoPago } from '../../../services/api.service';
@@ -76,3 +76,4 @@ export class CarritoComponent implements OnInit {
     }
   }
 }
+*/

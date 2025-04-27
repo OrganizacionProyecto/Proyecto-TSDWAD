@@ -3,34 +3,28 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
+
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
-  private apiUrl = 'http://127.0.0.1:8000/api/auth';
+  private apiUrl = 'http://127.0.0.1:8000/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
-  getAccessToken(): string | null {
-    return localStorage.getItem('access_token');  // Aquí obtenemos el token almacenado
-  }
+ 
   constructor(private http: HttpClient) { }
 
   private hasToken(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('access_token');
   }
 
   login(credentials: { email: string, password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login/`, credentials).pipe(
+    return this.http.post<any>(`${this.apiUrl}/auth/token/`, credentials).pipe(
       tap((res: any) => {
         if (res.access && res.refresh) {
           localStorage.setItem('access_token', res.access);
           localStorage.setItem('refresh_token', res.refresh);
-          if (res.userData) {
-            localStorage.setItem('userData', JSON.stringify(res.userData));
-            console.log('User data saved to localStorage:', res.userData);
-          } else {
-            console.warn('userData is not defined in the response.');
-          }
           this.authStatusSubject.next(true);
         }
       }),
@@ -38,6 +32,18 @@ export class AuthService {
     );
   }
 
+  getUserData(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
+      tap((userData) => {
+        console.log('Datos del usuario recibidos:', userData);  // Puedes verificar los datos aquí
+      }),
+      catchError((err) => {
+        console.error('Error al obtener los datos del usuario:', err);  // Manejamos el error aquí
+        return throwError(() => new Error('Error al obtener los datos del usuario'));
+      })
+    );
+  }
+  
   register(user: { username: string, first_name: string, last_name: string, email: string, password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/signup/`, user).pipe(
       tap((res: any) => {
@@ -52,7 +58,6 @@ export class AuthService {
   logout(): void {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
-    localStorage.removeItem('userData');
     this.authStatusSubject.next(false);
   }
 
@@ -60,18 +65,8 @@ export class AuthService {
     return !!localStorage.getItem('access_token');
   }
 
-  getUserData(): any {
-    try {
-      const userDataString = localStorage.getItem('userData');
-      if (!userDataString) {
-        console.warn('No user data found in localStorage.');
-        return null;
-      }
-      return JSON.parse(userDataString);
-    } catch (error) {
-      console.error('Error parsing user data from localStorage', error);
-      return null;
-    }
+  getAccessToken(): string | null {
+    return localStorage.getItem('access_token');
   }
   
   
@@ -99,3 +94,4 @@ export class AuthService {
     return throwError(() => new Error(errorMessage));
   }
 }
+

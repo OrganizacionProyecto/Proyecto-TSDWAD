@@ -84,3 +84,4 @@ class UserViewSet(viewsets.ModelViewSet):
         if user.is_staff or user.is_superuser:
             return CustomUser.objects.all()  # Admin puede ver todos
         return CustomUser.objects.filter(id=user.id)  # Solo se muestra el perfil del usuario autenticado
+

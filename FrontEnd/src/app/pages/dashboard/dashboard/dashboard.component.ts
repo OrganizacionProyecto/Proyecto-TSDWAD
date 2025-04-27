@@ -17,12 +17,15 @@ export class DashboardComponent implements OnInit {
   }
   
   loadUserData(): void {
-    this.userData = this.authService.getUserData();
-    if (!this.userData) {
-      console.warn('No user data found in localStorage.');
-    } else {
-      console.log('Loaded user data in dashboard:', this.userData);
-    }
+    this.authService.getUserData().subscribe({
+      next: (user) => {
+        this.userData = user;
+        console.log('Loaded user data in dashboard:', this.userData);
+      },
+      error: (err) => {
+        console.error('Error loading user data in dashboard:', err);
+      }
+    });
   }
 
   logout(): void {

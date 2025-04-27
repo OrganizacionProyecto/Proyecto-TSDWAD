@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+/*import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
 import { CarritoService } from '../../../services/carrito.service';
@@ -63,4 +63,4 @@ export class ProductosComponent implements OnInit {
     this.carritoService.actualizarCarrito({ productos: [productoConCantidad] });
     this.router.navigate(['carrito']);
   }
-}
+}*/
