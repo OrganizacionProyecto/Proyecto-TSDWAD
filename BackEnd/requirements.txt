@@ -1,0 +1,10 @@
+Django>=4.2,<5.0
+djangorestframework>=3.14
+djangorestframework-simplejwt>=5.2.2
+Pillow>=10.0
+psycopg2-binary>=2.9
+reportlab>=4.0        
+drf-spectacular>=0.26 
+django-cors-headers>=4.0
+django-environ>=0.9.0 
+django-extensions>=4.0 

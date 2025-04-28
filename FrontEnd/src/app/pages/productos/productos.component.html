@@ -1,0 +1,23 @@
+<section id="productos" class="container">
+  <div class="productos-container">
+    <div class="product-card" *ngFor="let producto of productos">
+      <div class="product-image-container">
+        <img [src]="producto.imagen" [alt]="producto.nombre" class="imagen">
+      </div>
+      <div class="product-details">
+        <h3 class="prod">{{ producto.nombre }}</h3>
+        <p class="prod_p">{{ producto.descripcion }}</p>
+        <p class="prod_p"><strong>Stock:</strong> {{ producto.disponibilidad }}</p>
+        <div class="cantidad-container">
+          <input type="number" [(ngModel)]="producto.cantidad" class="cantidad-input" placeholder="Cantidad" min="1">
+        </div>
+        <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)">Comprar</button>
+        <div class="precio">
+          <div class="precio-marco"><strong>Precio:</strong> ${{ producto.precio }} ARS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<router-outlet></router-outlet>
+
