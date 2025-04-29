@@ -3,17 +3,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
-
 @Injectable({
   providedIn: 'root'
 })
-
 export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
  
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   private hasToken(): boolean {
     return !!localStorage.getItem('access_token');
@@ -32,13 +30,26 @@ export class AuthService {
     );
   }
 
+  refreshToken(): Observable<any> {
+    const refresh = localStorage.getItem('refresh_token');
+    return this.http.post<any>(`${this.apiUrl}/auth/token/refresh/`, { refresh }).pipe(
+      tap((res) => {
+        localStorage.setItem('access_token', res.access);
+      }),
+      catchError((error) => {
+        this.logout();
+        return throwError(() => new Error('Error al refrescar el token'));
+      })
+    );
+  }
+
   getUserData(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
       tap((userData) => {
-        console.log('Datos del usuario recibidos:', userData);  // Puedes verificar los datos aquí
+        console.log('Datos del usuario recibidos:', userData);
       }),
       catchError((err) => {
-        console.error('Error al obtener los datos del usuario:', err);  // Manejamos el error aquí
+        console.error('Error al obtener los datos del usuario:', err);
         return throwError(() => new Error('Error al obtener los datos del usuario'));
       })
     );
@@ -47,8 +58,10 @@ export class AuthService {
   register(user: { username: string, first_name: string, last_name: string, email: string, password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/signup/`, user).pipe(
       tap((res: any) => {
-        if (res.token) {
-          localStorage.setItem('token', res.token);
+        if (res.access && res.refresh) {
+          localStorage.setItem('access_token', res.access);
+          localStorage.setItem('refresh_token', res.refresh);
+          this.authStatusSubject.next(true);
         }
       }),
       catchError(this.handleError)
@@ -68,8 +81,6 @@ export class AuthService {
   getAccessToken(): string | null {
     return localStorage.getItem('access_token');
   }
-  
-  
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = '';
@@ -94,4 +105,3 @@ export class AuthService {
     return throwError(() => new Error(errorMessage));
   }
 }
-

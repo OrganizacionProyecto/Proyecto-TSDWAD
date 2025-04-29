@@ -1,136 +1,92 @@
-/*import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
-import { ApiService } from './api.service';
-import { Producto } from './productos.service'; 
-import { AuthService } from '../app/pages/services/auth.service';
-
-export interface Carrito {
-  direccion_envio: string;
-  telefono: string;
-  total: number | null;
-  id_usuario_id: number | null;
-  id_datos_envio_id: number | null;
-  id_metodo_pago_id: number | null;
-  productos?: Producto[];
-}
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Carrito } from './carrito.model';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class CarritoService {
-  private carritoSubject: BehaviorSubject<Carrito> = new BehaviorSubject<Carrito>({
-    direccion_envio: '',
-    telefono: '',
-    total: null,
-    id_usuario_id: null,
-    id_datos_envio_id: null,
-    id_metodo_pago_id: null,
-    productos: []
-  });
-  carrito$ = this.carritoSubject.asObservable();
+  private baseUrl = 'http://127.0.0.1:8000/api/cart/'; // Base URL para las rutas del carrito
+  private pedidoUrl = `${this.baseUrl}pedido/`; // Base URL para las rutas de pedidos
 
-  constructor(private apiService: ApiService, private authService: AuthService) {
-    this.cargarCarritoDesdeApi();
+  constructor(private http: HttpClient) {}
+
+  // Obtener el carrito del usuario
+  obtenerCarrito(): Observable<Carrito> {
+    return this.http.get<Carrito>(`${this.baseUrl}carrito/`, { headers: this.getAuthHeaders() }).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  obtenerCarrito(): Observable<Producto[]> {
-    return this.carrito$.pipe(map(carrito => carrito.productos || []));
+  // Agregar un producto al carrito
+  agregarProductoAlCarrito(id_producto: number, cantidad: number): Observable<Carrito> {
+    const body = { producto_id: id_producto, cantidad };
+    return this.http.post<Carrito>(`${this.baseUrl}carrito/agregar/`, body, { headers: this.getAuthHeaders() }).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  actualizarCarrito(datos: Partial<Carrito>): Observable<Carrito> {
-    const currentCarrito = this.carritoSubject.value;
-    const updatedCarrito = {
-      ...currentCarrito,
-      ...datos,
-      productos: [
-        ...(currentCarrito.productos || []),
-        ...(datos.productos || [])
-      ]
-    };
-    this.carritoSubject.next(updatedCarrito);
-
-    if (updatedCarrito.id_usuario_id !== null) {
-      return this.apiService.actualizarCarrito(updatedCarrito).pipe(
-        map((carritoActualizado: Carrito) => {
-          this.carritoSubject.next(carritoActualizado);
-          return carritoActualizado;
-        }),
-        catchError((error) => {
-          console.error('Error al actualizar el carrito:', error);
-          throw error;
-        })
-      );
-    } else {
-      console.error('No se puede actualizar el carrito sin un ID de usuario.');
-      return new Observable<Carrito>((observer) => {
-        observer.error('No se puede actualizar el carrito sin un ID de usuario.');
-      });
-    }
-  }
-  agregarProductoAlCarrito(idProducto: number, cantidad: number): void {
-    const carritoId = this.carritoSubject.value.id_usuario_id;
-    if (carritoId === null) {
-      console.error('Carrito ID is not available');
-      return;
-    }
-
-    this.apiService.agregarProductoAlCarrito(carritoId, idProducto, cantidad)
-      .subscribe({
-        next: (carritoActualizado: Carrito) => {
-          this.carritoSubject.next(carritoActualizado);
-        },
-        error: (error) => {
-          console.error('Error al agregar producto al carrito:', error);
-        }
-      });
+  // Modificar la cantidad de un producto en el carrito
+  modificarProductoCarrito(id_producto: number, cantidad: number): Observable<Carrito> {
+    const body = { cantidad };
+    return this.http.put<Carrito>(`${this.baseUrl}carrito/modificar/${id_producto}/`, body, { headers: this.getAuthHeaders() }).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  quitarProductoDelCarrito(idProducto: number, cantidad: number) {
-    const carritoId = this.carritoSubject.value.id_usuario_id;
-    if (carritoId === null) {
-      console.error('Carrito ID is not available');
-      return;
-    }
-
-    this.apiService.quitarProductoDelCarrito(carritoId, idProducto, cantidad)
-      .subscribe({
-        next: (carritoActualizado: Carrito) => {
-          this.actualizarTotalCarrito(carritoActualizado);
-          this.carritoSubject.next(carritoActualizado);
-        },
-        error: (error) => {
-          console.error('Error al quitar producto del carrito:', error);
-        }
-      });
+  // Eliminar un producto del carrito
+  eliminarProductoDelCarrito(id_producto: number): Observable<Carrito> {
+    return this.http.delete<Carrito>(`${this.baseUrl}carrito/eliminar/${id_producto}/`, { headers: this.getAuthHeaders() }).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  actualizarTotalCarrito(carrito: Carrito) {
-    const total = carrito.productos?.reduce((sum, producto) => sum + (producto.precio * (producto.cantidad || 0)), 0) || 0;
-    carrito.total = total;
+  // Actualizar el carrito
+  actualizarCarrito(carrito: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}carrito/`, carrito, { headers: this.getAuthHeaders() }).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  cargarCarritoDesdeApi() {
-    const userData = this.authService.getUserData();
-    console.log('Datos del usuario:', userData);
-    if (!userData || !userData.id) {
-      console.error('User data is not available');
-      return;
-    }
+  // Realizar un pedido
+  realizarPedido(pedidoData: any): Observable<any> {
+    return this.http.post<any>(`${this.pedidoUrl}crear/`, pedidoData, { headers: this.getAuthHeaders() }).pipe(
+      catchError(this.handleError)
+    );
+  }
 
-    this.apiService.obtenerCarritos().subscribe({
-      next: (carritos: Carrito[]) => {
-        const userCarrito = carritos.find(carrito => carrito.id_usuario_id === userData.id);
-        if (userCarrito) {
-          this.carritoSubject.next(userCarrito);
-        } else {
-          console.warn('No carrito found for the user.');
-        }
-      },
-      error: (error) => {
-        console.error('Error al cargar el carrito desde la API:', error);
-      }
+  // Descargar factura de un pedido
+  descargarFactura(pedidoId: number): Observable<Blob> {
+    return this.http.get(`${this.pedidoUrl}${pedidoId}/factura/`, {
+      headers: this.getAuthHeaders(),
+      responseType: 'blob' // Para manejar archivos binarios
+    }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Obtener encabezados de autenticación
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('jwt_token'); // Asegúrate de que el token esté almacenado en localStorage
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
   }
+
+  // Manejo de errores
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'Error desconocido';
+    if (error.error instanceof ErrorEvent) {
+      // Errores del cliente
+      errorMessage = `Error del cliente: ${error.error.message}`;
+    } else {
+      // Errores del servidor
+      errorMessage = `Código de error: ${error.status}, Mensaje: ${error.message}`;
+    }
+    console.error('Ocurrió un error:', errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
 }
-*/

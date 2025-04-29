@@ -7,11 +7,23 @@
       <div class="product-details">
         <h3 class="prod">{{ producto.nombre }}</h3>
         <p class="prod_p">{{ producto.descripcion }}</p>
-        <p class="prod_p"><strong>Stock:</strong> {{ producto.disponibilidad }}</p>
+        <p class="prod_p"><strong>Stock:</strong> {{ producto.stock }}</p> 
         <div class="cantidad-container">
-          <input type="number" [(ngModel)]="producto.cantidad" class="cantidad-input" placeholder="Cantidad" min="1">
+          <input 
+            type="number" 
+            [(ngModel)]="producto.cantidad" 
+            class="cantidad-input" 
+            placeholder="Cantidad" 
+            min="1" 
+            [max]="producto.stock"  
+          >
         </div>
-        <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)">Comprar</button>
+        <button 
+          class="comprar-btn" 
+          (click)="agregarAlCarrito(producto, producto.cantidad)" 
+          [disabled]="producto.cantidad <= 0 || producto.cantidad > producto.stock">  
+        </button>
+        
         <div class="precio">
           <div class="precio-marco"><strong>Precio:</strong> ${{ producto.precio }} ARS</div>
         </div>
@@ -20,4 +32,3 @@
   </div>
 </section>
 <router-outlet></router-outlet>
-
