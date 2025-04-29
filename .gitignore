@@ -1,13 +1,38 @@
-# Ignorar archivos pycache
+# Python
 __pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+# Django
+db.sqlite3
+*.pot
 *.pyc
 *.pyo
-# Entornos virtuales
-venv/
-.env/
-.venv/
-# Archivos de sistema
+*.pyd
+*.db
+*.sqlite3-journal
+
+# Entorno virtual fuera de la carpeta de BackEnd
+/venv/
+
+# VSCode
+.vscode/
+
+# Mac
 .DS_Store
+
+# Windows
 Thumbs.db
-# entorno virtual
-BackEnd/venv/
+
+# Migrations
+**/migrations/
+!*/migrations/__init__.py
+
+# Entornos / secretos
+.env
+*.env
+
+# Node (si usás Angular o React en frontend)
+node_modules/
+

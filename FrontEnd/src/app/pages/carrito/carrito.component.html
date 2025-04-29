@@ -1,68 +1,22 @@
-<section class="vh-100">
-  <div class="container h-20">
-    <div class="row d-flex justify-content-center align-items-center h-100 w-100">
-      <div class="col-md-10">
-        <div class="card mb-4">
-          <div class="card-body p-4">
-            <p class="h2">Carrito</p>
+<div class="carrito">
+  <h2>Carrito</h2>
 
-            <!-- Información del Usuario -->
-            <div class="mb-4">
-              <p><strong>Nombre:</strong> {{ usuario?.first_name }}</p>
-              <p><strong>Apellido:</strong> {{ usuario?.last_name }}</p>
-              <p><strong>Email:</strong> {{ usuario?.email }}</p>
-            </div>
-
-            <!-- Información del Carrito -->
-            <div class="mb-4">
-              <form (ngSubmit)="actualizarCarrito()">
-                <div class="form-group">
-                  <label for="direccion_envio"><strong>Dirección de Envío:</strong></label>
-                  <input type="text" class="form-control" id="direccion_envio" [(ngModel)]="carrito.direccion_envio" name="direccion_envio">
-                </div>
-                <div class="form-group">
-                  <label for="telefono"><strong>Teléfono:</strong></label>
-                  <input type="text" class="form-control" id="telefono" [(ngModel)]="carrito.telefono" name="telefono">
-                </div>
-                <div class="form-group">
-                  <label for="metodo_pago"><strong>Método de Pago:</strong></label>
-                  <select class="form-control" id="metodo_pago" [(ngModel)]="carrito.id_metodo_pago" name="metodo_pago">
-                    <option value="1">Tarjeta de Crédito</option>
-                    <option value="2">Tarjeta de Débito</option>
-                    <option value="3">Transferencia Bancaria</option>
-                  </select>
-                </div>
-                <button type="submit" class="btn btn-primary mt-3">Continuar</button>
-              </form>
-            </div>
-
-            <!-- Productos en el Carrito -->
-            <div *ngFor="let producto of carrito.productos" class="row align-items-center mb-3">
-              <div class="col-md-2">
-                <img [src]="producto.imagen" class="img-fluid" [alt]="producto.nombre">
-              </div>
-              <div class="col-md-3">
-                <h5 class="product-name"><strong>{{ producto.nombre }}</strong></h5>
-              </div>
-              <div class="col-md-2">
-                <h5 class="product-quantity">Cantidad: {{ producto.cantidad || 0 }}</h5>
-              </div>
-              <div class="col-md-2">
-                <h5 class="product-price">${{ producto.precio }}</h5>
-              </div>
-              <div class="col-md-3 d-flex justify-content-end">
-                <button class="btn btn-danger me-2" (click)="quitarProducto(producto.idProducto)">-</button>
-                <button class="btn btn-success" (click)="agregarProducto(producto.idProducto)">+</button>
-              </div>
-            </div>
-
-            <!-- Total del Carrito -->
-            <div class="text-end mt-4">
-              <h4>Total del Carrito: ${{ carrito.total || 0 }}</h4>
-            </div>
-          </div>
-        </div>
-      </div>
+  <!-- Verificar que carrito y productos no sean nulos o undefined -->
+  <div *ngIf="carrito && carrito.productos && carrito.productos.length > 0; else carritoVacio">
+    <div *ngFor="let producto of carrito.productos" class="producto">
+      <p><strong>{{ producto.nombre }}</strong></p>
+      <p>Precio unitario: {{ producto.precio | currency }}</p>
+      <p>Cantidad: 
+        <input type="number" [(ngModel)]="producto.cantidad" (change)="modificarCantidad(producto.id_producto, producto.cantidad)" />
+      </p>
+      <p>Subtotal: {{ producto.cantidad * producto.precio | currency }}</p>
+      <button (click)="eliminarProducto(producto.id_producto)">Eliminar</button>
     </div>
+    <hr />
+    <p><strong>Total:</strong> {{ carrito.total | currency }}</p>
   </div>
-</section>
+
+  <ng-template #carritoVacio>
+    <p>Tu carrito está vacío.</p>
+  </ng-template>
+</div>

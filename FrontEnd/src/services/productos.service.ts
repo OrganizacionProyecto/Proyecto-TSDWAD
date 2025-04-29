@@ -1,36 +1,98 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+// Definimos las interfaces para los productos y otros datos relevantes.
 export interface Producto {
-  idProducto: number;
+  id_producto: number;  // Cambiado de idProducto a id_producto
   nombre: string;
   descripcion: string;
   precio: number;
-  disponibilidad: number;
+  stock: number;  // Cambiado de disponibilidad a stock
   imagen: string;
   id_categoria: number;
   cantidad: number;
+}
+
+export interface Categoria {
+  id_categoria: number;
+  nombre: string;
+}
+
+export interface Favorito {
+  id: number;
+  usuario: string;  // Asegúrate de que el modelo de usuario en la app coincida con lo que se recibe.
+  producto: Producto;
+  fecha_agregado: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductoService {
-  private baseUrl = 'http://127.0.0.1:8000/api/tablas/productos/';
+  private baseUrl = 'http://127.0.0.1:8000/api/products/productos/';  // Ruta base para productos
+  private categoriasUrl = 'http://127.0.0.1:8000/api/products/categorias/';  // Ruta para categorías
+  private favoritosUrl = 'http://127.0.0.1:8000/api/products/favoritos/';  // Ruta para favoritos
 
   constructor(private http: HttpClient) {}
 
-  obtenerProductos(): Observable<Producto[]> {
-    return this.http.get<Producto[]>(this.baseUrl)
-      .pipe(
-        catchError(this.handleError)
-      );
+  // Obtener todos los productos
+  obtenerProductos(id_categoria?: number): Observable<Producto[]> {
+    let url = this.baseUrl;
+    if (id_categoria) {
+      url += `?id_categoria=${id_categoria}`;  // Filtrar productos por categoría
+    }
+    return this.http.get<Producto[]>(url).pipe(
+      catchError(this.handleError)
+    );
   }
 
-  private handleError(error: HttpErrorResponse) {
-    console.error('Error al obtener productos:', error);
-    return throwError('Error al obtener productos. Por favor, inténtelo de nuevo más tarde.');
+  // Obtener un producto específico por su id
+  obtenerProductoDetalle(productoId: number): Observable<Producto> {
+    return this.http.get<Producto>(`${this.baseUrl}${productoId}/`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Crear un nuevo producto
+  agregarProducto(producto: Producto): Observable<Producto> {
+    return this.http.post<Producto>(this.baseUrl, producto).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Obtener todas las categorías
+  obtenerCategorias(): Observable<Categoria[]> {
+    return this.http.get<Categoria[]>(this.categoriasUrl).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Obtener los favoritos del usuario
+  obtenerFavoritos(): Observable<Favorito[]> {
+    return this.http.get<Favorito[]>(this.favoritosUrl).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Agregar un producto a favoritos
+  agregarAFavoritos(productoId: number): Observable<Favorito> {
+    return this.http.post<Favorito>(this.favoritosUrl, { producto_id: productoId }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Eliminar un favorito
+  eliminarFavorito(favoritoId: number): Observable<any> {
+    return this.http.delete(`${this.favoritosUrl}${favoritoId}/`).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  // Manejo de errores
+  private handleError(error: any): Observable<never> {
+    console.error('Ocurrió un error:', error);
+    return throwError(() => new Error(error.message || 'Error desconocido'));
   }
 }

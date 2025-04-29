@@ -20,6 +20,6 @@ export const routes: Routes = [
   { path: 'registro', component: RegistroComponent },
   { path: 'contacto', component: ContactoComponent},
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'carrito', component: CarritoComponent},
+  { path: 'carrito', component: CarritoComponent, canActivate: [AuthGuard] },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];

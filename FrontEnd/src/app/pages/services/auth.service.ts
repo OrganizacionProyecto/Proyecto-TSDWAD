@@ -7,27 +7,22 @@ import { tap, catchError } from 'rxjs/operators';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://127.0.0.1:8000/api/auth';
+  private apiUrl = 'http://127.0.0.1:8000/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
-
-  constructor(private http: HttpClient) { }
+ 
+  constructor(private http: HttpClient) {}
 
   private hasToken(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('access_token');
   }
 
   login(credentials: { email: string, password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login/`, credentials).pipe(
+    return this.http.post<any>(`${this.apiUrl}/auth/token/`, credentials).pipe(
       tap((res: any) => {
-        if (res.token) {
-          localStorage.setItem('token', res.token);
-          if (res.userData) {
-            localStorage.setItem('userData', JSON.stringify(res.userData));
-            console.log('User data saved to localStorage:', res.userData);  // Verifica que los datos se guardan
-          } else {
-            console.warn('userData is not defined in the response.');
-          }
+        if (res.access && res.refresh) {
+          localStorage.setItem('access_token', res.access);
+          localStorage.setItem('refresh_token', res.refresh);
           this.authStatusSubject.next(true);
         }
       }),
@@ -35,11 +30,38 @@ export class AuthService {
     );
   }
 
+  refreshToken(): Observable<any> {
+    const refresh = localStorage.getItem('refresh_token');
+    return this.http.post<any>(`${this.apiUrl}/auth/token/refresh/`, { refresh }).pipe(
+      tap((res) => {
+        localStorage.setItem('access_token', res.access);
+      }),
+      catchError((error) => {
+        this.logout();
+        return throwError(() => new Error('Error al refrescar el token'));
+      })
+    );
+  }
+
+  getUserData(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
+      tap((userData) => {
+        console.log('Datos del usuario recibidos:', userData);
+      }),
+      catchError((err) => {
+        console.error('Error al obtener los datos del usuario:', err);
+        return throwError(() => new Error('Error al obtener los datos del usuario'));
+      })
+    );
+  }
+  
   register(user: { username: string, first_name: string, last_name: string, email: string, password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/signup/`, user).pipe(
       tap((res: any) => {
-        if (res.token) {
-          localStorage.setItem('token', res.token);
+        if (res.access && res.refresh) {
+          localStorage.setItem('access_token', res.access);
+          localStorage.setItem('refresh_token', res.refresh);
+          this.authStatusSubject.next(true);
         }
       }),
       catchError(this.handleError)
@@ -47,30 +69,18 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userData');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     this.authStatusSubject.next(false);
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('access_token');
   }
 
-  getUserData(): any {
-    try {
-      const userDataString = localStorage.getItem('userData');
-      if (!userDataString) {
-        console.warn('No user data found in localStorage.');
-        return null;
-      }
-      return JSON.parse(userDataString);
-    } catch (error) {
-      console.error('Error parsing user data from localStorage', error);
-      return null;
-    }
+  getAccessToken(): string | null {
+    return localStorage.getItem('access_token');
   }
-  
-  
 
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = '';

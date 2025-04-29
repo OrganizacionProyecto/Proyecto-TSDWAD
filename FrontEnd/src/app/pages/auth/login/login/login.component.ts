@@ -36,7 +36,16 @@ export class LoginComponent {
       const formData = this.loginForm.value;
       this.authService.login(formData).subscribe({
         next: () => {
-          this.router.navigate(['/dashboard']);
+          this.authService.getUserData().subscribe({
+            next: (user) => {
+              console.log('Datos del usuario:', user);
+              this.router.navigate(['/dashboard']);
+            },
+            error: (err) => {
+              console.error('Error al obtener datos del usuario:', err);
+              this.router.navigate(['/dashboard']);
+            }
+          });
         },
         error: (err: HttpErrorResponse) => {
           this.handleError(err);
