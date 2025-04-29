@@ -46,11 +46,11 @@
   overflow: hidden;
   margin: 15px;
   width: 30%;
-  transition: transform 0.3s;
+  transition: transform 0.2s;
 }
 
 .product-card:hover {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
 
 .product-image-container {

@@ -14,8 +14,8 @@
       required
     />
     <div *ngIf="submitted && loginForm.controls['email'].invalid">
-      <small *ngIf="loginForm.controls['email'].errors?.['required']">Por favor, ingresa un correo electrónico.</small>
-      <small *ngIf="loginForm.controls['email'].errors?.['email']">El formato del correo electrónico no es válido.</small>
+      <small *ngIf="loginForm.controls['email'].errors?.['required']"class="warning">Por favor, ingresa un correo electrónico.</small>
+      <small *ngIf="loginForm.controls['email'].errors?.['email']"class="warning">El formato del correo electrónico no es válido.</small>
     </div>
     
     <label for="password">Contraseña:</label>

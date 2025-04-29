@@ -1,19 +1,18 @@
 .container-ingresar {
   display: flex;
-  background-color: #fff;
-  height: 65%;
+  background-color: rgba(255, 255, 255, 0.6);
   width: 40%;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-  margin: auto;
-  margin-top: 75px;
+  margin: 50px auto;
   justify-content: space-around;
   align-items: center;
   border-radius: 25px;
+  min-width:500px;
 }
-
 .container-ingresar_formulario {
   min-width: 400px;
 }
+
 
 .registerLink,
 .loginLink {
@@ -24,8 +23,11 @@
   font-size: 45px;
   color: rgb(68, 157, 68);
   font-weight: 600;
-  margin-bottom: 25px;
+  font-family:sans-serif;
+  margin-bottom: 45px;
   text-align: center;
+  box-shadow:0 0 10px -5px #fff;
+  border-radius:25% 25% 10% 10%;
 }
 
 .formLogin,
@@ -38,24 +40,24 @@
 
 .box-ingresar {
   border: 0;
-  background-color: #dfdfdf;
-  padding: 10px; /* Aumenta el padding para un campo más grande */
-  border-radius: 10px;
-  margin-bottom: 10px;
+  background-color: #ffffff84;
+  padding: 8px;
+  min-width: 350px;
+  width: 90%; 
+  border-radius: 25px;
+  margin-bottom: 25px;
   outline-color: #449d44;
-  width: 100%; /* Aumenta el ancho al 100% del contenedor */
-  box-sizing: border-box; /* Incluye el padding en el ancho total */
 }
 
 .submit-ingresar {
   background-color: rgb(68, 157, 68);
   border: 0;
-  padding: 10px; /* Ajusta el padding para que coincida con el de los campos */
+  padding: 8px; 
   color: #fff;
   font-size: 15px;
   border-radius: 25px;
-  margin-top: 10px;
-  width: 100%; /* Asegúrate de que el botón tenga el mismo ancho que los campos */
+  margin: 20px auto;
+  width: 100%; 
 }
 
 .formLogin p,
@@ -65,16 +67,17 @@
   color: #2e6329;
   font-size: 20px;
 }
-/* Resto del CSS existente */
+
+
+.container-ingresar_formulario div {
+  margin-bottom: 5px; /* más espacio entre campos si querés */
+}
 
 .warning {
   color: red;
   font-size: 12px;
-  margin-top: 5px;
+  margin-top: -20px;
+  text-align: center;
   display: block;
-}
-
-/* Opcional: Ajusta el padding y el margen para que las advertencias se alineen correctamente */
-.container-ingresar_formulario .box-ingresar {
-  margin-bottom: 5px; /* Reduce el margen inferior para espacio de advertencias */
+  
 }
