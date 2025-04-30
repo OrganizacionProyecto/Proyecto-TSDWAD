@@ -15,10 +15,11 @@ export class CarritoService {
     return this.http.get<Carrito>(`${this.baseUrl}/`);
   }
 
-  agregarProductoAlCarrito(id_producto: number, cantidad: number): Observable<any> {
-    const payload = { id_producto, cantidad };
+  agregarProductoAlCarrito(producto_id: number, cantidad: number): Observable<any> {
+    const payload = { producto_id, cantidad }; 
     return this.http.post(`${this.baseUrl}/agregar/`, payload);
   }
+  
 
   modificarProductoCarrito(id_producto: number, cantidad: number): Observable<any> {
     const payload = { cantidad };
