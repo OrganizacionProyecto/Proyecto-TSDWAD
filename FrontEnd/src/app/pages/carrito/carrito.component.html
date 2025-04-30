@@ -1,22 +1,36 @@
-<div class="carrito">
-  <h2>Carrito</h2>
+<div class="carrito-wrapper">
+  <h2>Carrito de Compras</h2>
+  <p *ngIf="carrito.detalles_producto.length === 0">Tu carrito está vacío.</p>
 
-  <!-- Verificar que carrito y productos no sean nulos o undefined -->
-  <div *ngIf="carrito && carrito.productos && carrito.productos.length > 0; else carritoVacio">
-    <div *ngFor="let producto of carrito.productos" class="producto">
-      <p><strong>{{ producto.nombre }}</strong></p>
-      <p>Precio unitario: {{ producto.precio | currency }}</p>
-      <p>Cantidad: 
-        <input type="number" [(ngModel)]="producto.cantidad" (change)="modificarCantidad(producto.id_producto, producto.cantidad)" />
-      </p>
-      <p>Subtotal: {{ producto.cantidad * producto.precio | currency }}</p>
-      <button (click)="eliminarProducto(producto.id_producto)">Eliminar</button>
+  <div *ngIf="carrito.detalles_producto.length > 0">
+    <table class="carrito-tabla">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario</th>
+          <th>Total</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of carrito.detalles_producto">
+          <td>{{ producto.nombre_producto }}</td>
+          <td>
+            <input type="number" [(ngModel)]="producto.cantidad" min="1" />
+          </td>
+          <td>${{ producto.precio_unitario }}</td>
+          <td>${{ producto.total_producto }}</td>
+          <td>
+            <button class="btn actualizar" (click)="modificarCantidad(producto, producto.cantidad)">Actualizar</button>
+            <button class="btn eliminar" (click)="eliminarProducto(producto)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="total-carrito">
+      <strong>Total: ${{ carrito.total_carrito }}</strong>
     </div>
-    <hr />
-    <p><strong>Total:</strong> {{ carrito.total | currency }}</p>
   </div>
-
-  <ng-template #carritoVacio>
-    <p>Tu carrito está vacío.</p>
-  </ng-template>
 </div>
