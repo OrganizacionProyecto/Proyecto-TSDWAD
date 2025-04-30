@@ -12,8 +12,15 @@ export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
+
+  private userDataSubject = new BehaviorSubject<any>(null);
+  public userData$ = this.userDataSubject.asObservable();
  
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    if (this.hasToken()) {
+      this.loadUserData();  // Cargar datos al iniciar si ya hay token
+    }
+   }
 
   private hasToken(): boolean {
     return !!localStorage.getItem('access_token');
@@ -26,24 +33,30 @@ export class AuthService {
           localStorage.setItem('access_token', res.access);
           localStorage.setItem('refresh_token', res.refresh);
           this.authStatusSubject.next(true);
+          this.loadUserData();
         }
       }),
       catchError(this.handleError)
     );
   }
 
-  getUserData(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
+  loadUserData(): void {
+    this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
       tap((userData) => {
         console.log('Datos del usuario recibidos:', userData);  // Puedes verificar los datos aquí
+        this.userDataSubject.next(userData);
       }),
       catchError((err) => {
         console.error('Error al obtener los datos del usuario:', err);  // Manejamos el error aquí
         return throwError(() => new Error('Error al obtener los datos del usuario'));
       })
-    );
+    ).subscribe();
   }
   
+  getUserData(): Observable<any> {
+    return this.userData$; // Ahora retorna el observable, no hace HTTP directamente
+  }
+
   register(user: { username: string, first_name: string, last_name: string, email: string, password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/signup/`, user).pipe(
       tap((res: any) => {
@@ -59,6 +72,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     this.authStatusSubject.next(false);
+    this.userDataSubject.next(null); 
   }
 
   isLoggedIn(): boolean {
@@ -69,8 +83,6 @@ export class AuthService {
     return localStorage.getItem('access_token');
   }
   
-  
-
   private handleError(error: HttpErrorResponse): Observable<never> {
     let errorMessage = '';
     if (error.error instanceof ErrorEvent) {
