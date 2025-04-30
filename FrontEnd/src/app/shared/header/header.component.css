@@ -41,8 +41,17 @@
   color: #fff;
   text-decoration: none;
   cursor: pointer;
+  margin-left: 20px;
 }
 
 .welcome-message:hover {
   color: rgb(4, 31, 13);
+}
+
+.search-input {
+  padding: 5px;
+  border: 0;
+  border-radius: 10px;
+  background-color: #dfdfdf;
+  outline-color: #449d44;
 }

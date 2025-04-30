@@ -1,0 +1,16 @@
+.container {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  h2 {
+    color: rgb(68, 157, 68);
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }

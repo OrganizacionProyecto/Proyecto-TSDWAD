@@ -1,0 +1,27 @@
+.container {
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    border-radius: 25px;
+    margin: 20px auto;
+    max-width: 1200px;
+  }
+  
+  h2 {
+    color: rgb(68, 157, 68);
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .search-bar {
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  button {
+    margin-right: 10px;
+  }

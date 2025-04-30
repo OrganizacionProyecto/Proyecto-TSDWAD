@@ -9,11 +9,20 @@
     <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/login')">Ingresar</a></li>
     <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/registro')">Registro</a></li>
     <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
-   
+    <li *ngIf="authService.isLoggedIn() && authService.isAdmin()">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="searchProducts()"
+        placeholder="Buscar productos..."
+        class="search-input"
+      />
+    </li>
   </ul>
   <div *ngIf="authService.isLoggedIn() && userData">
-    <a (click)="navigateTo('/dashboard')" class="welcome-message">
-      Bienvenido, {{ userData?.first_name || '' }} {{ userData?.last_name || '' }}
+    <a (click)="navigateTo('/dashboard-admin')" class="welcome-message">
+      Bienvenido, {{ userData?.username || '' }}
     </a>
+    <a (click)="logout()" class="welcome-message">Cerrar Sesión</a>
   </div>
 </nav>
