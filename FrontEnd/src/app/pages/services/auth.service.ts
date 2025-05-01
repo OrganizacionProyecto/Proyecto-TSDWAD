@@ -63,8 +63,17 @@ export class AuthService {
   }
 
   getUserData(): Observable<any> {
-    return this.userData$;
+    return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
+      tap((userData) => {
+        console.log('Datos del usuario recibidos:', userData);
+      }),
+      catchError((err) => {
+        console.error('Error al obtener los datos del usuario:', err);
+        return throwError(() => new Error('Error al obtener los datos del usuario'));
+      })
+    );
   }
+  
 
   getAllUsers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/users/`).pipe(
@@ -95,6 +104,19 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!localStorage.getItem('access_token');
+  }
+
+  refreshToken(): Observable<any> {
+    const refresh = localStorage.getItem('refresh_token');
+    return this.http.post<any>(`${this.apiUrl}/auth/token/refresh/`, { refresh }).pipe(
+      tap((res) => {
+        localStorage.setItem('access_token', res.access);
+      }),
+      catchError((error) => {
+        this.logout();
+        return throwError(() => new Error('Error al refrescar el token'));
+      })
+    );
   }
 
   isAdmin(): boolean {
