@@ -10,10 +10,6 @@ export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
-<<<<<<< HEAD
- 
-  constructor(private http: HttpClient) {}
-=======
   private userDataSubject = new BehaviorSubject<any>(null);
   public userData$ = this.userDataSubject.asObservable();
 
@@ -22,7 +18,6 @@ export class AuthService {
       this.loadUserData();
     }
   }
->>>>>>> origin/WalterCamino
 
   private hasToken(): boolean {
     return !!localStorage.getItem('access_token');
@@ -41,34 +36,6 @@ export class AuthService {
     );
   }
 
-<<<<<<< HEAD
-  refreshToken(): Observable<any> {
-    const refresh = localStorage.getItem('refresh_token');
-    return this.http.post<any>(`${this.apiUrl}/auth/token/refresh/`, { refresh }).pipe(
-      tap((res) => {
-        localStorage.setItem('access_token', res.access);
-      }),
-      catchError((error) => {
-        this.logout();
-        return throwError(() => new Error('Error al refrescar el token'));
-      })
-    );
-  }
-
-  getUserData(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
-      tap((userData) => {
-        console.log('Datos del usuario recibidos:', userData);
-      }),
-      catchError((err) => {
-        console.error('Error al obtener los datos del usuario:', err);
-        return throwError(() => new Error('Error al obtener los datos del usuario'));
-      })
-    );
-  }
-  
-  register(user: { username: string, first_name: string, last_name: string, email: string, password: string }): Observable<any> {
-=======
   loadUserData(): void {
     this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
       tap((userData) => {
@@ -107,7 +74,6 @@ export class AuthService {
   }
 
   register(user: { username: string; first_name: string; last_name: string; email: string; password: string }): Observable<any> {
->>>>>>> origin/WalterCamino
     return this.http.post<any>(`${this.apiUrl}/signup/`, user).pipe(
       tap((res: any) => {
         if (res.access && res.refresh) {
@@ -124,10 +90,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     this.authStatusSubject.next(false);
-<<<<<<< HEAD
-=======
     this.userDataSubject.next(null);
->>>>>>> origin/WalterCamino
   }
 
   isLoggedIn(): boolean {
@@ -168,8 +131,4 @@ export class AuthService {
     }
     return throwError(() => new Error(errorMessage));
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/WalterCamino
