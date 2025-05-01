@@ -1,0 +1,54 @@
+.container {
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    border-radius: 25px;
+    margin: 20px auto;
+    max-width: 600px;
+  }
+  
+  h2 {
+    color: rgb(68, 157, 68);
+    font-size: 32px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .box-ingresar {
+    width: 100%;
+    padding: 8px;
+    border: 0;
+    background-color: #dfdfdf;
+    border-radius: 10px;
+    outline-color: #449d44;
+  }
+  
+  textarea.box-ingresar {
+    height: 100px;
+    resize: vertical;
+  }
+  
+  .submit-ingresar {
+    background-color: rgb(68, 157, 68);
+    color: #fff;
+    border: 0;
+    padding: 10px;
+    border-radius: 25px;
+    cursor: pointer;
+  }
+  
+  small {
+    color: red;
+    display: block;
+    margin-top: 5px;
+  }

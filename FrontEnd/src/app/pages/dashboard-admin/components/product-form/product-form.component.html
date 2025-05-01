@@ -1,0 +1,105 @@
+<div class="container">
+    <h2>{{ productId ? 'Editar Producto' : 'Crear Producto' }}</h2>
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="form">
+      <div class="form-group">
+        <label for="nombre">Nombre:</label>
+        <input
+          id="nombre"
+          formControlName="nombre"
+          type="text"
+          class="box-ingresar"
+          placeholder="Nombre del producto"
+        />
+        <small *ngIf="productForm.get('nombre')?.hasError('required') && productForm.get('nombre')?.touched">
+          El nombre es requerido.
+        </small>
+        <small *ngIf="productForm.get('nombre')?.hasError('maxlength') && productForm.get('nombre')?.touched">
+          Máximo 200 caracteres.
+        </small>
+      </div>
+  
+      <div class="form-group">
+        <label for="descripcion">Descripción:</label>
+        <textarea
+          id="descripcion"
+          formControlName="descripcion"
+          class="box-ingresar"
+          placeholder="Descripción del producto"
+        ></textarea>
+        <small *ngIf="productForm.get('descripcion')?.hasError('required') && productForm.get('descripcion')?.touched">
+          La descripción es requerida.
+        </small>
+        <small *ngIf="productForm.get('descripcion')?.hasError('maxlength') && productForm.get('descripcion')?.touched">
+          Máximo 1000 caracteres.
+        </small>
+      </div>
+  
+      <div class="form-group">
+        <label for="precio">Precio:</label>
+        <input
+          id="precio"
+          formControlName="precio"
+          type="number"
+          class="box-ingresar"
+          placeholder="Precio"
+          step="0.01"
+        />
+        <small *ngIf="productForm.get('precio')?.hasError('required') && productForm.get('precio')?.touched">
+          El precio es requerido.
+        </small>
+        <small *ngIf="productForm.get('precio')?.hasError('min') && productForm.get('precio')?.touched">
+          El precio no puede ser negativo.
+        </small>
+      </div>
+  
+      <div class="form-group">
+        <label for="stock">Stock:</label>
+        <input
+          id="stock"
+          formControlName="stock"
+          type="number"
+          class="box-ingresar"
+          placeholder="Stock"
+        />
+        <small *ngIf="productForm.get('stock')?.hasError('required') && productForm.get('stock')?.touched">
+          El stock es requerido.
+        </small>
+        <small *ngIf="productForm.get('stock')?.hasError('min') && productForm.get('stock')?.touched">
+          El stock no puede ser negativo.
+        </small>
+      </div>
+  
+      <div class="form-group">
+        <label for="imagen">Imagen:</label>
+        <input
+          id="imagen"
+          type="file"
+          (change)="onFileChange($event)"
+          accept="image/*"
+          class="box-ingresar"
+        />
+        <span *ngIf="fileName">{{ fileName }}</span>
+      </div>
+  
+      <div class="form-group">
+        <label for="id_categoria">Categoría:</label>
+        <select
+          id="id_categoria"
+          formControlName="id_categoria"
+          class="box-ingresar"
+        >
+          <option value="" disabled>Seleccione una categoría</option>
+          <option *ngFor="let category of categories" [value]="category.id_categoria">
+            {{ category.nombre }}
+          </option>
+        </select>
+        <small *ngIf="productForm.get('id_categoria')?.hasError('required') && productForm.get('id_categoria')?.touched">
+          La categoría es requerida.
+        </small>
+      </div>
+  
+      <button type="submit" class="submit-ingresar" [disabled]="productForm.invalid">
+        {{ productId ? 'Actualizar' : 'Crear' }}
+      </button>
+    </form>
+  </div>
