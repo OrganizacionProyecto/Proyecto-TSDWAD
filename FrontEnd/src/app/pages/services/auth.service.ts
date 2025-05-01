@@ -57,6 +57,24 @@ export class AuthService {
     return this.userData$; // Ahora retorna el observable, no hace HTTP directamente
   }
 
+  updateUser(data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/users/me/`, data).pipe(
+      tap((updatedUser) => {
+        this.userDataSubject.next(updatedUser); // actualiza el observable global
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  deleteAccount(): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/users/me/`).pipe(
+      tap(() => {
+        this.logout(); // limpia el almacenamiento local y estado
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   register(user: { username: string, first_name: string, last_name: string, email: string, password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/signup/`, user).pipe(
       tap((res: any) => {
