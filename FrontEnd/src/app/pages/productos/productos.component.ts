@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { Router} from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CarritoService } from '../../../services/carrito.service';
 import { ProductoService, Producto } from '../../../services/productos.service';
 import { CommonModule } from '@angular/common'; 
@@ -8,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-productos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterOutlet],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css']
 })

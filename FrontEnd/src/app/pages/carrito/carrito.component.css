@@ -1,74 +1,64 @@
-.card-body {
-    padding: 3.5em 2em;
-    text-align: left;
-  }
-  
-  .h2 {
-    font-size: 45px;
-    color: rgb(68, 157, 68);
-    font-weight: 600;
-    margin-bottom: 25px;
-    text-align: center;
-  }
-  
-  .h5 {
-    font-size: 30px;
-    color: rgb(68, 157, 68);
-    font-weight: 600;
-    margin-bottom: 25px;
-    text-align: left;
-  }
-  
-  h2 {
-    font-size: 50px; /* Aumenta el tamaño del título "Carrito" */
-  }
-  
-  p {
-    margin: 0 0 0;
-    color: #2e6329;
-    font-size: 20px;
-    text-align: left;
-  }
-  
-  .form-group label {
-    font-size: 20px;
-    color: #2e6329;
-    text-align: left;
-  }
-  
-  .form-control {
-    border: 0;
-    background-color: #dfdfdf;
-    padding: 4px;
-    border-radius: 10px;
-    outline-color: #449d44;
-    margin-bottom: 10px;
-  }
-  
-  .btn-primary {
-    background-color: rgb(68, 157, 68);
-    border: 0;
-    padding: 4px;
-    color: #fff;
-    font-size: 15px;
-    border-radius: 25px;
-    margin-top: 10px;
-  }
-  
-  .btn-secondary {
-    background-color: #dfdfdf;
-    border: 0;
-    color: #2e6329;
-    font-size: 15px;
-    border-radius: 10px;
-    margin-top: 10px;
-  }
-  
-  .alert-danger {
-    color: red;
-  }
-  
-  .img-fluid {
-    width: 65px;
-    border-radius: 10px;
-  }
+.carrito-wrapper {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+.carrito-wrapper h2 {
+  text-align: center;
+  color: #2f693c;
+  margin-bottom: 25px;
+}
+
+.carrito-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.carrito-tabla th, .carrito-tabla td {
+  padding: 12px 8px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.carrito-tabla th {
+  background-color: #f2f2f2;
+  color: #2f693c;
+}
+
+.carrito-tabla input[type="number"] {
+  width: 60px;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.actualizar {
+  background-color: #5cb85c;
+  color: white;
+  margin-right: 5px;
+}
+
+.eliminar {
+  background-color: #d9534f;
+  color: white;
+}
+
+.total-carrito {
+  text-align: right;
+  font-size: 1.2em;
+  color: #2f693c;
+}
