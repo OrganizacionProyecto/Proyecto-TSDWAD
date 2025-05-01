@@ -1,14 +1,32 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../../../core/models/product.model';
-import { MatDialog } from '@angular/material/dialog';
 import { ProductDeleteComponent } from '../product-delete/product-delete.component';
-import { Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-product-list',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatTableModule,
+    MatButtonModule,
+    MatInputModule,
+    MatIconModule,
+    RouterModule,
+    ProductDeleteComponent
+  ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
 })
@@ -25,7 +43,7 @@ export class ProductListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
-    this.searchControl.valueChanges.pipe(debounceTime(300)).subscribe((search) => {
+    this.searchControl.valueChanges.pipe(debounceTime(300)).subscribe((search: string | null) => {
       this.loadProducts(search || undefined);
     });
   }

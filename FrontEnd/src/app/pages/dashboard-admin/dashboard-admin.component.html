@@ -1,0 +1,7 @@
+<div class="dashboard-admin-container">
+    <h2>Dashboard de Administrador</h2>
+    <p>Bienvenido, {{ userData?.username || 'Administrador' }}</p>
+    <button (click)="navigateToCreate()">Crear Producto</button>
+    <app-product-list></app-product-list>
+    <button (click)="logout()">Cerrar Sesión</button>
+  </div>

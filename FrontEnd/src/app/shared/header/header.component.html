@@ -19,10 +19,12 @@
       />
     </li>
   </ul>
-  <div *ngIf="authService.isLoggedIn() && userData">
-    <a (click)="navigateTo('/dashboard-admin')" class="welcome-message">
-      Bienvenido, {{ userData?.username || '' }}
-    </a>
+  <div *ngIf="authService.isLoggedIn()">
+    <span *ngIf="authService.isAdmin()">
+      <a (click)="navigateTo('/dashboard-admin')" class="welcome-message">
+        Bienvenido, {{ userData?.username || 'Usuario' }}
+      </a>
+    </span>
     <a (click)="logout()" class="welcome-message">Cerrar Sesión</a>
   </div>
 </nav>
