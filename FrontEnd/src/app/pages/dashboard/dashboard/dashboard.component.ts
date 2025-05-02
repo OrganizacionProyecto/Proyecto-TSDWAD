@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service'; // IMPORTANTE
 
 @Component({
   selector: 'app-dashboard',
@@ -10,14 +11,18 @@ import { Router } from '@angular/router';
 export class DashboardComponent implements OnInit {
   userData: any = {};
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService, // INYECTAR EL SERVICIO
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loadUserData();
   }
-  
+
   loadUserData(): void {
-    this.authService.getUserData().subscribe({
+    this.userService.loadUserData().subscribe({
       next: (user) => {
         this.userData = user;
         console.log('Loaded user data in dashboard:', this.userData);
@@ -29,7 +34,6 @@ export class DashboardComponent implements OnInit {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.authService.logout();  
   }
 }

@@ -13,20 +13,23 @@ export class ProductService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = this.authService.getAccessToken();
-    return new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+  private getHeaders(requireAuth: boolean = true): HttpHeaders {
+    if (requireAuth) {
+      const token = this.authService.getAccessToken();
+      return new HttpHeaders({
+        Authorization: `Bearer ${token}`
+      });
+    }
+    return new HttpHeaders(); // Sin token de autorización
   }
-
-  getProducts(search?: string): Observable<Product[]> {
+  
+  getProducts(search?: string, requireAuth: boolean = true): Observable<Product[]> {
     const url = search ? `${this.apiUrl}?search=${search}` : this.apiUrl;
-    return this.http.get<Product[]>(url, { headers: this.getHeaders() });
+    return this.http.get<Product[]>(url, { headers: this.getHeaders(requireAuth) });
   }
 
-  getProduct(id: number): Observable<Product> {
-    return this.http.get<Product>(`${this.apiUrl}${id}/`, { headers: this.getHeaders() });
+  getProduct(id: number, requireAuth: boolean = true): Observable<Product> {
+    return this.http.get<Product>(`${this.apiUrl}${id}/`, { headers: this.getHeaders(requireAuth) });
   }
 
   createProduct(product: FormData): Observable<Product> {
@@ -41,7 +44,7 @@ export class ProductService {
     return this.http.delete<void>(`${this.apiUrl}${id}/`, { headers: this.getHeaders() });
   }
 
-  getCategories(): Observable<any[]> {
-    return this.http.get<any[]>(`${environment.apiUrl}/api/categories/`, { headers: this.getHeaders() });
+  getCategories(requireAuth: boolean = true): Observable<any[]> {
+    return this.http.get<any[]>(`${environment.apiUrl}/api/categories/`, { headers: this.getHeaders(requireAuth) });
   }
 }
