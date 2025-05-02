@@ -1,70 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service'
-import { Router } from '@angular/router';
-
-
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-account-settings',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './account-settings.component.html',
   styleUrls: ['./account-settings.component.css']
 })
-export class AccountSettingsComponent implements OnInit {
-  accountForm!: FormGroup;
-  message = '';
-  error = '';
+export class AccountSettingsComponent {
+  userData = {
+    nombre: '',
+    apellido: '',
+    email: ''
+  };
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService) {
+    this.loadUserData();
+  }
 
-  ngOnInit(): void {
-    this.accountForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      name: ['', Validators.required],
-    });
-   
+  loadUserData() {
     this.authService.getUserData().subscribe({
-      next: (user) => {
-        this.accountForm = this.fb.group({
-          email: [user.email, [Validators.required, Validators.email]],
-          name: [user.name, Validators.required],
-          // otros campos necesarios
-        });
-      },
+      next: (data) => this.userData = data,
+      error: (err) => console.error(err)
+    });
+  }
+
+  updateUser() {
+    this.authService.updateUser(this.userData).subscribe({
+      next: () => alert('Datos actualizados correctamente'),
       error: (err) => {
-        this.error = 'No se pudieron cargar los datos del usuario';
+        console.error(err);
+        alert('Error al actualizar los datos');
       }
     });
-  }
-
-  onUpdate(): void {
-    if (this.accountForm.valid) {
-      this.authService.updateUser(this.accountForm.value).subscribe({
-        next: () => {
-          this.message = 'Datos actualizados correctamente';
-        },
-        error: () => {
-          this.error = 'No se pudieron actualizar los datos';
-        }
-      });
-    }
-  }
-
-  onDelete(): void {
-    if (confirm('¿Estás seguro de que querés eliminar tu cuenta? Esta acción no se puede deshacer.')) {
-      this.authService.deleteAccount().subscribe({
-        next: () => {
-          localStorage.removeItem('authToken');
-          this.router.navigate(['/login']);
-        },
-        error: () => {
-          this.error = 'No se pudo eliminar la cuenta';
-        }
-      });
-    }
   }
 }

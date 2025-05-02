@@ -1,41 +1,15 @@
-<div class="container-ingresar">
-    <form [formGroup]="accountForm" (ngSubmit)="onUpdate()" class="formLogin container-ingresar_formulario">
-      <h3>Mi cuenta</h3>
-  
-      <input
-        type="email"
-        class="box-ingresar"
-        placeholder="Correo electrónico"
-        id="email"
-        formControlName="email"
-      />
-      <small *ngIf="accountForm.get('email')?.invalid && accountForm.get('email')?.touched">
-        Correo inválido
-      </small>
-  
-      <input
-        type="text"
-        class="box-ingresar"
-        placeholder="Nombre"
-        id="name"
-        formControlName="name"
-      />
-      <small *ngIf="accountForm.get('name')?.invalid && accountForm.get('name')?.touched">
-        Este campo es obligatorio
-      </small>
-  
-      <button type="submit" class="submit-ingresar" [disabled]="accountForm.invalid">
-        Actualizar datos
-      </button>
-  
-      <button type="button" class="submit-eliminar" (click)="onDelete()">
-        Eliminar cuenta
-      </button>
-      
-  
-      <p *ngIf="message">{{ message }}</p>
-      <p *ngIf="error" style="color: red;">{{ error }}</p>
-    </form>
-  </div>
-  
-  
+<div class="account-settings-form">
+  <h3>Editar Cuenta</h3>
+  <form (ngSubmit)="updateUser()">
+    <label>Nombre:</label>
+    <input [(ngModel)]="userData.nombre" name="nombre" required>
+
+    <label>Apellido:</label>
+    <input [(ngModel)]="userData.apellido" name="apellido" required>
+
+    <label>Email:</label>
+    <input [(ngModel)]="userData.email" name="email" type="email" required>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+  </form>
+</div>
