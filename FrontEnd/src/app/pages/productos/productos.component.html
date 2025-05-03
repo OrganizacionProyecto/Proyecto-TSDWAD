@@ -1,34 +1,41 @@
 <section id="productos" class="container">
-  <div class="productos-container">
-    <div class="product-card" *ngFor="let producto of productos">
-      <div class="product-image-container">
-        <img [src]="producto.imagen" [alt]="producto.nombre" class="imagen">
+  <nav> 
+    <h3 class="titulo-producto">Nuestros Productos</h3>
+    <div class="navbar">
+      <div class="nav-container">
+        <input type="text" class="nav-input" placeholder="Buscar productos..." [(ngModel)]="buscarTexto">
+      
+        <select class="nav-select" [(ngModel)]="criterioSeleccionado">
+          <option value="0">Nombre</option>
+          <option value="1">Categoría</option>
+        </select>
+      
+        <button class="nav-cta" (click)="filtrarProductos()">Buscar</button>
       </div>
-      <div class="product-details">
-        <h3 class="prod">{{ producto.nombre }}</h3>
-        <p class="prod_p">{{ producto.descripcion }}</p>
-        <p class="prod_p"><strong>Stock:</strong> {{ producto.stock }}</p> 
-        <div class="cantidad-container">
-          <input 
-            type="number" 
-            [(ngModel)]="producto.cantidad" 
-            class="cantidad-input" 
-            placeholder="Cantidad" 
-            min="1" 
-            [max]="producto.stock"  
-          >
+    </div>
+  </nav>
+
+  
+  
+    <div class="productos-container">
+      <div class="product-card" *ngFor="let producto of productos">
+        <div class="product-image-container">
+          <img [src]="producto.imagen" [alt]="producto.nombre" class="imagen">
         </div>
-        <button 
-          class="comprar-btn" 
-          (click)="agregarAlCarrito(producto, producto.cantidad)" 
-          [disabled]="producto.cantidad <= 0 || producto.cantidad > producto.stock">  
-        </button>
-        
-        <div class="precio">
-          <div class="precio-marco"><strong>Precio:</strong> ${{ producto.precio }} ARS</div>
+        <div class="product-details">
+          <h3 class="prod">{{ producto.nombre }}</h3>
+          <p class="prod_p">{{ producto.descripcion }}</p>
+          <p class="prod_p"><strong>Categoría:</strong> {{ categoriaMap[producto.id_categoria] }}</p>
+          <p class="prod_p"><strong>Stock:</strong> {{ producto.stock }}</p>
+          <div class="cantidad-container">
+            <input type="number" [(ngModel)]="producto.cantidad" class="cantidad-input" placeholder="Cantidad" min="1" [max]="producto.stock">
+          </div>
+          <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)" [disabled]="producto.cantidad <= 0 || producto.cantidad > producto.stock">Comprar
+          </button>
+          <div class="precio">
+            <div class="precio-marco"><strong>Precio:</strong> ${{ producto.precio }} ARS</div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
-<router-outlet></router-outlet>
+  </section>
