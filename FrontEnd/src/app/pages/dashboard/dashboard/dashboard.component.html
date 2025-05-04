@@ -1,7 +1,16 @@
 <div class="dashboard-container">
-  <h2>Bienvenido, {{ userData?.first_name || '' }} {{ userData?.last_name || '' }}</h2>
-  <p><strong>Nombre:</strong> {{ userData?.first_name }}</p>
-  <p><strong>Apellido:</strong> {{ userData?.last_name }}</p>
-  <p><strong>Correo electrónico:</strong> {{ userData?.email }}</p>
-  <button (click)="logout()">Cerrar sesión</button>
+  <h2>Bienvenido, {{ userData.nombre }} {{ userData.apellido }}</h2>
+  <p><strong>Nombre:</strong> {{ userData.nombre }}</p>
+  <p><strong>Apellido:</strong> {{ userData.apellido }}</p>
+  <p><strong>Correo electrónico:</strong> {{ userData.email }}</p>
+
+  <button (click)="logout()" class="btn btn-success">Cerrar sesión</button>
+
+  <div style="margin-top: 20px;">
+    <button (click)="showEdit = !showEdit" class="btn btn-primary">Editar cuenta</button>
+    <button (click)="deleteAccount()" class="btn btn-danger">Eliminar cuenta</button>
+  </div>
+
+  <app-account-settings *ngIf="showEdit"></app-account-settings>
 </div>
+

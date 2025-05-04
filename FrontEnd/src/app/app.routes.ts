@@ -19,6 +19,7 @@ export const routes: Routes = [
   { path: 'footer', component: FooterComponent },
   { path: 'productos', component: ProductosComponent}, 
   { path: 'login', component: LoginComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   { path: 'registro', component: RegistroComponent },
   { path: 'contacto', component: ContactoComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },

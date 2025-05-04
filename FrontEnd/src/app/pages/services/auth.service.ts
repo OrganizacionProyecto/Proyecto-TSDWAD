@@ -8,6 +8,9 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
+  updateUserData(userData: { nombre: string; apellido: string; email: string; }) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = 'http://127.0.0.1:8000/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();

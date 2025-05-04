@@ -1,0 +1,15 @@
+<div class="account-settings-form">
+  <h3>Editar Cuenta</h3>
+  <form (ngSubmit)="updateUser()">
+    <label>Nombre:</label>
+    <input [(ngModel)]="userData.nombre" name="nombre" required>
+
+    <label>Apellido:</label>
+    <input [(ngModel)]="userData.apellido" name="apellido" required>
+
+    <label>Email:</label>
+    <input [(ngModel)]="userData.email" name="email" type="email" required>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+  </form>
+</div>
