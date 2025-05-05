@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../pages/services/auth.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -10,37 +11,41 @@ import { AuthService } from '../../pages/services/auth.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
-  userData: any = {};
+export class HeaderComponent implements OnInit, OnDestroy {
+  userData$: Observable<any> | undefined; // Usar el Observable del servicio
   isLoggedIn: boolean = false;
+  private authStatusSubscription: Subscription | undefined;
 
   constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    // Verificamos si el token existe
     this.isLoggedIn = this.authService.isLoggedIn();
+    this.userData$ = this.authService.userData$; // Suscribirse al Observable
+
+    this.authStatusSubscription = this.authService.authStatus$.subscribe(status => {
+      this.isLoggedIn = status;
+      if (this.isLoggedIn && !this.userData$) {
+        this.userData$ = this.authService.userData$; // Volver a suscribir si el estado cambia
+      } else if (!this.isLoggedIn) {
+        this.userData$ = undefined; // Limpiar userData$ al cerrar sesión
+      }
+    });
 
     if (!this.isLoggedIn) {
-      // Si el usuario no está logueado, redirigimos al inicio
       this.router.navigate(['/']);
-    } else {
-      // Si el usuario está logueado, cargamos sus datos
-      this.authService.getUserData().subscribe({
-        next: (data) => {
-          console.log('User data loaded in HeaderComponent:', data);
-          this.userData = data;
-        },
-        error: (error) => {
-          console.error('Error loading user data in HeaderComponent:', error);
-          console.warn('No user data found in HeaderComponent.');
-        }
-      });
+    }
+    // Ya no necesitamos llamar getUserData directamente aquí, el Observable lo maneja
+  }
+
+  ngOnDestroy(): void {
+    if (this.authStatusSubscription) {
+      this.authStatusSubscription.unsubscribe();
     }
   }
 
   logout(): void {
-    this.authService.logout();  // Redirige al inicio automáticamente al hacer logout
-    this.router.navigate(['/']);  // Aseguramos que si no hay token, el usuario va al inicio
+    this.authService.logout();
+    this.router.navigate(['/']);
   }
 
   navigateHome(): void {

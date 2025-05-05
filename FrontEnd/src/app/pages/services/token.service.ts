@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class TokenService {
+export class TokenService { // Asegúrate de que 'export' esté aquí
   getAccessToken(): string | null {
     return localStorage.getItem('access_token');
   }

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../services/user.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service'; // IMPORTANTE
+import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { AccountSettingsComponent } from '../account-settings/account-settings.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,33 +12,38 @@ import { AccountSettingsComponent } from '../account-settings/account-settings.c
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   userData: any = {};
   showEdit = false;
+  private userDataSubscription: Subscription | undefined;
 
   constructor(
-    private userService: UserService,
-    private authService: AuthService, // INYECTAR EL SERVICIO
+    private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadUserData();
-  }
-
-  loadUserData(): void {
-    this.userService.loadUserData().subscribe({
-      next: (user) => {
+    this.userDataSubscription = this.authService.userData$.subscribe({
+      next: (user: any) => {
         this.userData = user;
         console.log('Loaded user data in dashboard:', this.userData);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error loading user data in dashboard:', err);
       }
     });
+
+    // Ya no es necesario hacer una petición única aquí, el BehaviorSubject debería tener el valor
+    // si el servicio se inicializó después del login o al cargar la página con un token.
+  }
+
+  ngOnDestroy(): void {
+    if (this.userDataSubscription) {
+      this.userDataSubscription.unsubscribe();
+    }
   }
 
   logout(): void {
-    this.authService.logout();  
+    this.authService.logout();
   }
 }
