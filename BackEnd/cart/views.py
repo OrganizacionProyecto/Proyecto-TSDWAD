@@ -316,3 +316,10 @@ class EliminarProductoCarritoView(viewsets.ViewSet):
         item.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+class HistorialPedidosView(generics.ListAPIView):
+    serializer_class = PedidoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Pedido.objects.filter(usuario=self.request.user).order_by('-fecha_creacion')

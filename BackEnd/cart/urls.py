@@ -19,4 +19,8 @@ urlpatterns = [
 
     # Descargar factura de un pedido
     path('pedido/<int:pedido_id>/factura/', views.DescargarFacturaView.as_view(), name='descargar-factura'),
+
+    # Historial de pedidos
+    path('pedido/historial/', views.HistorialPedidosView.as_view(), name='historial-pedidos'),
+
 ]
