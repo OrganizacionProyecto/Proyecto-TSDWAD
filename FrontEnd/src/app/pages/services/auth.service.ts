@@ -165,7 +165,7 @@ export class AuthService {
 
   // Método para registrar un nuevo usuario
   register(formData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/register/`, formData).pipe(
+    return this.http.post<any>(`${this.apiUrl}/users/`, formData).pipe(
       tap((res) => {
         console.log('Usuario registrado con éxito:', res);
       }),
