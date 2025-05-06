@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, tap, switchMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { TokenService } from './token.service';
 
@@ -144,9 +144,13 @@ export class AuthService {
 
   //Metodo para borrar mi propia cuenta
   deleteAccount(): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/users/me/`).pipe(
+    return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
+      switchMap(user => {
+        const id = user.id;
+        return this.http.delete(`${this.apiUrl}/users/${id}/`);
+      }),
       tap(() => {
-        this.logout(); // limpia el almacenamiento local y estado
+        this.logout();
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Error al eliminar la cuenta', error);

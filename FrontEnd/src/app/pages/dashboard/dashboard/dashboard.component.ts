@@ -32,15 +32,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
         console.error('Error loading user data in dashboard:', err);
       }
     });
-
-    // Ya no es necesario hacer una petición única aquí, el BehaviorSubject debería tener el valor
-    // si el servicio se inicializó después del login o al cargar la página con un token.
   }
 
   ngOnDestroy(): void {
     if (this.userDataSubscription) {
       this.userDataSubscription.unsubscribe();
     }
+  }
+
+  confirmDelete() {
+    const confirmacion = confirm('¿Estás seguro de que querés eliminar tu cuenta? Esta acción no se puede deshacer.');
+    if (confirmacion) {
+      this.deleteAccount();
+    }
+  }
+
+  deleteAccount() {
+    this.authService.deleteAccount().subscribe({
+      next: () => {
+        alert('Cuenta eliminada correctamente');
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Error al eliminar la cuenta');
+      }
+    });
   }
 
   logout(): void {
