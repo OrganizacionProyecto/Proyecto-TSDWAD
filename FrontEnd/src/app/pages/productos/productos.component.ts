@@ -15,7 +15,15 @@ import { FormsModule } from '@angular/forms';
 })
 export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
+  productosOriginales: Producto[] = [];
   loading: boolean = true;
+  buscarTexto: string = '';
+  criterioSeleccionado: string = '0'; 
+  categoriaMap: { [key: number]: string } = {
+    1: 'Crocantes',
+    2: 'Bebidas',
+    3: 'Alimentos secos',
+  };
 
   constructor(
     private productoService: ProductoService,
@@ -30,6 +38,7 @@ export class ProductosComponent implements OnInit {
   obtenerProductos(): void {
     this.productoService.obtenerProductos().subscribe(
       (productosData: Producto[]) => {
+        this.productosOriginales = productosData;
         this.productos = productosData;
         this.loading = false;
       },
@@ -39,6 +48,29 @@ export class ProductosComponent implements OnInit {
       }
     );
   }
+
+  filtrarProductos(): void {
+    const texto = this.buscarTexto.trim().toLowerCase();
+    const criterio = this.criterioSeleccionado;
+  
+    if (!texto) {
+      this.productos = this.productosOriginales; 
+      return;
+    }
+  
+    this.productos = this.productosOriginales.filter((producto) => {
+      switch (criterio) {
+        case '0': // Nombre
+          return producto.nombre.toLowerCase().includes(texto);
+          case '1': // Categoría
+          const categoriaNombre = this.categoriaMap[producto.id_categoria]?.toLowerCase() || '';
+          return categoriaNombre.includes(texto);
+        default:
+          return true;
+      }
+    });
+  }
+  
 
   agregarAlCarrito(producto: Producto, cantidad: number): void {
     if (cantidad <= 0 || cantidad > producto.stock) {

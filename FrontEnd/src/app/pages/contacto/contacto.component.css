@@ -1,81 +1,182 @@
 .container-contacto {
-    display: flex;
-    background-color: #fff;
-    height: 70%;
-    width: 85%;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-    margin: auto;
-    margin-top: 150px;
-    border-radius: 25px;
-  }
+  display: flex;
+  background-color: rgba(255, 255, 255, 0.6);
+  height: 70%;
+  width: 85%;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  margin: auto;
+  margin-top: 150px;
+  border-radius: 25px;
+}
+
+.form {
+  padding: 3.5em 4em;
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+}
+
+.form2 {
+  padding: 4em 7em;
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+}
+
+.form h3 {
+  font-size: 45px;
+  color: rgb(68, 157, 68);
+  font-weight: 600;
+  margin-bottom: 25px;
+  font-family:  sans-serif;
+  border-top-right-radius: 90%;
+  border-top-left-radius: 90%;
+  border-bottom-left-radius: 10%;
+  border-bottom-right-radius: 10%;
+  box-shadow:0 0 10px -5px #fff;
+  text-align: center;
+}
+
+.form p {
+  margin: 0 0 0;
+  text-align: center;
+  color: #2e6329;
+  font-size: 20px;
+}
+
+.numero_tel {
+  font-size: 50px;
+  color: rgb(68, 157, 68);
+  font-weight: 600;
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.label {
+  font-size: 15px;
+  color: rgb(4, 31, 13);
+  margin-bottom: 15px;
+}
+
+.box {
+  border: 0;
+  background-color: #ffffff84;
+  padding: 6px;
+  border-radius: 25px;
+  margin-bottom: 25px;
+  outline-color: #449d44;
+  box-sizing: border-box;
+}
+
+.half-box{
+  border: 0;
+  background-color: #ffffff84;
+  padding: 6px;
+  border-radius: 25px;
+  margin-bottom: 10px;
+  outline-color: #449d44;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 1px;
+  background: #2e632940;
+  border-radius:5px;
+  outline: none;
   
-  .form {
-    padding: 3.5em 4em;
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-  }
+}
+
+input[type="range"]:hover {
+  background: #2e632984;
+}
+
+
+/*Chrome - Safari*/
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  border: 3px solid #2e6329 ;
+  margin-top: -1px; 
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  border: 3px solid #2e6329 ;
+  ;
+}
+
+/* IE/Edge  */
+input[type="range"]::-ms-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  border: 3px solid #2e6329 ;
+}
+
+
+.submit {
+  background-color: rgb(68, 157, 68);
+  border: 0;
+  padding: 8px;
+  color: #fff;
+  font-size: 15px;
+  border-radius: 25px;
+  width: 100%;
+  margin-top: 10px;
   
-  .form2 {
-    padding: 4em 7em;
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-  }
+}
+
+.info {
+  margin-top: 5%;
+  flex-direction: column;
+}
+
+
+.warning {
+  color: red;
+  font-size: 12px;
+  margin-top: -20px;
+  text-align: center;
+  display: block;
   
-  .form h3 {
-    font-size: 45px;
-    color: rgb(68, 157, 68);
-    font-weight: 600;
-    margin-bottom: 25px;
-    text-align: center;
-  }
+}
+
+  @media (max-width: 992px) {
+    .container-contacto {
+      flex-direction: column;
+      height: auto;
+    }
+
+    .form, .form2 {
+      width: 100%;
+      padding: 2em;
+    }
+
+    #row {
+      flex-wrap: wrap; 
+    }
   
-  .form p {
-    margin: 0 0 0;
-    text-align: center;
-    color: #2e6329;
-    font-size: 20px;
-  }
-  
-  .numero_tel {
-    font-size: 50px;
-    color: rgb(68, 157, 68);
-    font-weight: 600;
-    margin-bottom: 50px;
-    text-align: center;
-  }
-  
-  .label {
-    font-size: 15px;
-    color: rgb(4, 31, 13);
-    margin-bottom: 15px;
-  }
-  
-  .box {
-    border: 0;
-    background-color: #dfdfdf;
-    padding: 6px;
-    border-radius: 25px;
-    margin-bottom: 25px;
-    outline-color: #449d44;
-    width: 350px;
-  }
-  
-  .submit {
-    background-color: rgb(68, 157, 68);
-    border: 0;
-    padding: 8px;
-    color: #fff;
-    font-size: 15px;
-    border-radius: 25px;
-    width: 350px;
-    margin-top: 10px;
+    #row > div {
+      width: 50%;
+      display: flex;
+      flex-direction: column; 
+
     
   }
-  
-  .info {
-    margin-top: 5%;
-    flex-direction: column;
-  }
-  
+}   
