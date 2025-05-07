@@ -17,15 +17,23 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'header', component: HeaderComponent },
   { path: 'footer', component: FooterComponent },
-  { path: 'productos', component: ProductosComponent}, 
+  { path: 'productos', component: ProductosComponent }, 
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard]},
   { path: 'registro', component: RegistroComponent },
   { path: 'contacto', component: ContactoComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'carrito', component: CarritoComponent, canActivate: [AuthGuard] },
-  { path: '**', redirectTo: '', pathMatch: 'full' },
+  
+  // Standalone PedidoComponent
+  { 
+    path: 'pedido', 
+    loadComponent: () => import('./pages/pedido/pedido.component').then(m => m.PedidoComponent), 
+    canActivate: [AuthGuard] 
+  },
+
   { path: 'dashboard-admin', component: DashboardAdminComponent, canActivate: [AuthGuard] },
   { path: 'dashboard-admin/create', component: ProductFormComponent, canActivate: [AuthGuard] },
   { path: 'dashboard-admin/edit/:id', component: ProductFormComponent, canActivate: [AuthGuard] },
+
+  { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

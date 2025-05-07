@@ -1,0 +1,73 @@
+<div class="pedido-container">
+  <h1>Resumen del Pedido</h1>
+
+  <div class="pedido-items">
+    <div *ngFor="let item of carrito" class="pedido-item">
+      <div class="item-info">
+        <!-- Actualiza las propiedades -->
+        <h3>{{ item.nombre_producto }}</h3>  <!-- Cambié 'nombre' a 'nombre_producto' -->
+        <p>Cantidad: {{ item.cantidad }}</p>
+        <p>Precio: {{ item.precio_unitario | currency }}</p>  <!-- Cambié 'precio' a 'precio_unitario' -->
+      </div>
+    </div>
+  </div>
+
+  <div class="pedido-total">
+    <h2>Total: {{ calcularTotal() | currency }}</h2>
+  </div>
+
+  <form (ngSubmit)="realizarPedido()">
+    <div class="metodo-pago">
+      <h3>Método de Pago</h3>
+      <select [(ngModel)]="metodoPago" name="metodoPago" class="form-select" required>
+        <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+        <option value="efectivo">Efectivo</option>
+      </select>
+    </div>
+
+    <!-- Información de la tarjeta -->
+    <div *ngIf="metodoPago === 'tarjeta'" class="tarjeta-info">
+      <h3>Información de la Tarjeta</h3>
+      <div class="form-group">
+        <label for="numeroTarjeta">Número de Tarjeta</label>
+        <input id="numeroTarjeta" type="text" maxlength="16" [(ngModel)]="numeroTarjeta" name="numeroTarjeta" class="form-control" placeholder="1234 5678 9012 3456" required>
+      </div>
+      <div class="form-group">
+        <label for="nombreTarjeta">Nombre del Titular</label>
+        <input id="nombreTarjeta" type="text" [(ngModel)]="nombreTarjeta" name="nombreTarjeta" class="form-control" placeholder="Nombre del titular" required>
+      </div>
+      <div class="form-group">
+        <label for="fechaVencimiento">Fecha de Vencimiento</label>
+        <input id="fechaVencimiento" type="month" [(ngModel)]="fechaVencimiento" name="fechaVencimiento" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="cvv">CVV</label>
+        <input id="cvv" type="text" maxlength="3" [(ngModel)]="cvv" name="cvv" class="form-control" placeholder="123" required>
+      </div>
+    </div>
+
+    <!-- Información de la dirección -->
+    <div class="direccion-entrega">
+      <h3>Dirección de Entrega</h3>
+      <div class="form-group">
+        <label for="direccion">Dirección</label>
+        <input id="direccion" type="text" [(ngModel)]="direccion" name="direccion" class="form-control" placeholder="Calle, número, colonia, ciudad" required>
+      </div>
+    </div>
+
+    <!-- Teléfono de contacto -->
+    <div class="telefono-contacto">
+      <h3>Teléfono de Contacto</h3>
+      <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <input id="telefono" type="text" maxlength="10" [(ngModel)]="telefono" name="telefono" class="form-control" placeholder="1234567890" required>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Realizar Pedido</button>
+  </form>
+
+  <button *ngIf="pedidoRealizado && pedidoId" (click)="descargarPDF()" class="btn btn-secondary" style="margin-top: 10px;">
+    Descargar PDF del Pedido
+  </button>
+</div>
