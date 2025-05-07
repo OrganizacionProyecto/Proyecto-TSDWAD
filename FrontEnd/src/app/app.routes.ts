@@ -11,6 +11,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard/dashboard.compon
 import { DashboardAdminComponent } from './pages/dashboard-admin/dashboard-admin.component';
 import { ProductFormComponent } from './pages/dashboard-admin/components/product-form/product-form.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
+import { MispedidosComponent } from './pages/mispedidos/mispedidos.component';
+
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -23,6 +25,8 @@ export const routes: Routes = [
   { path: 'contacto', component: ContactoComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'carrito', component: CarritoComponent, canActivate: [AuthGuard] },
+  { path: 'mispedidos', component: MispedidosComponent, canActivate: [AuthGuard] },
+
   
   // Standalone PedidoComponent
   { 

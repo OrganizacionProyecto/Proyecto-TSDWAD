@@ -1,7 +1,9 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser'; // Necesario para el app principal
-import { FormsModule } from '@angular/forms';             // Necesario para ngModel
-import { HttpClientModule } from '@angular/common/http'; // Para las peticiones HTTP
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule, DatePipe } from '@angular/common';
+
 import { AppComponent } from './app.component';
 import { CarritoComponent } from './pages/carrito/carrito.component';
 import { ProductosComponent } from './pages/productos/productos.component';
@@ -15,6 +17,7 @@ import { ContactoComponent } from './pages/contacto/contacto.component';
 import { DashboardComponent } from './pages/dashboard/dashboard/dashboard.component';
 import { DashboardAdminComponent } from './pages/dashboard-admin/dashboard-admin.component';
 import { ProductFormComponent } from './pages/dashboard-admin/components/product-form/product-form.component';
+import { MispedidosComponent } from './pages/mispedidos/mispedidos.component';
 
 @NgModule({
   declarations: [
@@ -30,14 +33,16 @@ import { ProductFormComponent } from './pages/dashboard-admin/components/product
     ContactoComponent,
     DashboardComponent,
     DashboardAdminComponent,
-    ProductFormComponent
+    ProductFormComponent,
+    MispedidosComponent
   ],
   imports: [
-    BrowserModule,    // Necesario para la aplicación principal
-    FormsModule,      // Necesario para la vinculación ngModel
-    HttpClientModule  // Necesario para las peticiones HTTP
+    BrowserModule,
+    FormsModule,
+    HttpClientModule,
+    CommonModule  // Asegúrate de que CommonModule esté aquí
   ],
-  providers: [],
+  providers: [DatePipe],  // Agregar DatePipe aquí
   bootstrap: [AppComponent]
 })
 export class AppModule {}

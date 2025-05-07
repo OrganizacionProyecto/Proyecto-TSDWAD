@@ -88,7 +88,7 @@ export class PedidoComponent implements OnInit {
         this.metodoPago = 'tarjeta';
 
         // Redirigir tras 3 segundos
-        setTimeout(() => this.router.navigate(['/historial']), 3000);
+        setTimeout(() => this.router.navigate(['/mispedidos']), 3000);
       },
       error: (error: any) => {
         console.error('Error al realizar el pedido:', error);

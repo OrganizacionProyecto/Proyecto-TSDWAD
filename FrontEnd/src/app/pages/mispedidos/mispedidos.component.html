@@ -1,0 +1,15 @@
+<div class="mispedidos-container">
+    <h2>Mis Pedidos</h2>
+  
+    <div *ngIf="pedidos.length === 0">
+      <p>No tienes pedidos realizados.</p>
+    </div>
+  
+    <div *ngFor="let pedido of pedidos" class="pedido-card">
+      <p><strong>Fecha:</strong> {{ pedido.fecha_creacion | date: 'short' }}</p>
+      <p><strong>Total:</strong> ${{ pedido.total }}</p>
+  
+      <button (click)="descargarFactura(pedido.id)" class="btn btn-primary">Descargar Factura</button>
+    </div>
+  </div>
+  

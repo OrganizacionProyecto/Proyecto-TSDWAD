@@ -65,6 +65,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   verMisPedidos(): void {
-    this.router.navigate(['/pedido']);
+    this.router.navigate(['/mispedidos']);
   }
 }
