@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CarritoService } from '../../../services/carrito.service';
 import { Carrito, DetalleProducto } from '../../../services/carrito.model';
 import { CommonModule } from '@angular/common';
@@ -17,7 +18,7 @@ export class CarritoComponent implements OnInit {
     total_carrito: 0
   };
 
-  constructor(private carritoService: CarritoService) {}
+  constructor(private carritoService: CarritoService, private router: Router) {}
 
   ngOnInit(): void {
     this.obtenerCarrito();
@@ -35,11 +36,6 @@ export class CarritoComponent implements OnInit {
   }
 
   modificarCantidad(producto: DetalleProducto, nuevaCantidad: number | string): void {
-    if (!producto.id_producto) {
-      console.error('Falta id_producto');
-      return;
-    }
-
     const cantidadNumerica = Number(nuevaCantidad);
     if (isNaN(cantidadNumerica) || cantidadNumerica <= 0) {
       console.error('Cantidad inválida');
@@ -53,14 +49,13 @@ export class CarritoComponent implements OnInit {
   }
 
   eliminarProducto(producto: DetalleProducto): void {
-    if (!producto.id_producto) {
-      console.error('Falta id_producto');
-      return;
-    }
-
     this.carritoService.eliminarProductoDelCarrito(producto.id_producto).subscribe({
       next: () => this.obtenerCarrito(),
       error: (error) => console.error('Error al eliminar producto:', error)
     });
+  }
+
+  irAPedido(): void {
+    this.router.navigate(['/pedido']);
   }
 }

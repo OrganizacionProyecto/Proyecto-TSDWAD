@@ -63,4 +63,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   logout(): void {
     this.authService.logout();
   }
+
+  verMisPedidos(): void {
+    this.router.navigate(['/pedido']);
+  }
 }

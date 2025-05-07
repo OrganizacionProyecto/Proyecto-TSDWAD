@@ -23,6 +23,13 @@
     </div>
 
     <div>
+      <input id="direccion" name="direccion" formControlName="direccion" type="text" placeholder="Dirección" class="box-ingresar" />
+      <div *ngIf="registroForm.get('direccion')?.touched && registroForm.get('direccion')?.errors?.['required']">
+        <small class="warning">La dirección es requerida</small>
+      </div>
+    </div>
+
+    <div>
       <input id="email" name="email" formControlName="email" type="email" placeholder="Correo electrónico" class="box-ingresar" />
       <div *ngIf="registroForm.get('email')?.touched && registroForm.get('email')?.errors?.['required']">
         <small class="warning">El correo electrónico es requerido</small>
@@ -40,8 +47,24 @@
       <div *ngIf="registroForm.get('password')?.touched && registroForm.get('password')?.errors?.['minlength']">
         <small class="warning">La contraseña debe tener al menos 8 caracteres</small>
       </div>
+      <div *ngIf="registroForm.get('password')?.touched && registroForm.get('password')?.errors?.['pattern']">
+        <small class="warning">La contraseña debe contener al menos una letra mayúscula y un número</small>
+      </div>
     </div>
-    
+
+    <div>
+      <input id="password2" name="password2" formControlName="password2" type="password" placeholder="Confirmar Contraseña" class="box-ingresar" />
+      <div *ngIf="registroForm.get('password2')?.touched && registroForm.get('password2')?.errors?.['required']">
+        <small class="warning">La confirmación de contraseña es requerida</small>
+      </div>
+      <div *ngIf="registroForm.get('password2')?.touched && registroForm.get('password')?.value !== registroForm.get('password2')?.value">
+        <small class="warning">Las contraseñas no coinciden</small>
+      </div>
+      <div *ngIf="registroForm.get('password2')?.touched && registroForm.get('password2')?.errors?.['pattern']">
+        <small class="warning">La contraseña debe contener al menos una letra mayúscula y un número</small>
+      </div>
+    </div>
+
     <button type="submit" class="submit-ingresar" [disabled]="!registroForm.valid">Registrar</button>
 
     <div *ngIf="submitted && registroForm.valid">
