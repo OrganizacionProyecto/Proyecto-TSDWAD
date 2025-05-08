@@ -1,44 +1,37 @@
 import { Component, OnInit } from '@angular/core';
-     import { CommonModule } from '@angular/common';
-     import { Router } from '@angular/router';
-     import { AuthService } from '../../pages/services/auth.service';
-     import { ProductListComponent } from './components/product-list/product-list.component';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
+import { ProductListComponent } from './components/product-list/product-list.component';
+import { AuthService } from '../services/auth.service';
 
-     @Component({
-       selector: 'app-dashboard-admin',
-       standalone: true,
-       imports: [CommonModule, ProductListComponent],
-       templateUrl: './dashboard-admin.component.html',
-       styleUrls: ['./dashboard-admin.component.scss']
-     })
-     export class DashboardAdminComponent implements OnInit {
-       userData: any = {};
+@Component({
+  selector: 'app-dashboard-admin',
+  standalone: true,
+  imports: [CommonModule, RouterModule, ProductListComponent],
+  templateUrl: './dashboard-admin.component.html',
+  styleUrls: ['./dashboard-admin.component.scss']
+})
+export class DashboardAdminComponent implements OnInit {
+  userData: any = null;
 
-       constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
-       ngOnInit(): void {
-         if (!this.authService.isAdmin()) {
-           this.router.navigate(['/Home']);
-           return;
-         }
+  ngOnInit(): void {
+    this.authService.getUserData().subscribe({
+      next: (data) => {
+        this.userData = data;
+        console.log('Datos del usuario cargados:', data);
+      },
+      error: (err) => console.error('Error al cargar datos del usuario:', err)
+    });
+  }
 
-         this.authService.getUserData().subscribe({
-           next: (data) => {
-             console.log('User data loaded in DashboardAdmin:', data);
-             this.userData = data;
-           },
-           error: (error) => {
-             console.error('Error loading user data:', error);
-           }
-         });
-       }
+  navigateToCreate(): void {
+    this.router.navigate(['/dashboard-admin/create']);
+  }
 
-       logout(): void {
-         this.authService.logout();
-         this.router.navigate(['/login']);
-       }
-
-       navigateToCreate(): void {
-         this.router.navigate(['/dashboard-admin/create']);
-       }
-     }
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
+}

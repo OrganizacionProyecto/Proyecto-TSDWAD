@@ -50,11 +50,11 @@ import { Component, OnInit } from '@angular/core';
 
        loadProducts(search?: string): void {
          this.productService.getProducts(search).subscribe({
-           next: (products) => {
+           next: (products: Product[]) => {
              this.products = products;
              console.log('Productos cargados:', products);
            },
-           error: (err) => console.error('Error loading products:', err)
+           error: (err: any) => console.error('Error loading products:', err)
          });
        }
 
@@ -70,7 +70,7 @@ import { Component, OnInit } from '@angular/core';
            if (result) {
              this.productService.deleteProduct(id).subscribe({
                next: () => this.loadProducts(),
-               error: (err) => console.error('Error deleting product:', err)
+               error: (err: any) => console.error('Error deleting product:', err)
              });
            }
          });
