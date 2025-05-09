@@ -1,1 +1,21 @@
-<p>category-form works!</p>
+<div class="category-form-container">
+  <h2>{{ categoryId ? 'Editar Categoría' : 'Crear Categoría' }}</h2>
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+    <mat-form-field>
+      <mat-label>Nombre</mat-label>
+      <input matInput formControlName="nombre" required>
+      <mat-error *ngIf="categoryForm.get('nombre')?.hasError('required')">El nombre es obligatorio</mat-error>
+      <mat-error *ngIf="categoryForm.get('nombre')?.hasError('maxlength')">Máximo 100 caracteres</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Descripción</mat-label>
+      <textarea matInput formControlName="descripcion" required></textarea>
+      <mat-error *ngIf="categoryForm.get('descripcion')?.hasError('required')">La descripción es obligatoria</mat-error>
+      <mat-error *ngIf="categoryForm.get('descripcion')?.hasError('maxlength')">Máximo 500 caracteres</mat-error>
+    </mat-form-field>
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="categoryForm.invalid">Guardar</button>
+      <button mat-button type="button" (click)="cancel()">Cancelar</button>
+    </div>
+  </form>
+</div>

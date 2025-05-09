@@ -9,6 +9,9 @@ import { AuthGuard } from './pages/services/auth.guard';
 import { DashboardComponent } from './pages/dashboard/dashboard/dashboard.component';
 import { DashboardAdminComponent } from './pages/dashboard-admin/dashboard-admin.component';
 import { ProductFormComponent } from './pages/dashboard-admin/components/product-form/product-form.component';
+import { ProductListComponent } from './pages/dashboard-admin/components/product-list/product-list.component';
+import { CategoryFormComponent } from './pages/dashboard-admin/components/category-form/category-form.component';
+import { CategoryListComponent } from './pages/dashboard-admin/components/category-list/category-list.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,8 +22,18 @@ export const routes: Routes = [
   { path: 'registro', component: RegistroComponent },
   { path: 'contacto', component: ContactoComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'dashboard-admin', component: DashboardAdminComponent, canActivate: [AuthGuard] },
-  { path: 'dashboard-admin/create', component: ProductFormComponent, canActivate: [AuthGuard] },
-  { path: 'dashboard-admin/edit/:id', component: ProductFormComponent, canActivate: [AuthGuard] },
+  {
+    path: 'dashboard-admin',
+    component: DashboardAdminComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: '', component: ProductListComponent },
+      { path: 'create', component: ProductFormComponent },
+      { path: 'edit/:id', component: ProductFormComponent },
+      { path: 'categories', component: CategoryListComponent },
+      { path: 'categories/create', component: CategoryFormComponent },
+      { path: 'categories/edit/:id', component: CategoryFormComponent }
+    ]
+  },
   { path: '**', redirectTo: '', pathMatch: 'full' }
 ];

@@ -10,6 +10,7 @@ import { Injectable } from '@angular/core';
      })
      export class ProductService {
        private apiUrl = `${environment.apiUrl}/api/products/productos/`;
+       private categoryUrl = `${environment.apiUrl}/api/products/categorias/`;
 
        constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -41,7 +42,19 @@ import { Injectable } from '@angular/core';
          return this.http.delete<void>(`${this.apiUrl}${id}/`, { headers: this.getHeaders() });
        }
 
-       getCategories(): Observable<any[]> {
-         return this.http.get<any[]>(`${environment.apiUrl}/api/products/categorias/`, { headers: this.getHeaders() });
+       getCategories(): Observable<{ id_categoria: number; nombre: string; descripcion: string }[]> {
+         return this.http.get<{ id_categoria: number; nombre: string; descripcion: string }[]>(this.categoryUrl, { headers: this.getHeaders() });
+       }
+
+       createCategory(category: { nombre: string; descripcion: string }): Observable<{ id_categoria: number; nombre: string; descripcion: string }> {
+         return this.http.post<{ id_categoria: number; nombre: string; descripcion: string }>(this.categoryUrl, category, { headers: this.getHeaders() });
+       }
+
+       updateCategory(id: number, category: { nombre: string; descripcion: string }): Observable<{ id_categoria: number; nombre: string; descripcion: string }> {
+         return this.http.put<{ id_categoria: number; nombre: string; descripcion: string }>(`${this.categoryUrl}${id}/`, category, { headers: this.getHeaders() });
+       }
+
+       deleteCategory(id: number): Observable<void> {
+         return this.http.delete<void>(`${this.categoryUrl}${id}/`, { headers: this.getHeaders() });
        }
      }
