@@ -1,8 +1,10 @@
-<div class="dashboard-container">
+<div class="dashboard-admin-container">
   <h1>Dashboard Admin</h1>
   <p>Bienvenido, {{ userData?.username || 'Administrador' }}</p>
-  <button mat-raised-button color="primary" (click)="navigateToCreate()">Crear Producto</button>
-  <button mat-raised-button color="primary" (click)="navigateToCategories()">Gestionar Categorías</button>
-  <button mat-raised-button color="warn" (click)="logout()">Cerrar Sesión</button>
+  <div class="button-container">
+    <button mat-raised-button color="primary" (click)="navigateToCreate()">Crear Producto</button>
+    <button mat-raised-button color="primary" (click)="navigateToCategories()">Gestionar Categorías</button>
+    <button mat-raised-button color="warn" (click)="logout()">Cerrar Sesión</button>
+  </div>
   <router-outlet></router-outlet>
 </div>
