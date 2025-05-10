@@ -1,5 +1,4 @@
-    
-  .jumbotron {
+.jumbotron {
     padding: 10px; /* Ajusta el espaciado interno del jumbotron */
     
   }
@@ -54,3 +53,87 @@
     min-width: 320px;
     margin: auto;
   }
+
+/* Estilos para pantallas medianas (máximo 960px) */
+@media screen and (max-width: 960px) {
+  .jumbotron h1 {
+    font-size: 32px; /* Reduce el tamaño del título */
+  }
+
+  .jumbotron p {
+    font-size: 20px; /* Reduce el tamaño del párrafo */
+  }
+
+  .titulo-principal {
+    font-size: 28px; /* Ajusta el tamaño del título principal */
+  }
+
+  .mapa {
+    width: 90%; /* Ajusta el ancho para pantallas medianas */
+    padding: 2.5em 0;
+  }
+
+  .mapa p {
+    font-size: 20px; /* Reduce el tamaño del texto */
+  }
+
+  div > iframe {
+    height: 250px; /* Ajusta la altura del iframe */
+  }
+}
+
+/* Estilos para pantallas pequeñas (máximo 600px) */
+@media screen and (max-width: 600px) {
+  .jumbotron h1 {
+    font-size: 24px; /* Reduce aún más el tamaño del título */
+  }
+
+  .jumbotron p {
+    font-size: 16px; /* Reduce aún más el tamaño del párrafo */
+  }
+
+  .titulo-principal {
+    font-size: 22px; /* Ajusta el tamaño del título principal */
+  }
+
+  .mapa {
+    width: 95%; /* Ajusta el ancho para pantallas pequeñas */
+    padding: 2em 0;
+  }
+
+  .mapa p {
+    font-size: 16px; /* Reduce el tamaño del texto */
+  }
+
+  div > iframe {
+    height: 200px; /* Ajusta la altura del iframe */
+  }
+}
+
+/* Estilos para pantallas grandes (mínimo 1201px) */
+@media screen and (min-width: 1201px) {
+  .jumbotron h1 {
+    font-size: 48px; /* Aumenta el tamaño del título */
+  }
+
+  .jumbotron p {
+    font-size: 28px; /* Aumenta el tamaño del párrafo */
+  }
+
+  .titulo-principal {
+    font-size: 40px; /* Aumenta el tamaño del título principal */
+  }
+
+  .mapa {
+    width: 80%; /* Ajusta el ancho para pantallas grandes */
+    padding: 4em 0;
+  }
+
+  .mapa p {
+    font-size: 28px; /* Aumenta el tamaño del texto */
+  }
+
+  div > iframe {
+    height: 350px; /* Aumenta la altura del iframe */
+  }
+}
