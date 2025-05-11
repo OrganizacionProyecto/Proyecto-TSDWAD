@@ -138,7 +138,7 @@ class CrearPedidoView(generics.CreateAPIView):
         # Validación de campos obligatorios
         if not direccion or not telefono or not metodo_pago:
             return Response({"error": "Faltan campos obligatorios."}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         # Validación del teléfono
         if not telefono.isdigit():
             return Response({"error": "El teléfono debe contener solo números."}, status=status.HTTP_400_BAD_REQUEST)
@@ -147,28 +147,35 @@ class CrearPedidoView(generics.CreateAPIView):
             return Response({"error": "El teléfono no puede tener más de 11 dígitos."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Validación de método de pago
+        transaction_id = None
+        estado_pago = "pendiente"
+
         if metodo_pago == "tarjeta":
             numero_tarjeta = request.data.get("numero_tarjeta")
-            nombre_titular = request.data.get("nombre_titular")
-            vencimiento = request.data.get("vencimiento")
-            cvv = request.data.get("cvv")
+            fecha_expiracion = request.data.get("fecha_expiracion")  # <-- Cambiado a fecha_expiracion
+            codigo_seguridad = request.data.get("codigo_seguridad")  # <-- Cambiado a codigo_seguridad
 
-            if not all([numero_tarjeta, nombre_titular, vencimiento, cvv]):
+            # Validación de campos de tarjeta
+            if not all([numero_tarjeta, fecha_expiracion, codigo_seguridad]):
                 return Response({"error": "Faltan datos de la tarjeta."}, status=status.HTTP_400_BAD_REQUEST)
 
             if len(numero_tarjeta) != 16 or not numero_tarjeta.isdigit():
                 return Response({"error": "Número de tarjeta inválido."}, status=status.HTTP_400_BAD_REQUEST)
-            if len(cvv) != 3 or not cvv.isdigit():
+            if len(codigo_seguridad) != 3 or not codigo_seguridad.isdigit():
                 return Response({"error": "CVV inválido."}, status=status.HTTP_400_BAD_REQUEST)
 
+
+            # Generar transaction_id y cambiar estado
             transaction_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
             estado_pago = "pagado"
+
         elif metodo_pago == "efectivo":
-            transaction_id = None
+            # No se requiere transaction_id para efectivo
             estado_pago = "pendiente"
         else:
             return Response({"error": "Método de pago inválido."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Obtener el carrito
         try:
             carrito = Carrito.objects.get(usuario=usuario)
         except Carrito.DoesNotExist:
@@ -177,6 +184,7 @@ class CrearPedidoView(generics.CreateAPIView):
         if not carrito.items.exists():
             return Response({"error": "El carrito está vacío."}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Calcular el total del pedido
         total = sum(item.producto.precio * item.cantidad for item in carrito.items.all())
 
         # Crear el pedido
@@ -274,8 +282,11 @@ class ModificarProductoCarritoView(viewsets.ViewSet):
     @transaction.atomic
     def update(self, request, producto_id):
         accion = request.data.get('accion')
+        cantidad = request.data.get('cantidad')
+
+        # Validar la cantidad
         try:
-            cantidad = int(request.data.get('cantidad', 1))
+            cantidad = int(cantidad)
             if cantidad <= 0:
                 return Response(
                     {'error': 'La cantidad debe ser mayor a 0'},
@@ -287,6 +298,7 @@ class ModificarProductoCarritoView(viewsets.ViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Verificar la existencia del producto
         try:
             producto = Producto.objects.select_for_update().get(id_producto=producto_id)
         except Producto.DoesNotExist:
@@ -295,96 +307,46 @@ class ModificarProductoCarritoView(viewsets.ViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
 
+        # Obtener el carrito del usuario
         carrito = get_object_or_404(Carrito, usuario=request.user)
         item = get_object_or_404(ItemCarrito, carrito=carrito, producto=producto)
 
         if accion == 'aumentar':
-            if producto.stock < cantidad:
-                return Response(
-                    {'error': f'No hay suficiente stock disponible para agregar {cantidad} unidades'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            # Aumentar la cantidad del producto en el carrito
-            item.cantidad += cantidad
-            producto.stock -= cantidad  # Reducir el stock del producto en la tienda
-        elif accion == 'disminuir':
-            # Verificar que la cantidad a disminuir no sea mayor a la actual en el carrito
-            if item.cantidad < cantidad:
-                return Response(
-                    {'error': f'No hay suficientes items en el carrito para disminuir {cantidad} unidades'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            item.cantidad -= cantidad
-            producto.stock += cantidad
-        else:
-            return Response(
-                {'error': 'Acción no válida'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        item.save()
-        producto.save()
-
-        serializer = ItemCarritoSerializer(item)
-        return Response(serializer.data)
-    permission_classes = [IsAuthenticated]
-
-    @transaction.atomic
-    def update(self, request, producto_id):
-        accion = request.data.get('accion')
-        try:
-            cantidad = int(request.data.get('cantidad', 1))
-            if cantidad <= 0:
-                return Response(
-                    {'error': 'La cantidad debe ser mayor a 0'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-        except (TypeError, ValueError):
-            return Response(
-                {'error': 'La cantidad debe ser un número válido'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            producto = Producto.objects.select_for_update().get(id_producto=producto_id)
-        except Producto.DoesNotExist:
-            return Response(
-                {'error': 'Producto no encontrado'},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-        carrito = get_object_or_404(Carrito, usuario=request.user)
-        item = get_object_or_404(ItemCarrito, carrito=carrito, producto=producto)
-
-        if accion == 'aumentar':
-            # Verificamos si el stock del producto es suficiente para agregar la unidad
             if producto.stock < 1:
                 return Response(
-                    {'error': 'No hay suficiente stock disponible para agregar una unidad'},
+                    {'error': f'No hay suficiente stock. Stock disponible: {producto.stock}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            # Aumentar la cantidad del producto en el carrito
-            item.cantidad += 1
-            producto.stock -= 1  # Reducir el stock del producto en la tienda
+            item.cantidad += 1  
+            producto.stock -= 1  
+
         elif accion == 'disminuir':
-            if item.cantidad < cantidad:
+            if item.cantidad <= 1:
                 return Response(
-                    {'error': 'No hay suficientes items en el carrito'},
+                    {'error': f'No se pueden disminuir más unidades. Cantidad en carrito: {item.cantidad}'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            item.cantidad -= cantidad
-            producto.stock += cantidad
+            # Disminuir cantidad en el carrito y aumentar el stock
+            item.cantidad -= 1  
+            producto.stock += 1  
+
+            if item.cantidad == 0:
+                item.delete()
+
         else:
             return Response(
-                {'error': 'Acción no válida'},
+                {'error': 'Acción no válida. Use "aumentar" o "disminuir".'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        # Guardar los cambios
         item.save()
         producto.save()
 
         serializer = ItemCarritoSerializer(item)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 
 class EliminarProductoCarritoView(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]

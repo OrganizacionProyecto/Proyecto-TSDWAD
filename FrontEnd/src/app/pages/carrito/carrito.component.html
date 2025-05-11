@@ -17,8 +17,14 @@
         <tr *ngFor="let producto of carrito.detalles_producto">
           <td>{{ producto.nombre_producto }}</td>
           <td>
+            <!-- Botones para aumentar o disminuir -->
+            <button class="btn disminuir" (click)="modificarCantidad(producto, producto.cantidad - 1, 'disminuir')">-</button>
+            
             <!-- Input para modificar la cantidad -->
-            <input type="number" [(ngModel)]="producto.cantidad" min="1" (change)="modificarCantidad(producto, producto.cantidad)" />
+            <input type="number" [(ngModel)]="producto.cantidad" min="1" 
+              (change)="modificarCantidad(producto, producto.cantidad, 'modificar')"/>
+
+            <button class="btn aumentar" (click)="modificarCantidad(producto, producto.cantidad + 1, 'aumentar')">+</button>
           </td>
           <td>${{ producto.precio_unitario | number: '1.2-2' }}</td>
           <td>${{ producto.total_producto | number: '1.2-2' }}</td>

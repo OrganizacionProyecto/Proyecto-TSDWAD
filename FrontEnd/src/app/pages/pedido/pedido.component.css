@@ -6,6 +6,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     font-family: Arial, sans-serif;
+    transition: all 0.3s ease; 
 }
 
 .pedido-container h1,
@@ -23,8 +24,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 15px;
     border-bottom: 1px solid #ddd;
+    background-color: #fff; 
+    border-radius: 5px; 
+    transition: background-color 0.3s ease;
+}
+
+.pedido-item:hover {
+    background-color: #f1f1f1; 
 }
 
 .item-info h3 {
@@ -69,20 +77,27 @@
 .form-group input,
 .form-select {
     width: 100%;
-    padding: 8px;
+    padding: 12px; 
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
+    transition: border-color 0.3s ease;
 }
 
 .form-group input::placeholder {
     color: #aaa;
 }
 
+.form-group input:focus,
+.form-select:focus {
+    border-color: #007bff; 
+    outline: none;
+}
+
 .btn {
     display: block;
     width: 100%;
-    padding: 10px;
+    padding: 12px; 
     font-size: 16px;
     color: #fff;
     background-color: #007bff;
@@ -90,8 +105,25 @@
     border-radius: 4px;
     cursor: pointer;
     text-align: center;
+    transition: background-color 0.3s ease;
 }
 
 .btn:hover {
-    background-color: #0056b3;
+    background-color: #0056b3; 
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    margin-top: 10px;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268; 
+}
+
+/* Estilos para el mensaje de error */
+.error-message {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 10px;
 }

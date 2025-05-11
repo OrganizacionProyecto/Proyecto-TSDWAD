@@ -31,8 +31,8 @@ export class CarritoService {
     );
   }
 
-  modificarProductoCarrito(id_producto: number, accion: 'aumentar' | 'disminuir', cantidad: number): Observable<any> {
-    const payload = { accion, cantidad };
+  modificarProductoCarrito(id_producto: number, accion: string, cantidad: number): Observable<any> {
+    const payload = { accion, cantidad }; // Aquí estamos enviando el valor de "accion"
     return this.http.put(`${this.baseUrl}/modificar/${id_producto}/`, payload).pipe(
       catchError((error) => {
         console.error('Error al modificar producto en el carrito:', error);
@@ -40,6 +40,8 @@ export class CarritoService {
       })
     );
   }
+
+
 
   eliminarProductoDelCarrito(id_producto: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/eliminar/${id_producto}/`).pipe(

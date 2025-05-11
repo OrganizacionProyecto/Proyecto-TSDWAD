@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { PedidoService } from '../services/pedido.service';
 import { CarritoService } from '../../../services/carrito.service';
 import { Carrito, DetalleProducto } from '../../../services/carrito.model';
+
 @Component({
   selector: 'app-pedido',
   standalone: true,
@@ -16,10 +17,9 @@ import { Carrito, DetalleProducto } from '../../../services/carrito.model';
 export class PedidoComponent implements OnInit {
   carrito: DetalleProducto[] = [];
   metodoPago: string = 'tarjeta';
-  numeroTarjeta: string = '';
-  nombreTarjeta: string = '';
-  fechaVencimiento: string = '';
-  cvv: string = '';
+  numero_tarjeta: string = '';
+  fecha_expiracion: string = '';
+  codigo_seguridad: string = '';
   direccion: string = '';
   telefono: string = '';
   pedidoRealizado: boolean = false;
@@ -63,13 +63,13 @@ export class PedidoComponent implements OnInit {
     };
 
     if (this.metodoPago === 'tarjeta') {
-      if (!this.numeroTarjeta || !this.nombreTarjeta || !this.fechaVencimiento || !this.cvv) {
+      if (!this.numero_tarjeta || !this.fecha_expiracion || !this.codigo_seguridad) {
         alert('Completa todos los campos de tarjeta.');
         return;
       }
-      datosPedido.numero_tarjeta = this.numeroTarjeta;
-      datosPedido.fecha_expiracion = this.fechaVencimiento;
-      datosPedido.codigo_seguridad = this.cvv;
+      datosPedido.numero_tarjeta = this.numero_tarjeta;
+      datosPedido.fecha_expiracion = this.fecha_expiracion;
+      datosPedido.codigo_seguridad = this.codigo_seguridad;
     }
 
     this.pedidoService.crearPedido(datosPedido).subscribe({
@@ -79,10 +79,9 @@ export class PedidoComponent implements OnInit {
         this.pedidoId = response.id || null;
 
         // Limpiar campos
-        this.numeroTarjeta = '';
-        this.nombreTarjeta = '';
-        this.fechaVencimiento = '';
-        this.cvv = '';
+        this.numero_tarjeta = '';
+        this.fecha_expiracion = '';
+        this.codigo_seguridad = '';
         this.direccion = '';
         this.telefono = '';
         this.metodoPago = 'tarjeta';

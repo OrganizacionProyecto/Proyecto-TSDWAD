@@ -36,6 +36,7 @@
   border-radius: 8px;
   border: 1px solid #ccc;
   text-align: center;
+  margin: 0 10px; /* Espacio entre el input y los botones */
 }
 
 .btn {
@@ -44,17 +45,32 @@
   border-radius: 10px;
   cursor: pointer;
   font-weight: bold;
-  transition: background-color 0.3s ease; 
+  transition: background-color 0.3s ease;
 }
 
 .btn:hover {
-  opacity: 0.8; 
+  opacity: 0.8;
 }
 
-.actualizar {
+/* Estilos específicos para los botones de aumentar y disminuir */
+.aumentar {
   background-color: #5cb85c;
   color: white;
-  margin-right: 5px;
+  margin-left: 10px; /* Espacio entre el input y el botón de aumentar */
+}
+
+.disminuir {
+  background-color: #d9534f;
+  color: white;
+  margin-right: 10px; /* Espacio entre el input y el botón de disminuir */
+}
+
+.aumentar:hover {
+  background-color: #4cae4c; /* Cambio de color al hacer hover */
+}
+
+.disminuir:hover {
+  background-color: #c9302c; /* Cambio de color al hacer hover */
 }
 
 .eliminar {
@@ -96,6 +112,6 @@
   }
 
   .realizar-pedido {
-    padding: 12px 0; 
+    padding: 12px 0;
   }
 }

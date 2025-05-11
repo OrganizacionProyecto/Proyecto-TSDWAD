@@ -22,9 +22,8 @@ class ItemCarritoSerializer(serializers.ModelSerializer):
 
 class PedidoSerializer(serializers.ModelSerializer):
     numero_tarjeta = serializers.CharField(write_only=True, required=False)
-    nombre_titular = serializers.CharField(write_only=True, required=False)
-    vencimiento = serializers.CharField(write_only=True, required=False)
-    cvv = serializers.CharField(write_only=True, required=False)
+    fecha_expiracion = serializers.CharField(write_only=True, required=False)
+    codigo_seguridad = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Pedido
@@ -37,9 +36,8 @@ class PedidoSerializer(serializers.ModelSerializer):
             'total',
             'fecha_creacion',
             'numero_tarjeta',
-            'nombre_titular',
-            'vencimiento',
-            'cvv'
+            'fecha_expiracion',
+            'codigo_seguridad'
         ]
         read_only_fields = ['id', 'usuario', 'total', 'fecha_creacion']
 
@@ -47,7 +45,7 @@ class PedidoSerializer(serializers.ModelSerializer):
         metodo = data.get("metodo_pago", "").lower()
 
         if metodo == "tarjeta":
-            campos_tarjeta = ['numero_tarjeta', 'nombre_titular', 'vencimiento', 'cvv']
+            campos_tarjeta = ['numero_tarjeta', 'fecha_expiracion', 'codigo_seguridad']
             faltantes = [campo for campo in campos_tarjeta if not data.get(campo)]
             if faltantes:
                 raise serializers.ValidationError({
@@ -55,15 +53,8 @@ class PedidoSerializer(serializers.ModelSerializer):
                     for campo in faltantes
                 })
 
-        elif metodo == "efectivo":
-            if not data.get("direccion_entrega"):
-                raise serializers.ValidationError({"direccion_entrega": "Este campo es obligatorio para pagos en efectivo."})
-            if not data.get("telefono"):
-                raise serializers.ValidationError({"telefono": "Este campo es obligatorio para pagos en efectivo."})
-        else:
-            raise serializers.ValidationError({"metodo_pago": "Debe ser 'tarjeta' o 'efectivo'."})
-
         return data
+
 
 class CarritoSerializer(serializers.ModelSerializer):
     items = ItemCarritoSerializer(many=True, read_only=True)
