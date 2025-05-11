@@ -1,92 +1,4 @@
-.container-ingresar {
-    display: flex;
-    background-color: #fff;
-    height: 65%;
-    width: 40%;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-    margin: auto;
-    margin-top: 75px;
-    justify-content: space-around;
-    align-items: center;
-    border-radius: 25px;
-  }
-  
-  .container-ingresar_formulario {
-    min-width: 400px;
-  }
-  
-  .registerLink,
-  .loginLink {
-    align-self: flex-end;
-  }
-  
-  .container-ingresar h3 {
-    font-size: 45px;
-    color: rgb(68, 157, 68);
-    font-weight: 600;
-    margin-bottom: 25px;
-    gap: 10px;
-    text-align: center;
-  }
-  
-  .formLogin {
-    padding: 3.5em 2em;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .registroForm {
-    padding: 3.5em 2em;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .box-ingresar {
-    border: 0;
-    background-color: #dfdfdf;
-    padding: 4px;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    outline-color: #449d44;
-  }
-  
-  .submit-ingresar {
-    background-color: rgb(68, 157, 68);
-    border: 0;
-    padding: 4px;
-    color: #fff;
-    font-size: 15px;
-    border-radius: 25px;
-    margin-top: 10px;
-    cursor: pointer;
-  }
-  
-  
-  .submit-eliminar {
-    background-color: red; 
-    border: 0;
-    padding: 4px;
-    color: #fff;
-    font-size: 15px;
-    border-radius: 25px;
-    margin-top: 10px;
-    cursor: pointer;
-  }
-  
-  .formLogin p,
-  .registroForm p {
-    margin: 0 0 0;
-    text-align: center;
-    color: #2e6329;
-    font-size: 20px;
-  }
-  
-  small {
-    color: red;
-  }
-  /* Estilo para el contenedor del formulario */
+/* Estilo para el contenedor del formulario */
 .account-settings-form {
   max-width: 400px;
   margin: 0 auto;
@@ -100,7 +12,7 @@
 /* Estilo para el título */
 .account-settings-form h3 {
   font-size: 1.5rem;
-  color: #1d1c1c;
+  color: #333;
   margin-bottom: 20px;
 }
 
@@ -114,7 +26,7 @@
 /* Estilo para las etiquetas */
 .account-settings-form label {
   font-size: 1rem;
-  color: #070707;
+  color: #555;
   text-align: left;
 }
 
@@ -122,11 +34,11 @@
 .account-settings-form input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #b9b6b6;
   border-radius: 5px;
   font-size: 1rem;
-  color: #000000;
-  background-color: #bbb9b9;
+  color: #333;
+  background-color: #c5c2c2;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 

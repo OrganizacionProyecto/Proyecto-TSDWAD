@@ -1,80 +1,115 @@
 .container-ingresar {
   display: flex;
   background-color: #fff;
-  height: 65%;
-  width: 40%;
+  width: 90%; /* Ajuste relativo para pantallas pequeñas */
+  max-width: 500px; /* Limita el ancho en pantallas grandes */
+  min-height: 70vh; /* Altura mínima basada en el viewport */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-  margin: auto;
-  margin-top: 75px;
-  justify-content: space-around;
+  margin: 20px auto; /* Reducir margen superior/inferior */
+  justify-content: center;
   align-items: center;
   border-radius: 25px;
+  padding: 15px; /* Padding interno para móviles */
+  box-sizing: border-box; /* Incluye padding en el cálculo del ancho */
 }
 
 .container-ingresar_formulario {
-  min-width: 400px;
-}
-
-.registerLink,
-.loginLink {
-  align-self: flex-end;
+  width: 100%; /* Ocupa todo el contenedor padre */
+  max-width: 400px; /* Máximo ancho para el formulario */
+  margin: 0 auto;
+  padding: 0 10px; /* Espaciado interno ajustado */
 }
 
 .container-ingresar h3 {
-  font-size: 45px;
+  font-size: 2rem; /* Tamaño relativo (32px base) */
   color: rgb(68, 157, 68);
   font-weight: 600;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
   text-align: center;
 }
 
-.formLogin,
 .registroForm {
-  padding: 3.5em 2em;
+  padding: 1.5em; /* Reducido para pantallas pequeñas */
   display: flex;
   flex-direction: column;
   text-align: center;
+  gap: 10px; /* Espacio uniforme entre elementos */
+  width: 100%;
 }
 
 .box-ingresar {
   border: 0;
   background-color: #dfdfdf;
-  padding: 10px; /* Aumenta el padding para un campo más grande */
+  padding: 8px;
   border-radius: 10px;
   margin-bottom: 10px;
   outline-color: #449d44;
-  width: 100%; /* Aumenta el ancho al 100% del contenedor */
-  box-sizing: border-box; /* Incluye el padding en el ancho total */
+  width: 100%; /* Asegura que ocupe todo el ancho */
+  box-sizing: border-box;
+  font-size: 1rem; /* Tamaño relativo (16px base) */
 }
 
 .submit-ingresar {
   background-color: rgb(68, 157, 68);
   border: 0;
-  padding: 10px; /* Ajusta el padding para que coincida con el de los campos */
+  padding: 8px;
   color: #fff;
-  font-size: 15px;
+  font-size: 1rem; /* Tamaño relativo (16px base) */
   border-radius: 25px;
   margin-top: 10px;
-  width: 100%; /* Asegúrate de que el botón tenga el mismo ancho que los campos */
+  width: 100%;
+  max-width: 200px; /* Limita el ancho máximo */
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.formLogin p,
-.registroForm p {
-  margin: 0 0 0;
-  text-align: center;
-  color: #2e6329;
-  font-size: 20px;
-}
-/* Resto del CSS existente */
-
-.warning {
+small {
   color: red;
-  font-size: 12px;
-  margin-top: 5px;
-  display: block;
 }
 
-/* Opcional: Ajusta el padding y el margen para que las advertencias se alineen correctamente */
-.container-ingresar_formulario .box-ingresar {
-  margin-bottom: 5px; /* Reduce el margen inferior para espacio de advertencias */
+/* Media query para pantallas pequeñas (móviles) */
+@media (max-width: 600px) {
+  .container-ingresar {
+    width: 95%; /* Más ancho en móviles */
+    min-height: 60vh; /* Ajuste de altura */
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  .container-ingresar h3 {
+    font-size: 1.5rem; /* Reducir tamaño (24px) */
+    margin-bottom: 10px;
+  }
+
+  .registroForm {
+    padding: 1em; /* Reducir padding */
+    gap: 8px;
+  }
+
+  .box-ingresar {
+    padding: 6px;
+    font-size: 0.875rem; /* Reducir a 14px */
+  }
+
+  .submit-ingresar {
+    padding: 6px;
+    font-size: 0.875rem; /* Reducir a 14px */
+    max-width: 150px;
+  }
+}
+
+/* Media query para pantallas muy pequeñas */
+@media (max-width: 400px) {
+  .container-ingresar h3 {
+    font-size: 1.25rem; /* Reducir a 20px */
+  }
+
+  .box-ingresar {
+    font-size: 0.75rem; /* Reducir a 12px */
+  }
+
+  .submit-ingresar {
+    font-size: 0.75rem; /* Reducir a 12px */
+    max-width: 120px;
+  }
 }
