@@ -183,7 +183,7 @@ export class AuthService {
   // Método para verificar si el usuario es administrador
   isAdmin(): boolean {
     const userData = this.userDataSubject.getValue();
-    return userData && userData.role === 'admin'; // Asumiendo que el rol está en user.role
+    return userData && userData.app_role === 'admin_app';
   }
 
   // Manejo de errores (este método ya no es necesario con el manejo individual en cada método)

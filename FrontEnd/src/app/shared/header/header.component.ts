@@ -1,22 +1,24 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-     import { Router, RouterModule } from '@angular/router';
-     import { CommonModule } from '@angular/common';
-          import { AuthService } from '../../pages/services/auth.service';
+import { Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../pages/services/auth.service';
 import { Observable, Subscription } from 'rxjs';
+import { FormsModule } from '@angular/forms';  
 
-     @Component({
-       selector: 'app-header',
-       standalone: true,
-       imports: [CommonModule, RouterModule],
-       templateUrl: './header.component.html',
-       styleUrls: ['./header.component.css']
-     })
-     export class HeaderComponent implements OnInit, OnDestroy {
-       userData$: Observable<any> | undefined; // Usar el Observable del servicio
+@Component({
+  selector: 'app-header',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule],
+  templateUrl: './header.component.html',
+  styleUrls: ['./header.component.css']
+})
+export class HeaderComponent implements OnInit, OnDestroy {
+  userData$: Observable<any> | undefined; // Usar el Observable del servicio
   isLoggedIn: boolean = false;
-       private authStatusSubscription: Subscription | undefined;
+  private authStatusSubscription: Subscription | undefined;
+  searchQuery: string = '';
 
-       constructor(public authService: AuthService, private router: Router) {}
+  constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();

@@ -28,7 +28,7 @@ import { Component, OnInit } from '@angular/core';
        }
 
        navigateToCreate(): void {
-         this.router.navigate(['/dashboard-admin/create']);
+         this.router.navigate(['/dashboard-admin/']);
        }
 
        navigateToCategories(): void {

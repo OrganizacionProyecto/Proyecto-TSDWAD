@@ -8,12 +8,17 @@
     <li><a (click)="navigateTo('/productos')">Productos</a></li>
     <li><a (click)="navigateTo('/contacto')">Contacto</a></li>
     <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
+    <li><a (click)="navigateTo('/faq')">faq</a></li>
 
+
+    <!-- Mostrar opciones para usuarios NO logueados -->
     <ng-container *ngIf="!authService.isLoggedIn()">
       <li><a (click)="navigateTo('/login')">Ingresar</a></li>
       <li><a (click)="navigateTo('/registro')">Registro</a></li>
+
     </ng-container>
 
+    <!-- Mostrar opciones para usuarios logueados -->
     <ng-container *ngIf="authService.isLoggedIn()">
       <ng-container *ngIf="userData$ | async as user">
         <li>
@@ -21,40 +26,18 @@
             Bienvenido, {{ user?.first_name || user?.nombre || '' }} {{ user?.last_name || user?.apellido || '' }}
           </a>
         </li>
+
+        <!-- Panel de Administrador: Solo visible para administradores -->
+        <li *ngIf="authService.isAdmin()">
+          <a (click)="navigateTo('/dashboard-admin')" class="admin-panel-link">Panel de Administrador</a>
+        </li>
+
         <li>
           <a (click)="logout()">Cerrar sesión</a>
         </li>
       </ng-container>
     </ng-container>
+
+
   </ul>
 </nav>
-       <div class="logo_nav">
-         <img src="../../../assets/img/Logo_Aymara-removebg-preview.png" alt="Logo" (click)="navigateHome()">
-       </div>
-       <ul>
-         <li><a (click)="navigateTo('/Home')">Inicio</a></li>
-         <li><a (click)="navigateTo('/productos')">Productos</a></li>
-         <li><a (click)="navigateTo('/contacto')">Contacto</a></li>
-         <li><a (click)="navigateTo('/faq')">Preguntas Frecuentes</a></li>
-         <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/login')">Ingresar</a></li>
-         <li *ngIf="!authService.isLoggedIn()"><a (click)="navigateTo('/registro')">Registro</a></li>
-         <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
-         <li *ngIf="authService.isLoggedIn() && authService.isAdmin()">
-           <input
-             type="text"
-             [(ngModel)]="searchQuery"
-             (keyup.enter)="searchProducts()"
-             placeholder="Buscar productos..."
-             class="search-input"
-           />
-         </li>
-       </ul>
-       <div *ngIf="authService.isLoggedIn()">
-         <span *ngIf="authService.isAdmin()">
-           <a (click)="navigateTo('/dashboard-admin')" class="welcome-message">
-             Bienvenido, {{ userData?.username || 'Usuario' }}
-           </a>
-         </span>
-         <a (click)="logout()" class="welcome-message">Cerrar Sesión</a>
-       </div>
-     </nav>
