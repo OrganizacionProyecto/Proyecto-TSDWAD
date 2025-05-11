@@ -1,22 +1,22 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { AuthService } from '../../pages/services/auth.service';
+     import { Router, RouterModule } from '@angular/router';
+     import { CommonModule } from '@angular/common';
+          import { AuthService } from '../../pages/services/auth.service';
 import { Observable, Subscription } from 'rxjs';
 
-@Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.css']
-})
-export class HeaderComponent implements OnInit, OnDestroy {
-  userData$: Observable<any> | undefined; // Usar el Observable del servicio
+     @Component({
+       selector: 'app-header',
+       standalone: true,
+       imports: [CommonModule, RouterModule],
+       templateUrl: './header.component.html',
+       styleUrls: ['./header.component.css']
+     })
+     export class HeaderComponent implements OnInit, OnDestroy {
+       userData$: Observable<any> | undefined; // Usar el Observable del servicio
   isLoggedIn: boolean = false;
-  private authStatusSubscription: Subscription | undefined;
+       private authStatusSubscription: Subscription | undefined;
 
-  constructor(public authService: AuthService, private router: Router) {}
+       constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
@@ -43,16 +43,23 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/']);
-  }
+       logout(): void {
+         this.authService.logout();
+         this.router.navigate(['/login']);
+       }
 
-  navigateHome(): void {
-    this.router.navigate(['/Home']);
-  }
+       navigateHome(): void {
+         this.router.navigate(['/home']);
+       }
 
-  navigateTo(route: string): void {
-    this.router.navigate([route]);
-  }
-}
+       navigateTo(route: string): void {
+         this.router.navigate([route]);
+       }
+
+       searchProducts(): void {
+         // Navega a dashboard-admin con el parámetro de búsqueda para filtrar productos
+         if (this.searchQuery.trim()) {
+           this.router.navigate(['/dashboard-admin'], { queryParams: { search: this.searchQuery } });
+         }
+       }
+     }

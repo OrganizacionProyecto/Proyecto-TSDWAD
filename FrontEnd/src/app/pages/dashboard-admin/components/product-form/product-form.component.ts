@@ -3,19 +3,22 @@ import { Component, OnInit } from '@angular/core';
      import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
      import { MatButtonModule } from '@angular/material/button';
      import { MatInputModule } from '@angular/material/input';
+     import { MatSelectModule } from '@angular/material/select';
+     import { RouterModule } from '@angular/router';
      import { ProductService } from '../../services/product.service';
      import { ActivatedRoute, Router } from '@angular/router';
+     import { Product } from '../../../../core/models/product.model';
 
      @Component({
        selector: 'app-product-form',
        standalone: true,
-       imports: [CommonModule, FormsModule, ReactiveFormsModule, MatButtonModule, MatInputModule],
+       imports: [CommonModule, FormsModule, ReactiveFormsModule, MatButtonModule, MatInputModule, MatSelectModule, RouterModule],
        templateUrl: './product-form.component.html',
        styleUrls: ['./product-form.component.scss']
      })
      export class ProductFormComponent implements OnInit {
        productForm: FormGroup;
-       categories: any[] = [];
+       categories: { id_categoria: number; nombre: string; descripcion: string }[] = [];
        productId?: number;
        fileName = '';
 
@@ -36,15 +39,23 @@ import { Component, OnInit } from '@angular/core';
        }
 
        ngOnInit(): void {
-         this.productService.getCategories().subscribe((categories) => {
-           this.categories = categories;
+         console.log('ngOnInit ejecutado');
+         this.productService.getCategories().subscribe({
+           next: (categories: { id_categoria: number; nombre: string; descripcion: string }[]) => {
+             console.log('Categorías recibidas:', categories);
+             this.categories = categories;
+           },
+           error: (err: any) => console.error('Error al cargar categorías:', err)
          });
 
          this.productId = this.route.snapshot.params['id'];
          if (this.productId) {
-           this.productService.getProduct(this.productId).subscribe((product) => {
-             this.productForm.patchValue(product);
-             this.fileName = typeof product.imagen === 'string' ? product.imagen.split('/').pop() || '' : '';
+           this.productService.getProduct(this.productId).subscribe({
+             next: (product: Product) => {
+               this.productForm.patchValue(product);
+               this.fileName = typeof product.imagen === 'string' ? product.imagen.split('/').pop() || '' : '';
+             },
+             error: (err: any) => console.error('Error al cargar producto:', err)
            });
          }
        }
@@ -55,6 +66,9 @@ import { Component, OnInit } from '@angular/core';
            const file = input.files[0];
            this.productForm.patchValue({ imagen: file });
            this.fileName = file.name;
+         } else {
+           this.productForm.patchValue({ imagen: null });
+           this.fileName = '';
          }
        }
 
@@ -63,12 +77,21 @@ import { Component, OnInit } from '@angular/core';
 
          const formData = new FormData();
          Object.keys(this.productForm.value).forEach((key) => {
-           if (key === 'imagen' && this.productForm.value[key]) {
-             formData.append(key, this.productForm.value[key]);
+           if (key === 'imagen') {
+             if (this.productForm.value[key] instanceof File) {
+               formData.append(key, this.productForm.value[key]);
+             }
            } else if (this.productForm.value[key] !== null) {
-             formData.append(key, this.productForm.value[key]);
+             formData.append(key, String(this.productForm.value[key]));
            }
          });
+
+         // Depurar FormData
+         const formDataDebug: { [key: string]: any } = {};
+         formData.forEach((value, key) => {
+           formDataDebug[key] = value;
+         });
+         console.log('Datos enviados:', formDataDebug);
 
          const request = this.productId
            ? this.productService.updateProduct(this.productId, formData)
@@ -76,7 +99,7 @@ import { Component, OnInit } from '@angular/core';
 
          request.subscribe({
            next: () => this.router.navigate(['/dashboard-admin']),
-           error: (err) => console.error('Error saving product:', err)
+           error: (err: any) => console.error('Error saving product:', err)
          });
        }
      }

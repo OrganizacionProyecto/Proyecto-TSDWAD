@@ -1,54 +1,168 @@
 .container {
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-    border-radius: 25px;
-    margin: 20px auto;
+  max-width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+mat-form-field {
+  width: 100%;
+  font-size: 1rem;
+}
+
+.box-ingresar {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[mat-raised-button][color="primary"] {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+button[mat-raised-button][color="warn"] {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+}
+
+button[mat-raised-button][color="primary"]:hover {
+  background-color: #0056b3;
+}
+
+button[mat-raised-button][color="warn"]:hover {
+  background-color: #c82333;
+}
+
+@media screen and (max-width: 960px) {
+  .container {
+    max-width: 95%;
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .form {
+    gap: 0.8rem;
+  }
+
+  mat-form-field {
+    font-size: 0.95rem;
+  }
+
+  .box-ingresar {
+    font-size: 0.95rem;
+    padding: 0.4rem;
+  }
+
+  button {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    max-width: 100%;
+    padding: 1rem;
+    margin: 1rem auto;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  .form {
+    gap: 0.6rem;
+  }
+
+  mat-form-field {
+    font-size: 0.9rem;
+  }
+
+  .box-ingresar {
+    font-size: 0.9rem;
+    padding: 0.3rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (min-width: 1201px) {
+  .container {
     max-width: 600px;
   }
-  
+
   h2 {
-    color: rgb(68, 157, 68);
-    font-size: 32px;
-    text-align: center;
-    margin-bottom: 20px;
+    font-size: 2rem;
   }
-  
+
   .form {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
+    gap: 1rem;
   }
-  
-  .form-group {
-    margin-bottom: 15px;
+
+  mat-form-field {
+    font-size: 1rem;
   }
-  
+
   .box-ingresar {
-    width: 100%;
-    padding: 8px;
-    border: 0;
-    background-color: #dfdfdf;
-    border-radius: 10px;
-    outline-color: #449d44;
+    font-size: 1rem;
+    padding: 0.5rem;
   }
-  
-  textarea.box-ingresar {
-    height: 100px;
-    resize: vertical;
+
+  button {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
   }
-  
-  .submit-ingresar {
-    background-color: rgb(68, 157, 68);
-    color: #fff;
-    border: 0;
-    padding: 10px;
-    border-radius: 25px;
-    cursor: pointer;
-  }
-  
-  small {
-    color: red;
-    display: block;
-    margin-top: 5px;
-  }
+}

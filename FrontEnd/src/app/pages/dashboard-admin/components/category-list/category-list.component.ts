@@ -8,12 +8,11 @@ import { Component, OnInit } from '@angular/core';
      import { MatIconModule } from '@angular/material/icon';
      import { Router, RouterModule } from '@angular/router';
      import { ProductService } from '../../services/product.service';
-     import { Product } from '../../../../core/models/product.model';
-     import { ProductDeleteComponent } from '../product-delete/product-delete.component';
+     import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-delete-dialog.component';
      import { debounceTime } from 'rxjs/operators';
 
      @Component({
-       selector: 'app-product-list',
+       selector: 'app-category-list',
        standalone: true,
        imports: [
          CommonModule,
@@ -25,14 +24,14 @@ import { Component, OnInit } from '@angular/core';
          MatInputModule,
          MatIconModule,
          RouterModule,
-         ProductDeleteComponent
+         ConfirmDeleteDialogComponent
        ],
-       templateUrl: './product-list.component.html',
-       styleUrls: ['./product-list.component.scss']
+       templateUrl: './category-list.component.html',
+       styleUrls: ['./category-list.component.scss']
      })
-     export class ProductListComponent implements OnInit {
-       products: Product[] = [];
-       displayedColumns: string[] = ['id_producto', 'nombre', 'precio', 'stock', 'id_categoria', 'actions'];
+     export class CategoryListComponent implements OnInit {
+       categories: { id_categoria: number; nombre: string; descripcion: string }[] = [];
+       displayedColumns: string[] = ['id_categoria', 'nombre', 'descripcion', 'actions'];
        searchControl = new FormControl('');
 
        constructor(
@@ -42,35 +41,37 @@ import { Component, OnInit } from '@angular/core';
        ) {}
 
        ngOnInit(): void {
-         this.loadProducts();
+         this.loadCategories();
          this.searchControl.valueChanges.pipe(debounceTime(300)).subscribe((search: string | null) => {
-           this.loadProducts(search || undefined);
+           this.loadCategories(search || undefined);
          });
        }
 
-       loadProducts(search?: string): void {
-         this.productService.getProducts(search).subscribe({
-           next: (products: Product[]) => {
-             this.products = products;
-             console.log('Productos cargados:', products);
+       loadCategories(search?: string): void {
+         this.productService.getCategories().subscribe({
+           next: (categories) => {
+             this.categories = search
+               ? categories.filter(c => c.nombre.toLowerCase().includes(search.toLowerCase()))
+               : categories;
+             console.log('Categorías cargadas:', categories);
            },
-           error: (err: any) => console.error('Error loading products:', err)
+           error: (err: any) => console.error('Error loading categories:', err)
          });
        }
 
-       editProduct(id: number): void {
-         this.router.navigate([`/dashboard-admin/edit/${id}`]);
+       editCategory(id: number): void {
+         this.router.navigate([`/dashboard-admin/categories/edit/${id}`]);
        }
 
-       deleteProduct(id: number): void {
-         const dialogRef = this.dialog.open(ProductDeleteComponent, {
+       deleteCategory(id: number): void {
+         const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
            data: { id }
          });
          dialogRef.afterClosed().subscribe((result) => {
            if (result) {
-             this.productService.deleteProduct(id).subscribe({
-               next: () => this.loadProducts(),
-               error: (err: any) => console.error('Error deleting product:', err)
+             this.productService.deleteCategory(id).subscribe({
+               next: () => this.loadCategories(),
+               error: (err: any) => console.error('Error deleting category:', err)
              });
            }
          });
