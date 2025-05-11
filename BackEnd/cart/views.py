@@ -39,6 +39,7 @@ class CarritoView(generics.RetrieveAPIView):
             total_carrito += precio_total_producto
 
             detalles_producto.append({
+                "id_producto": item.producto.id_producto,
                 'nombre_producto': producto.nombre,
                 'cantidad': item.cantidad,
                 'precio_unitario': str(producto.precio),
@@ -54,6 +55,38 @@ class CarritoView(generics.RetrieveAPIView):
 
 # Vista para agregar un producto al carrito
 class AgregarProductoCarritoView(generics.CreateAPIView):
+    serializer_class = ItemCarritoSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        producto_id = request.data.get('producto_id')
+        cantidad = int(request.data.get('cantidad', 1))
+
+        # Verificar si el producto_id es válido
+        if not producto_id:
+            return Response({"error": "Debes proporcionar un producto_id."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Manejo de errores si el producto no existe
+        try:
+            producto = Producto.objects.get(id_producto=producto_id)
+        except Producto.DoesNotExist:
+            return Response({"error": "Producto no encontrado."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verificar si hay suficiente stock antes de agregar al carrito
+        if producto.stock < cantidad:
+            return Response({"error": f"No hay suficiente stock de {producto.nombre}."}, status=status.HTTP_400_BAD_REQUEST)
+
+        carrito, _ = Carrito.objects.get_or_create(usuario=request.user)
+
+        # Buscar si ya existe el producto en el carrito
+        item, created = ItemCarrito.objects.get_or_create(carrito=carrito, producto=producto)
+        if not created:
+            item.cantidad += cantidad
+        else:
+            item.cantidad = cantidad
+        item.save()
+
+        return Response({"success": "Producto agregado al carrito."}, status=status.HTTP_200_OK)
     serializer_class = ItemCarritoSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -220,7 +253,7 @@ def generar_factura_pdf(pedido_id):
     buffer.seek(0)
     return buffer
 
-# Vista para descargar la factura como PDF
+# Descargar la factura como PDF
 class DescargarFacturaView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -236,6 +269,64 @@ class DescargarFacturaView(generics.GenericAPIView):
 
 
 class ModificarProductoCarritoView(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    @transaction.atomic
+    def update(self, request, producto_id):
+        accion = request.data.get('accion')
+        try:
+            cantidad = int(request.data.get('cantidad', 1))
+            if cantidad <= 0:
+                return Response(
+                    {'error': 'La cantidad debe ser mayor a 0'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        except (TypeError, ValueError):
+            return Response(
+                {'error': 'La cantidad debe ser un número válido'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            producto = Producto.objects.select_for_update().get(id_producto=producto_id)
+        except Producto.DoesNotExist:
+            return Response(
+                {'error': 'Producto no encontrado'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        carrito = get_object_or_404(Carrito, usuario=request.user)
+        item = get_object_or_404(ItemCarrito, carrito=carrito, producto=producto)
+
+        if accion == 'aumentar':
+            if producto.stock < cantidad:
+                return Response(
+                    {'error': f'No hay suficiente stock disponible para agregar {cantidad} unidades'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            # Aumentar la cantidad del producto en el carrito
+            item.cantidad += cantidad
+            producto.stock -= cantidad  # Reducir el stock del producto en la tienda
+        elif accion == 'disminuir':
+            # Verificar que la cantidad a disminuir no sea mayor a la actual en el carrito
+            if item.cantidad < cantidad:
+                return Response(
+                    {'error': f'No hay suficientes items en el carrito para disminuir {cantidad} unidades'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            item.cantidad -= cantidad
+            producto.stock += cantidad
+        else:
+            return Response(
+                {'error': 'Acción no válida'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        item.save()
+        producto.save()
+
+        serializer = ItemCarritoSerializer(item)
+        return Response(serializer.data)
     permission_classes = [IsAuthenticated]
 
     @transaction.atomic

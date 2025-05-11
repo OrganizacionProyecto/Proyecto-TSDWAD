@@ -14,9 +14,11 @@ class ItemCarritoSerializer(serializers.ModelSerializer):
         fields = ['id', 'producto_id', 'producto_detalle', 'cantidad']
 
     def validate_producto_id(self, value):
-        if not Producto.objects.filter(id_producto=value).exists():
+        try:
+            producto = Producto.objects.get(id_producto=value)
+        except Producto.DoesNotExist:
             raise serializers.ValidationError("Producto no encontrado.")
-        return value
+        return producto
 
 class PedidoSerializer(serializers.ModelSerializer):
     numero_tarjeta = serializers.CharField(write_only=True, required=False)
@@ -42,9 +44,8 @@ class PedidoSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'usuario', 'total', 'fecha_creacion']
 
     def validate(self, data):
-        metodo = data.get("metodo_pago", "").lower()  # Convertir a minúsculas 
+        metodo = data.get("metodo_pago", "").lower()
 
-        # Validación para el método de pago "tarjeta"
         if metodo == "tarjeta":
             campos_tarjeta = ['numero_tarjeta', 'nombre_titular', 'vencimiento', 'cvv']
             faltantes = [campo for campo in campos_tarjeta if not data.get(campo)]
@@ -53,21 +54,20 @@ class PedidoSerializer(serializers.ModelSerializer):
                     campo: "Este campo es obligatorio para pagos con tarjeta."
                     for campo in faltantes
                 })
-        
-        # Validación para el método de pago "efectivo"
+
         elif metodo == "efectivo":
             if not data.get("direccion_entrega"):
                 raise serializers.ValidationError({"direccion_entrega": "Este campo es obligatorio para pagos en efectivo."})
             if not data.get("telefono"):
                 raise serializers.ValidationError({"telefono": "Este campo es obligatorio para pagos en efectivo."})
-        
         else:
             raise serializers.ValidationError({"metodo_pago": "Debe ser 'tarjeta' o 'efectivo'."})
 
         return data
 
-    
 class CarritoSerializer(serializers.ModelSerializer):
+    items = ItemCarritoSerializer(many=True, read_only=True)
+
     class Meta:
         model = Carrito
         fields = ['usuario', 'items']

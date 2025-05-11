@@ -17,12 +17,13 @@
         <tr *ngFor="let producto of carrito.detalles_producto">
           <td>{{ producto.nombre_producto }}</td>
           <td>
-            <input type="number" [(ngModel)]="producto.cantidad" min="1" />
+            <!-- Input para modificar la cantidad -->
+            <input type="number" [(ngModel)]="producto.cantidad" min="1" (change)="modificarCantidad(producto, producto.cantidad)" />
           </td>
-          <td>${{ producto.precio_unitario }}</td>
-          <td>${{ producto.total_producto }}</td>
+          <td>${{ producto.precio_unitario | number: '1.2-2' }}</td>
+          <td>${{ producto.total_producto | number: '1.2-2' }}</td>
           <td>
-            <button class="btn actualizar" (click)="modificarCantidad(producto, producto.cantidad)">Actualizar</button>
+            <!-- Botón para eliminar el producto -->
             <button class="btn eliminar" (click)="eliminarProducto(producto)">Eliminar</button>
           </td>
         </tr>
@@ -30,7 +31,7 @@
     </table>
 
     <div class="total-carrito">
-      <strong>Total: ${{ carrito.total_carrito }}</strong>
+      <strong>Total: ${{ carrito.total_carrito | number: '1.2-2' }}</strong>
     </div>
 
     <div class="acciones-carrito">
