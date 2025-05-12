@@ -25,7 +25,7 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userDataSubscription = this.authService.userData$.subscribe(data => {
       if (data) {
-        this.userData = { ...data }; // Actualiza el objeto para detección de cambios
+        this.userData = { ...data }; 
       }
     });
   }

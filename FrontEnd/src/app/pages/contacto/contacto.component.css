@@ -1,182 +1,140 @@
 .container-contacto {
   display: flex;
   background-color: rgba(255, 255, 255, 0.6);
-  height: 70%;
   width: 85%;
+  padding: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
   margin: auto;
   margin-top: 150px;
   border-radius: 25px;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .form {
-  padding: 3.5em 4em;
+  padding: 2em;
   width: 45%;
   display: flex;
   flex-direction: column;
   align-self: center;
+  box-sizing: border-box;
 }
 
 .form2 {
-  padding: 4em 7em;
-  width: 55%;
+  padding: 2em;
+  width: 50%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 }
 
 .form h3 {
-  font-size: 45px;
+  font-size: 32px;
   color: rgb(68, 157, 68);
   font-weight: 600;
-  margin-bottom: 25px;
-  font-family:  sans-serif;
-  border-top-right-radius: 90%;
-  border-top-left-radius: 90%;
-  border-bottom-left-radius: 10%;
-  border-bottom-right-radius: 10%;
-  box-shadow:0 0 10px -5px #fff;
+  margin-bottom: 15px;
   text-align: center;
 }
 
 .form p {
-  margin: 0 0 0;
   text-align: center;
   color: #2e6329;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .numero_tel {
-  font-size: 50px;
+  font-size: 28px;
   color: rgb(68, 157, 68);
   font-weight: 600;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
 .label {
-  font-size: 15px;
-  color: rgb(4, 31, 13);
+  font-size: 14px;
+  color: #2e6329;
+  margin-bottom: 8px;
+}
+
+.box, .half-box {
+  background-color: #ffffff84;
+  padding: 10px;
+  border-radius: 15px;
   margin-bottom: 15px;
-}
-
-.box {
-  border: 0;
-  background-color: #ffffff84;
-  padding: 6px;
-  border-radius: 25px;
-  margin-bottom: 25px;
-  outline-color: #449d44;
-  box-sizing: border-box;
-}
-
-.half-box{
-  border: 0;
-  background-color: #ffffff84;
-  padding: 6px;
-  border-radius: 25px;
-  margin-bottom: 10px;
-  outline-color: #449d44;
+  border: 1px solid #449d44;
   width: 100%;
   box-sizing: border-box;
+}
+
+textarea.box {
+  resize: none;
 }
 
 input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
-  height: 1px;
+  height: 4px;
   background: #2e632940;
-  border-radius:5px;
+  border-radius: 5px;
   outline: none;
-  
+  margin-bottom: 15px;
 }
 
-input[type="range"]:hover {
-  background: #2e632984;
-}
-
-
-/*Chrome - Safari*/
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  background: transparent;
+  background: #2e6329;
   cursor: pointer;
-  border: 3px solid #2e6329 ;
-  margin-top: -1px; 
 }
 
-/* Firefox */
 input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-  background: transparent;
+  background: #2e6329;
   cursor: pointer;
-  border: 3px solid #2e6329 ;
-  ;
 }
-
-/* IE/Edge  */
-input[type="range"]::-ms-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
-  border: 3px solid #2e6329 ;
-}
-
 
 .submit {
   background-color: rgb(68, 157, 68);
-  border: 0;
-  padding: 8px;
+  padding: 10px;
   color: #fff;
-  font-size: 15px;
-  border-radius: 25px;
+  font-size: 14px;
+  border-radius: 15px;
   width: 100%;
-  margin-top: 10px;
-  
+  cursor: pointer;
 }
 
-.info {
-  margin-top: 5%;
-  flex-direction: column;
+.submit:hover {
+  background-color: #44a344;
 }
-
 
 .warning {
   color: red;
   font-size: 12px;
-  margin-top: -20px;
   text-align: center;
-  display: block;
-  
+  margin-bottom: 10px;
 }
 
-  @media (max-width: 992px) {
-    .container-contacto {
-      flex-direction: column;
-      height: auto;
-    }
+.info {
+  margin-top: 20px;
+}
 
-    .form, .form2 {
-      width: 100%;
-      padding: 2em;
-    }
-
-    #row {
-      flex-wrap: wrap; 
-    }
-  
-    #row > div {
-      width: 50%;
-      display: flex;
-      flex-direction: column; 
-
-    
+@media (max-width: 992px) {
+  .container-contacto {
+    flex-direction: column;
+    width: 95%;
+    padding: 15px;
   }
-}   
+
+  .form, .form2 {
+    width: 100%;
+    padding: 15px;
+  }
+
+  .form h3 {
+    font-size: 24px;
+  }
+}

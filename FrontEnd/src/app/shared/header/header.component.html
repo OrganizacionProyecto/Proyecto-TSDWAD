@@ -7,7 +7,6 @@
     <li><a (click)="navigateTo('/Home')">Inicio</a></li>
     <li><a (click)="navigateTo('/productos')">Productos</a></li>
     <li><a (click)="navigateTo('/contacto')">Contacto</a></li>
-    <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
     <li><a (click)="navigateTo('/faq')">faq</a></li>
 
 
@@ -21,11 +20,16 @@
     <!-- Mostrar opciones para usuarios logueados -->
     <ng-container *ngIf="authService.isLoggedIn()">
       <ng-container *ngIf="userData$ | async as user">
+
+       <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
+
         <li>
+
           <a (click)="navigateTo('/dashboard')" class="welcome-message">
             Bienvenido, {{ user?.first_name || user?.nombre || '' }} {{ user?.last_name || user?.apellido || '' }}
           </a>
         </li>
+
 
         <!-- Panel de Administrador: Solo visible para administradores -->
         <li *ngIf="authService.isAdmin()">

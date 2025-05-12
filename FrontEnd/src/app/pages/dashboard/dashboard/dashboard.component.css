@@ -19,9 +19,18 @@
   margin: 10px 0;
 }
 
-.dashboard-container button {
-  margin-top: 10px;
-  padding: 10px 20px;
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.action-buttons button:not(.delete-button) {
+  flex: 1 1 calc(50% - 10px); 
+  max-width: 48%;
+  padding: 10px;
   background-color: #44a344;
   color: white;
   border: none;
@@ -29,7 +38,7 @@
   cursor: pointer;
 }
 
-.dashboard-container button:hover {
+.action-buttons button:not(.delete-button):hover {
   background-color: #369336;
 }
 
@@ -40,4 +49,37 @@
 
 .btn-info:hover {
   background-color: #286090;
+}
+
+.btn-primary {
+  background-color: #0275d8;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background-color: #025aa5;
+}
+
+.btn-success {
+  background-color: #44a344;
+  color: #fff;
+}
+
+.btn-success:hover {
+  background-color: #369336;
+}
+
+.delete-button {
+  padding: 5px 10px;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  flex: 1 1 100%;
+  max-width: 100%;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
 }
