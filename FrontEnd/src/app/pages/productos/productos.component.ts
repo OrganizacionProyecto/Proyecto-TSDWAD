@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Router} from '@angular/router';
+import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CarritoService } from '../../../services/carrito.service';
 import { ProductoService, Producto } from '../../../services/productos.service';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
+import { AuthService } from '../../pages/services/auth.service';  // Asegúrate de tener el import correcto
 
 @Component({
   selector: 'app-productos',
@@ -28,7 +29,8 @@ export class ProductosComponent implements OnInit {
   constructor(
     private productoService: ProductoService,
     private carritoService: CarritoService,
-    private router: Router
+    private router: Router,
+    public authService: AuthService  // Cambia a public
   ) {}
 
   ngOnInit(): void {
@@ -62,7 +64,7 @@ export class ProductosComponent implements OnInit {
       switch (criterio) {
         case '0': // Nombre
           return producto.nombre.toLowerCase().includes(texto);
-          case '1': // Categoría
+        case '1': // Categoría
           const categoriaNombre = this.categoriaMap[producto.id_categoria]?.toLowerCase() || '';
           return categoriaNombre.includes(texto);
         default:
@@ -70,7 +72,6 @@ export class ProductosComponent implements OnInit {
       }
     });
   }
-  
 
   agregarAlCarrito(producto: Producto, cantidad: number): void {
     if (cantidad <= 0 || cantidad > producto.stock) {
