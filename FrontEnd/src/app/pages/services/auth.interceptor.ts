@@ -1,21 +1,46 @@
 import { Injectable, Injector } from '@angular/core';
-     import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-     import { Observable } from 'rxjs';
-     import { AuthService } from './auth.service';
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from './auth.service';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { TokenService } from './token.service';
 
-     @Injectable()
-     export class AuthInterceptor implements HttpInterceptor {
-       constructor(private injector: Injector) {}
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
 
-       intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-         const authService = this.injector.get(AuthService);
-         const accessToken = authService.getAccessToken();
-         if (accessToken) {
-           const cloned = req.clone({
-             headers: req.headers.set('Authorization', `Bearer ${accessToken}`)
-           });
-           return next.handle(cloned);
-         }
-         return next.handle(req);
-       }
-     }
+  constructor(private tokenService: TokenService, private injector: Injector) {}
+
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const accessToken = this.tokenService.getAccessToken();
+
+    if (accessToken) {
+      const cloned = req.clone({
+        headers: req.headers.set('Authorization', `Bearer ${accessToken}`)
+      });
+
+      return next.handle(cloned).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            // Use the injector to get AuthService lazily
+            const authService = this.injector.get(AuthService);
+            return authService.refreshToken().pipe(
+              switchMap((res) => {
+                const clonedRetry = req.clone({
+                  headers: req.headers.set('Authorization', `Bearer ${res.access}`)
+                });
+                return next.handle(clonedRetry);
+              }),
+              catchError(() => {
+                authService.logout();
+                return throwError(() => new Error('Error refreshing token'));
+              })
+            );
+          }
+          return throwError(() => error);
+        })
+      );
+    }
+
+    return next.handle(req);
+  }
+}
