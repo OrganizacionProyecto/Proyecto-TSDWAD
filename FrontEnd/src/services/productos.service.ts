@@ -31,9 +31,9 @@ export interface Favorito {
   providedIn: 'root'
 })
 export class ProductoService {
-  private baseUrl = 'http://127.0.0.1:8000/api/products/productos/';  // Ruta base para productos
-  private categoriasUrl = 'http://127.0.0.1:8000/api/products/categorias/';  // Ruta para categorías
-  private favoritosUrl = 'http://127.0.0.1:8000/api/products/favoritos/';  // Ruta para favoritos
+  private baseUrl = 'https://aymara.pythonanywhere.com/api/products/productos/';  // Ruta base para productos
+  private categoriasUrl = 'https://aymara.pythonanywhere.com/api/products/categorias/';  // Ruta para categorías
+  private favoritosUrl = 'https://aymara.pythonanywhere.com/api/products/favoritos/';  // Ruta para favoritos
 
   constructor(private http: HttpClient) {}
 

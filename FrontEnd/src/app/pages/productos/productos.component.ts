@@ -5,7 +5,7 @@ import { CarritoService } from '../../../services/carrito.service';
 import { ProductoService, Producto } from '../../../services/productos.service';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
-import { AuthService } from '../../pages/services/auth.service';  // Asegúrate de tener el import correcto
+import { AuthService } from '../../pages/services/auth.service'; 
 
 @Component({
   selector: 'app-productos',
