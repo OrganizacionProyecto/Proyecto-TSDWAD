@@ -17,26 +17,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn: boolean = false;
   private authStatusSubscription: Subscription | undefined;
   searchQuery: string = '';
+  menuOpen: boolean = false;
 
   constructor(public authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
-    this.userData$ = this.authService.userData$; // Suscribirse al Observable
+    this.userData$ = this.authService.userData$;
 
     this.authStatusSubscription = this.authService.authStatus$.subscribe(status => {
       this.isLoggedIn = status;
       if (this.isLoggedIn && !this.userData$) {
-        this.userData$ = this.authService.userData$; // Volver a suscribir si el estado cambia
+        this.userData$ = this.authService.userData$;
       } else if (!this.isLoggedIn) {
-        this.userData$ = undefined; // Limpiar userData$ al cerrar sesión
+        this.userData$ = undefined;
       }
     });
 
     if (!this.isLoggedIn) {
       this.router.navigate(['/']);
     }
-    // Ya no necesitamos llamar getUserData directamente aquí, el Observable lo maneja
   }
 
   ngOnDestroy(): void {
@@ -45,23 +45,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
     }
   }
 
-       logout(): void {
-         this.authService.logout();
-         this.router.navigate(['/login']);
-       }
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
+  }
 
-       navigateHome(): void {
-         this.router.navigate(['/home']);
-       }
+  navigateHome(): void {
+    this.router.navigate(['/home']);
+  }
 
-       navigateTo(route: string): void {
-         this.router.navigate([route]);
-       }
+  navigateTo(route: string): void {
+    this.router.navigate([route]);
+  }
 
-       searchProducts(): void {
-         // Navega a dashboard-admin con el parámetro de búsqueda para filtrar productos
-         if (this.searchQuery.trim()) {
-           this.router.navigate(['/dashboard-admin'], { queryParams: { search: this.searchQuery } });
-         }
-       }
-     }
+  searchProducts(): void {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/dashboard-admin'], { queryParams: { search: this.searchQuery } });
+    }
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+}
