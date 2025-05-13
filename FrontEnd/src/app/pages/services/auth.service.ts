@@ -20,7 +20,6 @@ export class AuthService {
     private router: Router,
     private tokenService: TokenService
   ) {
-    // Cargar los datos del usuario al inicializar el servicio si hay un token
     if (this.hasToken()) {
       this.loadUserData();
     }
@@ -104,7 +103,7 @@ refreshToken(): Observable<any> {
           this.tokenService.setAccessToken(res.access);
           this.tokenService.setRefreshToken(res.refresh);
           this.authStatusSubject.next(true);
-          this.loadUserData(); // Cargar datos después del login
+          this.loadUserData(); 
         }
       }),
       catchError((error: HttpErrorResponse) => {
@@ -122,7 +121,7 @@ refreshToken(): Observable<any> {
   logout(): void {
     this.tokenService.removeTokens();
     this.authStatusSubject.next(false);
-    this.userDataSubject.next(null); // Limpiar los datos del usuario al logout
+    this.userDataSubject.next(null); 
     this.router.navigate(['/']); // Redirige al inicio ("/")
   }
 
@@ -130,7 +129,7 @@ refreshToken(): Observable<any> {
   updateUser(data: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/users/me/`, data).pipe(
       tap((updatedUser) => {
-        this.userDataSubject.next(updatedUser); // actualiza el observable global
+        this.userDataSubject.next(updatedUser); 
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Error al actualizar el usuario', error);
@@ -187,13 +186,5 @@ refreshToken(): Observable<any> {
     return userData && userData.app_role === 'admin_app';
   }
 
-  // Manejo de errores (este método ya no es necesario con el manejo individual en cada método)
-  // private handleError(error: HttpErrorResponse): Observable<any> {
-  //   console.error('Error de autenticación', error);
-  //   let errorMessage = 'Error de autenticación';
-  //   if (error.error && error.error.message) {
-  //     errorMessage = error.error.message;
-  //   }
-  //   return throwError(() => new Error(errorMessage));
-  // }
+
 }
