@@ -15,6 +15,7 @@ export class AuthGuard implements CanActivate {
     return this.authService.authStatus$.pipe(
       map(isLoggedIn => {
         if (!isLoggedIn) {
+          // Si el usuario no está logueado (o su sesión ha expirado), redirigir al login
           this.router.navigate(['/login']);
           return false;
         }
@@ -23,3 +24,4 @@ export class AuthGuard implements CanActivate {
     );
   }
 }
+

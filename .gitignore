@@ -15,6 +15,7 @@ db.sqlite3
 
 # Entorno virtual fuera de la carpeta de BackEnd
 /venv/
+env/
 
 # VSCode
 .vscode/

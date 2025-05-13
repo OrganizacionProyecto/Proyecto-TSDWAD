@@ -1,0 +1,73 @@
+/* Estilo para el contenedor del formulario */
+.account-settings-form {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Estilo para el título */
+.account-settings-form h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Estilo para el formulario */
+.account-settings-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Estilo para las etiquetas */
+.account-settings-form label {
+  font-size: 1rem;
+  color: #555;
+  text-align: left;
+}
+
+/* Estilo para los inputs */
+.account-settings-form input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #b9b6b6;
+  border-radius: 5px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #c5c2c2;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.account-settings-form input:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+  outline: none;
+}
+
+/* Estilo para el botón */
+.account-settings-form .btn-primary {
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.account-settings-form .btn-primary:hover {
+  background-color: #218838;
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 768px) {
+  .account-settings-form {
+    max-width: 90%;
+    padding: 15px;
+  }
+}

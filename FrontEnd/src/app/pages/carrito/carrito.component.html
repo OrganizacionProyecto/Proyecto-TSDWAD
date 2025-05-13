@@ -1,23 +1,47 @@
+<div class="carrito-wrapper">
+  <h2>Carrito de Compras</h2>
+  <p *ngIf="carrito.detalles_producto.length === 0">Tu carrito está vacío.</p>
 
-<div class="carrito">
-  <h2>Carrito</h2>
+  <div *ngIf="carrito.detalles_producto.length > 0">
+    <table class="carrito-tabla">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario</th>
+          <th>Total</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let producto of carrito.detalles_producto">
+          <td>{{ producto.nombre_producto }}</td>
+          <td>
+            <!-- Botones para aumentar o disminuir -->
+            <button class="btn disminuir" (click)="modificarCantidad(producto, producto.cantidad - 1, 'disminuir')">-</button>
+            
+            <!-- Input para modificar la cantidad -->
+            <input type="number" [(ngModel)]="producto.cantidad" min="1" 
+              (change)="modificarCantidad(producto, producto.cantidad, 'modificar')"/>
 
-  <!-- Verificar que carrito y productos no sean nulos o undefined -->
-  <div *ngIf="carrito && carrito.productos && carrito.productos.length > 0; else carritoVacio">
-    <div *ngFor="let producto of carrito.productos" class="producto">
-      <p><strong>{{ producto.nombre }}</strong></p>
-      <p>Precio unitario: {{ producto.precio | currency }}</p>
-      <p>Cantidad: 
-        <input type="number" [(ngModel)]="producto.cantidad" (change)="modificarCantidad(producto.id_producto, producto.cantidad)" />
-      </p>
-      <p>Subtotal: {{ producto.cantidad * producto.precio | currency }}</p>
-      <button (click)="eliminarProducto(producto.id_producto)">Eliminar</button>
+            <button class="btn aumentar" (click)="modificarCantidad(producto, producto.cantidad + 1, 'aumentar')">+</button>
+          </td>
+          <td>${{ producto.precio_unitario | number: '1.2-2' }}</td>
+          <td>${{ producto.total_producto | number: '1.2-2' }}</td>
+          <td>
+            <!-- Botón para eliminar el producto -->
+            <button class="btn eliminar" (click)="eliminarProducto(producto)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="total-carrito">
+      <strong>Total: ${{ carrito.total_carrito | number: '1.2-2' }}</strong>
     </div>
-    <hr />
-    <p><strong>Total:</strong> {{ carrito.total | currency }}</p>
-  </div>
 
-  <ng-template #carritoVacio>
-    <p>Tu carrito está vacío.</p>
-  </ng-template>
+    <div class="acciones-carrito">
+      <button class="btn realizar-pedido" (click)="irAPedido()">Realizar Pedido</button>
+    </div>
+  </div>
 </div>

@@ -1,45 +1,46 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, switchMap, catchError } from 'rxjs';
 import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
+import { Observable, throwError } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
+import { TokenService } from './token.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private tokenService: TokenService, private injector: Injector) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const accessToken = this.authService.getAccessToken();
+    const accessToken = this.tokenService.getAccessToken();
 
-    let authReq = req;
     if (accessToken) {
-      authReq = req.clone({
+      const cloned = req.clone({
         headers: req.headers.set('Authorization', `Bearer ${accessToken}`)
       });
+
+      return next.handle(cloned).pipe(
+        catchError((error: HttpErrorResponse) => {
+          if (error.status === 401) {
+            // Use the injector to get AuthService lazily
+            const authService = this.injector.get(AuthService);
+            return authService.refreshToken().pipe(
+              switchMap((res) => {
+                const clonedRetry = req.clone({
+                  headers: req.headers.set('Authorization', `Bearer ${res.access}`)
+                });
+                return next.handle(clonedRetry);
+              }),
+              catchError(() => {
+                authService.logout();
+                return throwError(() => new Error('Error refreshing token'));
+              })
+            );
+          }
+          return throwError(() => error);
+        })
+      );
     }
 
-    return next.handle(authReq).pipe(
-      catchError((error: HttpErrorResponse) => {
-        if (error.status === 401 && !req.url.includes('/auth/token/refresh/')) {
-          // Si falló por token expirado, intento refrescar
-          return this.authService.refreshToken().pipe(
-            switchMap((res: any) => {
-              const newToken = res.access;
-              const clonedReq = req.clone({
-                headers: req.headers.set('Authorization', `Bearer ${newToken}`)
-              });
-              return next.handle(clonedReq);
-            }),
-            catchError((err) => {
-              this.authService.logout();
-              this.router.navigate(['/login']);
-              return throwError(() => err);
-            })
-          );
-        }
-        return throwError(() => error);
-      })
-    );
+    return next.handle(req);
   }
 }

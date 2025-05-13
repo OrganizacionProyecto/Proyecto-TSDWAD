@@ -1,9 +1,13 @@
-import { Producto } from './productos.model';
+export interface DetalleProducto {
+  id_producto: number;           
+  nombre_producto: string;
+  cantidad: number;              
+  precio_unitario: number;       
+  total_producto?: number;  
+}
 
 export interface Carrito {
-  id: number;
-  productos: Producto[];
-  total: number;
-  direccionEnvio: string;
-  telefono: string;
+  usuario?: number;
+  detalles_producto: DetalleProducto[];
+  total_carrito: number;  
 }

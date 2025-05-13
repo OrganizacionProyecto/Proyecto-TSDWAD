@@ -1,17 +1,22 @@
 .container-ingresar {
   display: flex;
-  background-color: rgba(255, 255, 255, 0.6);
-  width: 40%;
+  background-color: #fff;
+  width: 90%; /* Ajuste relativo */
+  max-width: 500px; /* Limita el ancho en pantallas grandes */
+  min-height: 60vh; /* Altura mínima basada en el viewport */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
-  margin: 50px auto;
-  justify-content: space-around;
+  margin: 20px auto; /* Reducir margen superior */
+  justify-content: center;
   align-items: center;
   border-radius: 25px;
-  min-width:500px;
+  padding: 15px;
+  box-sizing: border-box;
 }
 
 .container-ingresar_formulario {
-  min-width: 400px;
+  width: 100%; /* Ocupa todo el contenedor padre */
+  max-width: 400px; /* Máximo ancho */
+  padding: 0 10px;
 }
 
 .registerLink,
@@ -20,39 +25,35 @@
 }
 
 .container-ingresar h3 {
-  font-size: 45px;
+  font-size: 2.5rem; /* 40px base */
   color: rgb(68, 157, 68);
   font-weight: 600;
-  font-family:sans-serif;
-  margin-bottom: 45px;
+  margin-bottom: 15px;
   text-align: center;
   box-shadow:0 0 10px -5px #fff;
   border-radius:25% 25% 10% 10%;
 }
 
-.formLogin {
-  padding: 3.5em 2em;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-
+.formLogin,
 .registroForm {
-  padding: 3.5em 2em;
+  padding: 2em 1.5em; /* Reducido */
   display: flex;
   flex-direction: column;
   text-align: center;
+  gap: 10px; /* Espacio uniforme entre elementos */
+  width: 100%;
 }
 
 .box-ingresar {
   border: 0;
-  background-color: #ffffff84;
+  background-color: #dfdfdf;
   padding: 8px;
-  min-width: 350px;
-  width: 90%; 
-  border-radius: 25px;
-  margin-bottom: 25px;
+  border-radius: 10px;
+  margin-bottom: 10px;
   outline-color: #449d44;
+  width: 100%; /* Ocupa todo el ancho */
+  box-sizing: border-box;
+  font-size: 1rem; /* 16px base */
 }
 
 .submit-ingresar {
@@ -60,31 +61,87 @@
   border: 0;
   padding: 8px;
   color: #fff;
-  font-size: 15px;
+  font-size: 1rem; /* 16px base */
   border-radius: 25px;
-  margin: 20px auto;
+  margin-top: 10px;
   width: 100%;
+  max-width: 200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.formLogin p {
-  margin: 0 0 0;
-  text-align: center;
-  color: #2e6329;
-  font-size: 20px;
-}
-
+.formLogin p,
 .registroForm p {
-  margin: 0 0 0;
+  margin: 0;
   text-align: center;
   color: #2e6329;
-  font-size: 20px;
+  font-size: 1.25rem; /* 20px base */
 }
 
 .warning {
   color: red;
-  font-size: 12px;
-  margin-top: -20px;
-  text-align: center;
-  display: block;
-  
+}
+
+/* Media query para pantallas pequeñas (≤600px) */
+@media (max-width: 600px) {
+  .container-ingresar {
+    width: 95%;
+    min-height: 50vh; /* Reducir altura */
+    margin: 10px auto;
+    padding: 10px;
+  }
+
+  .container-ingresar_formulario {
+    padding: 0 5px;
+  }
+
+  .container-ingresar h3 {
+    font-size: 1.75rem; /* 28px */
+    margin-bottom: 10px;
+  }
+
+  .formLogin,
+  .registroForm {
+    padding: 1em;
+    gap: 8px;
+  }
+
+  .box-ingresar {
+    padding: 6px;
+    font-size: 0.875rem; /* 14px */
+  }
+
+  .submit-ingresar {
+    padding: 6px;
+    font-size: 0.875rem; /* 14px */
+    max-width: 150px;
+  }
+
+  .formLogin p,
+  .registroForm p {
+    font-size: 1rem; /* 16px */
+  }
+}
+
+/* Media query para pantallas muy pequeñas (≤400px) */
+@media (max-width: 400px) {
+  .container-ingresar h3 {
+    font-size: 1.5rem; /* 24px */
+  }
+
+  .box-ingresar {
+    padding: 5px;
+    font-size: 0.75rem; /* 12px */
+  }
+
+  .submit-ingresar {
+    padding: 5px;
+    font-size: 0.75rem; /* 12px */
+    max-width: 120px;
+  }
+
+  .formLogin p,
+  .registroForm p {
+    font-size: 0.875rem; /* 14px */
+  }
 }
