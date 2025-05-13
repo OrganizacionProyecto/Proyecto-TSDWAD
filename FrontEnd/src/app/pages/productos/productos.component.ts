@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CarritoService } from '../../../services/carrito.service';
-import { ProductoService, Producto } from '../../../services/productos.service';
+import { ProductoService, Producto, Categoria } from '../../../services/productos.service';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
-import { AuthService } from '../../pages/services/auth.service';  // Asegúrate de tener el import correcto
+import { AuthService } from '../../pages/services/auth.service'; 
 
 @Component({
   selector: 'app-productos',
@@ -17,24 +17,23 @@ import { AuthService } from '../../pages/services/auth.service';  // Asegúrate 
 export class ProductosComponent implements OnInit {
   productos: Producto[] = [];
   productosOriginales: Producto[] = [];
+  categorias: Categoria[] = [];
+  categoriaMap: { [key: number]: string } = {};
   loading: boolean = true;
   buscarTexto: string = '';
-  criterioSeleccionado: string = '0'; 
-  categoriaMap: { [key: number]: string } = {
-    1: 'Crocantes',
-    2: 'Bebidas',
-    3: 'Alimentos secos',
-  };
+  criterioSeleccionado: string = '0';
+  filtroCategoria: string = ''; 
 
   constructor(
     private productoService: ProductoService,
     private carritoService: CarritoService,
     private router: Router,
-    public authService: AuthService  // Cambia a public
+    public authService: AuthService  
   ) {}
 
   ngOnInit(): void {
     this.obtenerProductos();
+    this.obtenerCategorias();
   }
 
   obtenerProductos(): void {
@@ -51,25 +50,34 @@ export class ProductosComponent implements OnInit {
     );
   }
 
+  obtenerCategorias(): void {
+    this.productoService.obtenerCategorias().subscribe(
+      (categoriasData: Categoria[]) => {
+        this.categorias = categoriasData;
+
+        // Actualizamos el mapa de categorías
+        this.categoriaMap = {};
+        categoriasData.forEach(categoria => {
+          this.categoriaMap[categoria.id_categoria] = categoria.nombre;
+        });
+      },
+      (error) => {
+        console.error('Error al obtener categorías:', error);
+      }
+    );
+  }
+
   filtrarProductos(): void {
     const texto = this.buscarTexto.trim().toLowerCase();
-    const criterio = this.criterioSeleccionado;
-  
-    if (!texto) {
-      this.productos = this.productosOriginales; 
-      return;
-    }
-  
+    const categoriaSeleccionada = this.filtroCategoria;
+
     this.productos = this.productosOriginales.filter((producto) => {
-      switch (criterio) {
-        case '0': // Nombre
-          return producto.nombre.toLowerCase().includes(texto);
-        case '1': // Categoría
-          const categoriaNombre = this.categoriaMap[producto.id_categoria]?.toLowerCase() || '';
-          return categoriaNombre.includes(texto);
-        default:
-          return true;
-      }
+      const coincideTexto = producto.nombre.toLowerCase().includes(texto);
+      const coincideCategoria = categoriaSeleccionada 
+        ? producto.id_categoria.toString() === categoriaSeleccionada 
+        : true;
+
+      return coincideTexto && coincideCategoria;
     });
   }
 
@@ -80,7 +88,7 @@ export class ProductosComponent implements OnInit {
     }
 
     this.carritoService.agregarProductoAlCarrito(producto.id_producto, cantidad).subscribe(
-      (response) => {
+      () => {
         this.router.navigate(['carrito']);
       },
       (error) => {

@@ -9,10 +9,9 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = 'https://aymara.pythonanywhere.com/api';
 
   constructor(private http: HttpClient) {}
 
-  // Ahora este servicio podría tener métodos para interactuar con *otros* usuarios
-  // si tu aplicación lo requiere (por ejemplo, obtener lista de usuarios, detalles de un usuario específico, etc.).
+
 }
