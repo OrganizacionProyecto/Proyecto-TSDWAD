@@ -1,0 +1,119 @@
+.container {
+  padding: 2rem;
+  text-align: center;
+  box-sizing: border-box;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+h2 {
+  color: rgb(68, 157, 68);
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+p {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+button[mat-raised-button] {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[color="warn"] {
+  background-color: #dc3545;
+  color: white;
+}
+
+button[color="warn"]:hover {
+  background-color: #c82333;
+}
+
+button:not([color="warn"]) {
+  background-color: #007bff;
+  color: white;
+}
+
+button:not([color="warn"]):hover {
+  background-color: #0056b3;
+}
+
+@media screen and (max-width: 960px) {
+  .container {
+    padding: 1.5rem;
+    max-width: 95%;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.2rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    margin-bottom: 1.2rem;
+  }
+
+  button[mat-raised-button] {
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  button[mat-raised-button] {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (min-width: 1201px) {
+  .container {
+    max-width: 600px;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+
+  button[mat-raised-button] {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+}

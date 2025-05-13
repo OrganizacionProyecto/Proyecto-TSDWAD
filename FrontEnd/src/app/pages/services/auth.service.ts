@@ -1,101 +1,199 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, BehaviorSubject, throwError } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { catchError, tap, switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://127.0.0.1:8000/api/auth';
+  private apiUrl = 'https://aymara.pythonanywhere.com/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
-  getAccessToken(): string | null {
-    return localStorage.getItem('access_token');  // Aquí obtenemos el token almacenado
+  private userDataSubject = new BehaviorSubject<any>(null);
+  public userData$ = this.userDataSubject.asObservable();
+
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private tokenService: TokenService
+  ) {
+    // Cargar los datos del usuario al inicializar el servicio si hay un token
+    if (this.hasToken()) {
+      this.loadUserData();
+    }
   }
-  constructor(private http: HttpClient) { }
 
   private hasToken(): boolean {
-    return !!localStorage.getItem('token');
+    const token = this.tokenService.getAccessToken();
+    return !!token;
   }
 
-  login(credentials: { email: string, password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login/`, credentials).pipe(
+  // Método para obtener los datos del usuario
+  getUserData(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
+      tap((data) => {
+        this.userDataSubject.next(data);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al obtener los datos del usuario', error);
+        let errorMessage = 'Error al obtener los datos del usuario';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+
+  // Método para verificar si el usuario está logueado
+  isLoggedIn(): boolean {
+    return this.hasToken();
+  }
+
+  // Método para cargar los datos del usuario al iniciar la aplicación (o cuando sea necesario)
+  loadUserData(): void {
+    this.getUserData().subscribe({
+      next: (data) => {
+        console.log('Datos del usuario cargados:', data);
+      },
+      error: (err) => {
+        console.error('Error al cargar los datos del usuario:', err);
+        // Considera redirigir al login si falla la carga inicial
+        this.router.navigate(['/']);
+      }
+    });
+  }
+
+  // Método para obtener el token de acceso
+  getAccessToken(): string | null {
+    return this.tokenService.getAccessToken();
+  }
+
+  // Método para refrescar el token
+refreshToken(): Observable<any> {
+  const refreshToken = this.tokenService.getRefreshToken();
+  if (refreshToken) {
+    return this.http.post<any>(`${this.apiUrl}/auth/token/refresh/`, { refresh: refreshToken }).pipe(
+      tap((tokens) => {
+        if (tokens.access) {
+          this.tokenService.setAccessToken(tokens.access);
+        }
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al refrescar el token', error);
+        let errorMessage = 'Error al refrescar el token';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        return throwError(() => new Error(errorMessage));
+      })
+    );
+  }
+  return throwError(() => new Error('No refresh token found'));
+}
+
+
+  // Método para loguearse
+  login(credentials: { email: string; password: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/auth/token/`, credentials).pipe(
       tap((res: any) => {
         if (res.access && res.refresh) {
-          localStorage.setItem('access_token', res.access);
-          localStorage.setItem('refresh_token', res.refresh);
-          if (res.userData) {
-            localStorage.setItem('userData', JSON.stringify(res.userData));
-            console.log('User data saved to localStorage:', res.userData);
-          } else {
-            console.warn('userData is not defined in the response.');
-          }
+          this.tokenService.setAccessToken(res.access);
+          this.tokenService.setRefreshToken(res.refresh);
           this.authStatusSubject.next(true);
+          this.loadUserData(); // Cargar datos después del login
         }
       }),
-      catchError(this.handleError)
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error de autenticación', error);
+        let errorMessage = 'Error de autenticación';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        return throwError(() => new Error(errorMessage));
+      })
     );
   }
 
-  register(user: { username: string, first_name: string, last_name: string, email: string, password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/signup/`, user).pipe(
-      tap((res: any) => {
-        if (res.token) {
-          localStorage.setItem('token', res.token);
-        }
-      }),
-      catchError(this.handleError)
-    );
-  }
-
+  // Método para hacer logout
   logout(): void {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('userData');
+    this.tokenService.removeTokens();
     this.authStatusSubject.next(false);
+    this.userDataSubject.next(null); // Limpiar los datos del usuario al logout
+    this.router.navigate(['/']); // Redirige al inicio ("/")
   }
 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('access_token');
+  //Metodo para hacer update de perfil de user
+  updateUser(data: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/users/me/`, data).pipe(
+      tap((updatedUser) => {
+        this.userDataSubject.next(updatedUser); // actualiza el observable global
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al actualizar el usuario', error);
+        let errorMessage = 'Error al actualizar el usuario';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        return throwError(() => new Error(errorMessage));
+      })
+    );
   }
 
-  getUserData(): any {
-    try {
-      const userDataString = localStorage.getItem('userData');
-      if (!userDataString) {
-        console.warn('No user data found in localStorage.');
-        return null;
-      }
-      return JSON.parse(userDataString);
-    } catch (error) {
-      console.error('Error parsing user data from localStorage', error);
-      return null;
-    }
+  //Metodo para borrar mi propia cuenta
+  deleteAccount(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/users/me/`).pipe(
+      switchMap(user => {
+        const id = user.id;
+        return this.http.delete(`${this.apiUrl}/users/${id}/`);
+      }),
+      tap(() => {
+        this.logout();
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al eliminar la cuenta', error);
+        let errorMessage = 'Error al eliminar la cuenta';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        return throwError(() => new Error(errorMessage));
+      })
+    );
   }
-  
-  
 
-  private handleError(error: HttpErrorResponse): Observable<never> {
-    let errorMessage = '';
-    if (error.error instanceof ErrorEvent) {
-      errorMessage = `Error: ${error.error.message}`;
-    } else {
-      switch (error.status) {
-        case 0:
-          errorMessage = 'No se puede conectar con el servidor. Por favor, inténtelo de nuevo más tarde.';
-          break;
-        case 400:
-          errorMessage = 'Credenciales inválidas. Por favor, verifique su correo electrónico y contraseña.';
-          break;
-        case 401:
-          errorMessage = 'No autorizado. Por favor, verifique sus credenciales.';
-          break;
-        default:
-          errorMessage = `Error inesperado: ${error.message}`;
-          break;
-      }
-    }
-    return throwError(() => new Error(errorMessage));
+  // Método para registrar un nuevo usuario
+  register(formData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/users/`, formData).pipe(
+      tap((res) => {
+        console.log('Usuario registrado con éxito:', res);
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Error al registrar usuario', error);
+        let errorMessage = 'Error al registrar usuario';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        }
+        return throwError(() => new Error(errorMessage));
+      })
+    );
   }
+
+  // Método para verificar si el usuario es administrador
+  isAdmin(): boolean {
+    const userData = this.userDataSubject.getValue();
+    return userData && userData.app_role === 'admin_app';
+  }
+
+  // Manejo de errores (este método ya no es necesario con el manejo individual en cada método)
+  // private handleError(error: HttpErrorResponse): Observable<any> {
+  //   console.error('Error de autenticación', error);
+  //   let errorMessage = 'Error de autenticación';
+  //   if (error.error && error.error.message) {
+  //     errorMessage = error.error.message;
+  //   }
+  //   return throwError(() => new Error(errorMessage));
+  // }
 }
