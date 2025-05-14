@@ -10,9 +10,7 @@
           [(ngModel)]="buscarTexto"
         />
 
-        <select class="nav-select" [(ngModel)]="criterioSeleccionado">
-          <option value="0">Nombre</option>
-        </select>
+        
 
         <select class="nav-select" [(ngModel)]="filtroCategoria">
           <option value="">Todas las Categorías</option>
@@ -27,7 +25,29 @@
   </nav>
 
   <div class="productos-container">
+    <div *ngIf="productos.length === 0" class="no-result">
+  No se encontraron productos con los filtros aplicados.
+</div>
     <div class="product-card" *ngFor="let producto of productos">
+      <div class="favorito-toggle-mode" (click)="toggleFavorito(producto)">
+  <img 
+    *ngIf="esFavorito(producto.id_producto); else noFav" 
+    src="../../../assets/img/heart-filled.png " 
+    alt="Favorito" 
+    class="icon"
+  />
+  <ng-template #noFav>
+    <img 
+      src="../../../assets/img/heart-outline.png" 
+      alt="No favorito" 
+      class="icon"
+    />
+  </ng-template>
+</div>
+      <!-- <button class="favorito-toggle-mode">
+        <img width="24" height="24" viewBox="0 0 24 24" class="img-mode light" src="./images/icon-text.svg">
+        <img width="24" height="24" viewBox="0 0 24 24" class="img-mode dark" src="./images/icon-blacklist.svg">
+    </button> -->
       <div class="product-image-container">
         <img [src]="producto.imagen" [alt]="producto.nombre" class="imagen" />
       </div>

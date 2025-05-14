@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
 import { CarritoService } from '../../../services/carrito.service';
-import { ProductoService, Producto, Categoria } from '../../../services/productos.service';
-import { CommonModule } from '@angular/common'; 
-import { FormsModule } from '@angular/forms'; 
-import { AuthService } from '../../pages/services/auth.service'; 
+import { ProductoService, Producto, Categoria, Favorito } from '../../../services/productos.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../pages/services/auth.service';
 
 @Component({
   selector: 'app-productos',
@@ -19,21 +19,27 @@ export class ProductosComponent implements OnInit {
   productosOriginales: Producto[] = [];
   categorias: Categoria[] = [];
   categoriaMap: { [key: number]: string } = {};
+  favoritos: Favorito[] = [];
+  favoritoPorProductoId: { [key: number]: number } = {}; 
   loading: boolean = true;
   buscarTexto: string = '';
   criterioSeleccionado: string = '0';
-  filtroCategoria: string = ''; 
+  filtroCategoria: string = '';
 
   constructor(
     private productoService: ProductoService,
     private carritoService: CarritoService,
     private router: Router,
-    public authService: AuthService  
-  ) {}
+    public authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.obtenerProductos();
     this.obtenerCategorias();
+    this.obtenerFavoritos();
+    // if (this.authService.isLoggedIn()) {
+    // this.obtenerFavoritos();
+  // }
   }
 
   obtenerProductos(): void {
@@ -67,14 +73,60 @@ export class ProductosComponent implements OnInit {
     );
   }
 
+  obtenerFavoritos(): void {
+  this.productoService.obtenerFavoritos().subscribe(
+    (favoritos) => {
+      this.favoritoPorProductoId = {};
+      favoritos.forEach(f => {
+        this.favoritoPorProductoId[f.producto.id_producto] = f.id;
+      });
+    },
+    (error) => {
+      console.error('Error al obtener favoritos:', error);
+    }
+  );
+}
+
+esFavorito(productoId: number): boolean {
+  return productoId in this.favoritoPorProductoId;
+}
+
+toggleFavorito(producto: Producto): void {
+  const favoritoId = this.favoritoPorProductoId[producto.id_producto];
+
+  if (favoritoId) {
+    // 🔴 Eliminar favorito
+    this.productoService.eliminarFavorito(favoritoId).subscribe(
+      () => {
+        // ✅ Actualiza el estado
+        this.obtenerFavoritos();
+      },
+      (error) => console.error('Error al eliminar favorito:', error)
+    );
+  } else {
+    // 🟢 Agregar a favoritos
+    this.productoService.agregarAFavoritos(producto.id_producto).subscribe(
+      (nuevoFavorito: Favorito) => {
+        this.favoritoPorProductoId[nuevoFavorito.producto.id_producto] = nuevoFavorito.id;
+
+        // ✅ Mantener sincronizado el mapa
+        this.obtenerFavoritos();
+      },
+      (error) => console.error('Error al agregar a favoritos:', error)
+    );
+  }
+}
+
+
+
   filtrarProductos(): void {
     const texto = this.buscarTexto.trim().toLowerCase();
     const categoriaSeleccionada = this.filtroCategoria;
 
     this.productos = this.productosOriginales.filter((producto) => {
       const coincideTexto = producto.nombre.toLowerCase().includes(texto);
-      const coincideCategoria = categoriaSeleccionada 
-        ? producto.id_categoria.toString() === categoriaSeleccionada 
+      const coincideCategoria = categoriaSeleccionada
+        ? producto.id_categoria.toString() === categoriaSeleccionada
         : true;
 
       return coincideTexto && coincideCategoria;
