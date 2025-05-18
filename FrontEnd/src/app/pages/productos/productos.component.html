@@ -30,6 +30,9 @@
           <p class="prod_p"><strong>Stock:</strong> {{ producto.stock }}</p>
           <div class="cantidad-container">
             <input type="number" [(ngModel)]="producto.cantidad" class="cantidad-input" placeholder="Cantidad" min="1" [max]="producto.stock">
+            <div *ngIf="errorMensajes[producto.id_producto]" class="error-mensaje" style="color: red; font-size: 0.9em;">
+              {{ errorMensajes[producto.id_producto] }}
+            </div>
           </div>
           <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)" [disabled]="producto.cantidad <= 0 || producto.cantidad > producto.stock">Comprar</button>
         </div>

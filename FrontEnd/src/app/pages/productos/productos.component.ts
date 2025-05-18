@@ -25,6 +25,7 @@ export class ProductosComponent implements OnInit {
     2: 'Bebidas',
     3: 'Alimentos secos',
   };
+  errorMensajes: { [id_producto: number]: string } = {};
 
   constructor(
     private productoService: ProductoService,
@@ -74,8 +75,15 @@ export class ProductosComponent implements OnInit {
   }
 
   agregarAlCarrito(producto: Producto, cantidad: number): void {
-    if (cantidad <= 0 || cantidad > producto.stock) {
-      console.error('Cantidad inválida o mayor al stock disponible');
+    // Limpia el mensaje anterior
+    this.errorMensajes[producto.id_producto] = '';
+
+    if (cantidad == null || cantidad <= 0) {
+      this.errorMensajes[producto.id_producto] = 'Cantidad inválida';
+      return;
+    }
+    if (cantidad > producto.stock) {
+      this.errorMensajes[producto.id_producto] = 'No hay stock disponible para esa cantidad';
       return;
     }
 
@@ -84,6 +92,7 @@ export class ProductosComponent implements OnInit {
         this.router.navigate(['carrito']);
       },
       (error) => {
+        this.errorMensajes[producto.id_producto] = 'Error al agregar al carrito';
         console.error('Error al agregar al carrito:', error);
       }
     );
