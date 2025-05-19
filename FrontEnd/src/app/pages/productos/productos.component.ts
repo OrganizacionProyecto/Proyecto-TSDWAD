@@ -42,7 +42,7 @@ export class ProductosComponent implements OnInit {
     this.productoService.obtenerProductos().subscribe(
       (productosData: Producto[]) => {
         this.productosOriginales = productosData;
-        this.productos = productosData;
+        this.productos = productosData.map(p => ({ ...p, cantidad: 1 }));
         this.loading = false;
       },
       (error) => {
@@ -74,20 +74,22 @@ export class ProductosComponent implements OnInit {
     });
   }
 
-  agregarAlCarrito(producto: Producto, cantidad: number): void {
+  agregarAlCarrito(producto: Producto, cantidad: any): void {
     // Limpia el mensaje anterior
     this.errorMensajes[producto.id_producto] = '';
 
-    if (cantidad == null || cantidad <= 0) {
-      this.errorMensajes[producto.id_producto] = 'Cantidad inválida';
+    const cantidadNum = Number(cantidad);
+
+    if (isNaN(cantidadNum) || cantidadNum <= 0) {
+      this.errorMensajes[producto.id_producto] = 'La cantidad debe ser mayor a 0';
       return;
     }
-    if (cantidad > producto.stock) {
-      this.errorMensajes[producto.id_producto] = 'No hay stock disponible para esa cantidad';
+    if (cantidadNum > producto.stock) {
+      this.errorMensajes[producto.id_producto] = 'Cantidad no válida: supera el stock disponible';
       return;
     }
 
-    this.carritoService.agregarProductoAlCarrito(producto.id_producto, cantidad).subscribe(
+    this.carritoService.agregarProductoAlCarrito(producto.id_producto, cantidadNum).subscribe(
       (response) => {
         this.router.navigate(['carrito']);
       },
