@@ -74,11 +74,11 @@ class FavoritoDeleteView(generics.DestroyAPIView):
     serializer_class = FavoritoSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return Favorito.objects.filter(usuario=self.request.user)
-
-    def perform_destroy(self, instance):
-        if instance:
-            super().perform_destroy(instance)
-        else:
+    def get_object(self):
+        producto_id = self.kwargs.get('producto_id')
+        print("Intentando eliminar favorito:", producto_id, "usuario:", self.request.user)
+        favorito = Favorito.objects.filter(usuario=self.request.user, producto_id=producto_id).first()
+        if not favorito:
+            print("No se encontró favorito para ese producto y usuario")
             raise ValidationError("Este producto no está en tus favoritos.")
+        return favorito

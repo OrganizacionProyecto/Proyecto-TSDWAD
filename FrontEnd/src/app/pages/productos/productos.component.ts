@@ -20,7 +20,7 @@ export class ProductosComponent implements OnInit {
   categorias: Categoria[] = [];
   categoriaMap: { [key: number]: string } = {};
   favoritos: Favorito[] = [];
-  favoritoPorProductoId: { [key: number]: number } = {}; 
+  favoritoPorProductoId: { [key: number]: number } = {};
   loading: boolean = true;
   buscarTexto: string = '';
   criterioSeleccionado: string = '0';
@@ -92,24 +92,24 @@ esFavorito(productoId: number): boolean {
 }
 
 toggleFavorito(producto: Producto): void {
-  const favoritoId = this.favoritoPorProductoId[producto.id_producto];
-
-  if (favoritoId) {
-    // 🔴 Eliminar favorito
-    this.productoService.eliminarFavorito(favoritoId).subscribe(
+  if (this.esFavorito(producto.id_producto)) {
+    console.log('Intentando eliminar favorito:', producto.id_producto, this.favoritoPorProductoId);
+    this.productoService.eliminarFavorito(producto.id_producto).subscribe(
       () => {
-        // ✅ Actualiza el estado
         this.obtenerFavoritos();
       },
-      (error) => console.error('Error al eliminar favorito:', error)
+      (error) => {
+        if (error.status === 404) {
+          this.obtenerFavoritos();
+        }
+        console.error('Error al eliminar favorito:', error);
+      }
     );
   } else {
-    // 🟢 Agregar a favoritos
+    // Agregar a favoritos
     this.productoService.agregarAFavoritos(producto.id_producto).subscribe(
       (nuevoFavorito: Favorito) => {
         this.favoritoPorProductoId[nuevoFavorito.producto.id_producto] = nuevoFavorito.id;
-
-        // ✅ Mantener sincronizado el mapa
         this.obtenerFavoritos();
       },
       (error) => console.error('Error al agregar a favoritos:', error)
