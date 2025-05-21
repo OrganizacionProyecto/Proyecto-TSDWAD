@@ -13,6 +13,5 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  // Ahora este servicio podría tener métodos para interactuar con *otros* usuarios
-  // si tu aplicación lo requiere (por ejemplo, obtener lista de usuarios, detalles de un usuario específico, etc.).
+
 }

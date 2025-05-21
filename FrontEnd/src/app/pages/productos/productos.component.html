@@ -3,13 +3,24 @@
     <h3 class="titulo-producto">Nuestros Productos</h3>
     <div class="navbar">
       <div class="nav-container">
-        <input type="text" class="nav-input" placeholder="Buscar productos..." [(ngModel)]="buscarTexto">
-      
+        <input 
+          type="text" 
+          class="nav-input" 
+          placeholder="Buscar productos..." 
+          [(ngModel)]="buscarTexto"
+        />
+
         <select class="nav-select" [(ngModel)]="criterioSeleccionado">
           <option value="0">Nombre</option>
-          <option value="1">Categoría</option>
         </select>
-      
+
+        <select class="nav-select" [(ngModel)]="filtroCategoria">
+          <option value="">Todas las Categorías</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.id_categoria">
+            {{ categoria.nombre }}
+          </option>
+        </select>
+
         <button class="nav-cta" (click)="filtrarProductos()">Buscar</button>
       </div>
     </div>
@@ -18,25 +29,40 @@
   <div class="productos-container">
     <div class="product-card" *ngFor="let producto of productos">
       <div class="product-image-container">
-        <img [src]="producto.imagen" [alt]="producto.nombre" class="imagen">
+        <img [src]="producto.imagen" [alt]="producto.nombre" class="imagen" />
       </div>
+
       <div class="product-details">
         <h3 class="prod">{{ producto.nombre }}</h3>
         <p class="prod_p">{{ producto.descripcion }}</p>
-        <p class="prod_p"><strong>Categoría:</strong> {{ categoriaMap[producto.id_categoria] }}</p>
-        
-        <!-- Solo ocultar stock y cantidad si el usuario no está logueado -->
+        <p class="prod_p"><strong>Categoría:</strong> {{ categoriaMap[producto.id_categoria] || 'Sin categoría' }}</p>
+
+        <!-- Solo mostrar stock y cantidad si el usuario está logueado -->
         <div *ngIf="authService.isLoggedIn()">
           <p class="prod_p"><strong>Stock:</strong> {{ producto.stock }}</p>
           <div class="cantidad-container">
-            <input type="number" [(ngModel)]="producto.cantidad" class="cantidad-input" placeholder="Cantidad" min="1" [max]="producto.stock">
+            <input 
+              type="number" 
+              [(ngModel)]="producto.cantidad" 
+              class="cantidad-input" 
+              placeholder="Cantidad" 
+              min="1" 
+              [max]="producto.stock"
+            />
           </div>
-          <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)" [disabled]="producto.cantidad <= 0 || producto.cantidad > producto.stock">Comprar</button>
+          <button 
+            class="comprar-btn" 
+            (click)="agregarAlCarrito(producto, producto.cantidad)" 
+            [disabled]="producto.cantidad <= 0 || producto.cantidad > producto.stock"
+          >
+            Comprar
+          </button>
         </div>
 
-        <!-- El precio siempre es visible -->
         <div class="precio">
-          <div class="precio-marco"><strong>Precio:</strong> ${{ producto.precio }} ARS</div>
+          <div class="precio-marco">
+            <strong>Precio:</strong> ${{ producto.precio }} ARS
+          </div>
         </div>
       </div>
     </div>
