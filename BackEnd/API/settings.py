@@ -1,6 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
-
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -10,6 +10,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-twe17h3kn+niooy-d19$jd4!7hj(m6bbfl#(er9mwr^qjtsxnm'
+
+#CONEXION A MERCADOPAGO
+MERCADOPAGO_ACCESS_TOKEN = config('MP_ACCES_TOKEN')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -30,6 +33,7 @@ INSTALLED_APPS = [
     'users',
     'products',
     'cart',
+    'mp_pasarela',
     'drf_spectacular',
 ]
 
