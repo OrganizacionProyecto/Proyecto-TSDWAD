@@ -21,6 +21,9 @@ urlpatterns = [
     # API de usuarios
     path('api/users/', include('users.urls')),  # SOLO ESTA ES CORRECTA
 
+    #Api mercado pago
+    path('api/pagos/', include('mp_pasarela.urls')),
+
     # Documentación
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
