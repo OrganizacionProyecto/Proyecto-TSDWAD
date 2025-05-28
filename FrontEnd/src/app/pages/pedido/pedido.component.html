@@ -4,18 +4,18 @@
   <div class="pedido-items">
     <div *ngFor="let item of carrito" class="pedido-item">
       <div class="item-info">
-        <h3>{{ item.nombre_producto }}</h3> <!-- Asegúrate de que el nombre del producto esté correctamente vinculado -->
+        <h3>{{ item.nombre_producto }}</h3>
         <p>Cantidad: {{ item.cantidad }}</p>
-        <p>Precio: {{ item.precio_unitario | currency }}</p> <!-- Validar que el precio esté formateado correctamente -->
+        <p>Precio: {{ item.precio_unitario | currency }}</p>
       </div>
     </div>
   </div>
 
   <div class="pedido-total">
-    <h2>Total: {{ calcularTotal() | currency }}</h2> <!-- Asegúrate de que la función calcularTotal esté implementada correctamente -->
+    <h2>Total: {{ calcularTotal() | currency }}</h2>
   </div>
 
-  <form (ngSubmit)="realizarPedido()" #pedidoForm="ngForm">
+  <form id="form-checkout" (ngSubmit)="realizarPedido()">
     <div class="metodo-pago">
       <h3>Método de Pago</h3>
       <select [(ngModel)]="metodoPago" name="metodoPago" class="form-select" required>
@@ -24,24 +24,46 @@
       </select>
     </div>
 
-    <!-- Información de la tarjeta -->
     <div *ngIf="metodoPago === 'tarjeta'" class="tarjeta-info">
       <h3>Información de la Tarjeta</h3>
       <div class="form-group">
-        <label for="numeroTarjeta">Número de Tarjeta</label>
-        <input id="numeroTarjeta" type="text" maxlength="16" [(ngModel)]="numero_tarjeta" name="numeroTarjeta" class="form-control" placeholder="1234 5678 9012 3456" required pattern="[\d]{16}">
+        <label for="form-checkout__cardNumber">Número de Tarjeta</label>
+        <div id="form-checkout__cardNumber" class="container"></div>
       </div>
       <div class="form-group">
-        <label for="fechaExpiracion">Fecha de Vencimiento</label>
-        <input id="fechaExpiracion" type="month" [(ngModel)]="fecha_expiracion" name="fechaExpiracion" class="form-control" required>
+        <label for="form-checkout__expirationDate">Fecha de Vencimiento</label>
+        <div id="form-checkout__expirationDate" class="container"></div>
       </div>
       <div class="form-group">
-        <label for="cvv">CVV</label>
-        <input id="cvv" type="text" maxlength="3" [(ngModel)]="codigo_seguridad" name="cvv" class="form-control" placeholder="123" required pattern="[\d]{3}">
+        <label for="form-checkout__securityCode">CVV</label>
+        <div id="form-checkout__securityCode" class="container"></div>
+      </div>
+      <div class="form-group">
+        <label for="form-checkout__cardholderName">Nombre del Titular</label>
+        <input id="form-checkout__cardholderName" type="text" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="form-checkout__issuer">Banco Emisor</label>
+        <select id="form-checkout__issuer" class="form-select" required></select>
+      </div>
+      <div class="form-group">
+        <label for="form-checkout__installments">Cuotas</label>
+        <select id="form-checkout__installments" class="form-select" required></select>
+      </div>
+      <div class="form-group">
+        <label for="form-checkout__identificationType">Tipo de Documento</label>
+        <select id="form-checkout__identificationType" class="form-select" required></select>
+      </div>
+      <div class="form-group">
+        <label for="form-checkout__identificationNumber">Número de Documento</label>
+        <input id="form-checkout__identificationNumber" type="text" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label for="form-checkout__cardholderEmail">E-mail</label>
+        <input id="form-checkout__cardholderEmail" type="email" class="form-control" [(ngModel)]="userEmail" name="cardholderEmail" required>
       </div>
     </div>
 
-    <!-- Información de la dirección -->
     <div class="direccion-entrega">
       <h3>Dirección de Entrega</h3>
       <div class="form-group">
@@ -50,7 +72,6 @@
       </div>
     </div>
 
-    <!-- Teléfono de contacto -->
     <div class="telefono-contacto">
       <h3>Teléfono de Contacto</h3>
       <div class="form-group">
@@ -59,7 +80,8 @@
       </div>
     </div>
 
-    <button type="submit" class="btn btn-primary" [disabled]="!pedidoForm.form.valid">Realizar Pedido</button> <!-- Deshabilitar si el formulario no es válido -->
+    <button type="submit" id="form-checkout__submit" class="btn btn-primary">Realizar Pedido</button>
+    <progress value="0" class="progress-bar">Cargando...</progress>
   </form>
 
   <button *ngIf="pedidoRealizado && pedidoId" (click)="descargarPDF()" class="btn btn-secondary" style="margin-top: 10px;">
