@@ -8,8 +8,39 @@ import { CarritoService } from '../../../services/carrito.service';
 import { AuthService } from '../../pages/services/auth.service'; // Ajusta la ruta según tu estructura
 import { Carrito, DetalleProducto } from '../../../services/carrito.model';
 import { first } from 'rxjs/operators';
+import { firstValueFrom, Subject} from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
-declare var MercadoPago: any;
+interface CardData {
+  token?: string;
+  issuerId?: string;
+  paymentMethodId?: string;
+  installments?: number;
+  cardholderEmail?: string;
+  identificationType?: string;
+  identificationNumber?: string;
+}
+
+interface PaymentResponse {
+  id: number;
+  status: string;
+  status_detail: string;
+  card: { last_four_digits: string; first_six_digits?: string; expiration_month?: number; expiration_year?: number };
+}
+
+interface PedidoResponse {
+  id: number;
+}
+
+interface DatosPedido {
+  metodo_pago: string;
+  direccion_entrega: string;
+  telefono: string;
+  total: number;
+  numero_tarjeta?: string;
+  fecha_expiracion?: string;
+  codigo_seguridad?: string;
+}
 
 @Component({
   selector: 'app-pedido',
@@ -25,12 +56,13 @@ export class PedidoComponent implements OnInit, AfterViewInit {
   telefono: string = '';
   pedidoRealizado: boolean = false;
   pedidoId: number | null = null;
-  mpCardForm: any;
+  mpCardForm: any | null = null;
   userEmail: string = '';
+  isProcessing: boolean = false;
 
   constructor(
     private carritoService: CarritoService,
-    private pedidoService: PedidoService,
+    private servicio_pedido: PedidoService,
     private authService: AuthService,
     private router: Router,
     private http: HttpClient
@@ -38,70 +70,78 @@ export class PedidoComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.obtenerCarrito();
-    this.authService.userData$.pipe(first()).subscribe({
-      next: (userData: { email: string } | null) => {
-        this.userEmail = userData?.email || 'testuser@example.com';
-      },
+    this.authService.userData$.subscribe({
+      next: (userData: { email: string } | null) => (this.userEmail = userData?.email || 'testuser@example.com'),
       error: (error: HttpErrorResponse) => {
         this.userEmail = 'testuser@example.com';
-        console.error('Error al obtener el email del usuario:', error);
-        alert(`Error al obtener datos del usuario: ${error.message || 'Inténtalo de nuevo.'}`);
+        console.error('Error al obtener email:', error);
       }
     });
   }
 
   ngAfterViewInit(): void {
-    this.inicializarMercadoPago();
+    setTimeout(() => this.inicializarMercadoPago(), 0);
   }
 
   obtenerCarrito(): void {
     this.carritoService.obtenerCarrito().subscribe({
-      next: (data: any) => {
+      next: (data: Carrito) => {
         this.carrito = data.detalles_producto;
+        if (!this.carrito?.length) {
+          alert('Carrito vacío. Agrega productos.');
+          this.router.navigate(['/productos']);
+        }
       },
       error: (error: HttpErrorResponse) => {
-        console.error('Error al obtener el carrito:', error);
-        alert(`Error al obtener el carrito: ${error.message || 'Inténtalo de nuevo.'}`);
+        console.error('Error al obtener carrito:', error);
+        alert('Error al obtener carrito.');
       }
     });
   }
 
   calcularTotal(): number {
-    const total = this.carrito.reduce((total, item) => total + Number(item.total_producto), 0);
-    return total > 0 ? total : 100; // Usar 100 como monto de prueba si es 0
+    return this.carrito.reduce((sum, item) => sum + Number(item.total_producto), 0) || 100;
+  }
+
+  async sincronizarCarrito(): Promise<void> {
+    try {
+      const token = this.authService.getAccessToken();
+      if (!token) throw new Error('No hay token.');
+      const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' });
+      const carritoBackend = await firstValueFrom(this.carritoService.obtenerCarrito());
+      const itemsBackend = carritoBackend.detalles_producto.map((item: any) => ({
+        producto_id: item.id_producto,
+        cantidad: item.cantidad
+      }));
+      const itemsFrontend = this.carrito.map(item => ({ producto_id: item.id_producto, cantidad: item.cantidad }));
+      if (JSON.stringify(itemsBackend) === JSON.stringify(itemsFrontend)) return;
+
+      for (const item of itemsFrontend) {
+        try {
+          await firstValueFrom(this.http.post('http://127.0.0.1:8000/api/cart/carrito/agregar/', item, { headers }));
+        } catch (error: any) {
+          console.warn('Error al agregar item:', error);
+        }
+      }
+      const carritoFinal = await firstValueFrom(this.carritoService.obtenerCarrito());
+      if (!carritoFinal.detalles_producto?.length) throw new Error('Carrito no sincronizado.');
+    } catch (error: any) {
+      console.error('Error al sincronizar carrito:', error);
+      throw error;
+    }
   }
 
   inicializarMercadoPago(): void {
-    if (this.metodoPago !== 'tarjeta') {
-      console.log('Método de pago no es tarjeta, omitiendo inicialización de Mercado Pago');
+    if (this.metodoPago !== 'tarjeta') return;
+    if (!window.MercadoPago) {
+      alert('SDK de Mercado Pago no cargado.');
       return;
     }
 
     try {
-      const mp = new MercadoPago('TEST-a6ce50b2-3883-4185-ae56-bf8e2c88014e', { locale: 'es-AR' });
-      console.log('Mercado Pago inicializado con éxito');
-
+      const mp = new window.MercadoPago('TEST-a6ce50b2-3883-4185-ae56-bf8e2c88014e', { locale: 'es-AR' });
       const form = document.getElementById('form-checkout');
-      if (!form) {
-        throw new Error('Formulario con id="form-checkout" no encontrado en el DOM');
-      }
-
-      const requiredIds = [
-        'form-checkout__cardNumber',
-        'form-checkout__expirationDate',
-        'form-checkout__securityCode',
-        'form-checkout__cardholderName',
-        'form-checkout__issuer',
-        'form-checkout__installments',
-        'form-checkout__identificationType',
-        'form-checkout__identificationNumber',
-        'form-checkout__cardholderEmail'
-      ];
-      requiredIds.forEach(id => {
-        if (!document.getElementById(id)) {
-          throw new Error(`Elemento con id="${id}" no encontrado en el DOM`);
-        }
-      });
+      if (!form) throw new Error('Formulario no encontrado.');
 
       this.mpCardForm = mp.cardForm({
         amount: this.calcularTotal().toString(),
@@ -111,154 +151,87 @@ export class PedidoComponent implements OnInit, AfterViewInit {
           cardNumber: { id: 'form-checkout__cardNumber', placeholder: 'Número de tarjeta' },
           expirationDate: { id: 'form-checkout__expirationDate', placeholder: 'MM/AA' },
           securityCode: { id: 'form-checkout__securityCode', placeholder: 'Código de seguridad' },
-          cardholderName: { id: 'form-checkout__cardholderName', placeholder: 'Titular de la tarjeta' },
+          cardholderName: { id: 'form-checkout__cardholderName', placeholder: 'Titular' },
           issuer: { id: 'form-checkout__issuer', placeholder: 'Banco emisor' },
           installments: { id: 'form-checkout__installments', placeholder: 'Cuotas' },
           identificationType: { id: 'form-checkout__identificationType', placeholder: 'Tipo de documento' },
-          identificationNumber: { id: 'form-checkout__identificationNumber', placeholder: 'Número del documento' },
+          identificationNumber: { id: 'form-checkout__identificationNumber', placeholder: 'Número de documento' },
           cardholderEmail: { id: 'form-checkout__cardholderEmail', placeholder: 'E-mail' }
         },
         callbacks: {
-          onFormMounted: (error: any) => {
-            if (error) {
-              console.error('Error al montar el formulario:', error);
-              return;
-            }
-            console.log('Form mounted');
-          },
-          onSubmit: (event: any) => {
+          onFormMounted: (error: any) => error && console.error('Error al montar formulario:', error),
+          onSubmit: async (event: Event) => {
             event.preventDefault();
-            const cardData = this.mpCardForm.getCardFormData();
-            console.log('Datos del formulario:', cardData);
-            this.realizarPedido(cardData);
+            await this.handleSubmit();
           },
-          onFetching: (resource: any) => {
-            console.log('Fetching resource:', resource);
-            const progressBar = document.querySelector('.progress-bar');
-            if (progressBar) {
-              progressBar.removeAttribute('value');
-            }
-            return () => {
-              if (progressBar) {
-                progressBar.setAttribute('value', '0');
-              }
-            };
-          },
-          onIdentificationTypesReceived: (error: any, identificationTypes: any) => {
-            console.log('IdentificationTypes recibidos:', { error, identificationTypes });
-            if (error) {
-              console.error('Error al obtener tipos de identificación:', error);
-              alert(`Error al obtener tipos de identificación: ${error.message || 'Inténtalo de nuevo.'}`);
-              return;
-            }
-            const identificationSelect = document.getElementById('form-checkout__identificationType') as HTMLSelectElement;
-            identificationSelect.innerHTML = '<option value="">Seleccione tipo de documento</option>';
-            if (identificationTypes && Array.isArray(identificationTypes)) {
-              identificationTypes.forEach((type: any) => {
-                const option = document.createElement('option');
-                option.value = type.id;
-                option.text = type.name;
-                identificationSelect.appendChild(option);
-              });
-            } else {
-              console.warn('No se recibieron tipos de identificación válidos');
-            }
-          },
-          onPaymentMethodsReceived: (error: any, paymentMethods: any) => {
-            console.log('PaymentMethods recibidos:', { error, paymentMethods });
-            if (error) {
-              console.error('Error al obtener métodos de pago:', error);
-              alert(`Error al obtener métodos de pago: ${error.message || 'Inténtalo de nuevo.'}`);
-              return;
-            }
-            const issuerSelect = document.getElementById('form-checkout__issuer') as HTMLSelectElement;
-            issuerSelect.innerHTML = '<option value="">Seleccione un banco</option>';
-            if (paymentMethods && Array.isArray(paymentMethods)) {
-              paymentMethods.forEach((method: any) => {
-                const option = document.createElement('option');
-                option.value = method.id || method.issuer_id || '';
-                option.text = method.name || method.issuer_name || 'Banco desconocido';
-                issuerSelect.appendChild(option);
-              });
-            } else {
-              console.warn('No se recibieron métodos de pago válidos:', paymentMethods);
-            }
-          },
-          onInstallmentsReceived: (error: any, installments: any) => {
-            console.log('Installments recibidos:', { error, installments });
-            if (error) {
-              console.error('Error al obtener cuotas:', error);
-              alert(`Error al obtener cuotas: ${error.message || 'Inténtalo de nuevo.'}`);
-              return;
-            }
-            const installmentsSelect = document.getElementById('form-checkout__installments') as HTMLSelectElement;
-            installmentsSelect.innerHTML = '<option value="">Seleccione cuotas</option>';
-            if (installments && installments.payer_costs && Array.isArray(installments.payer_costs)) {
-              installments.payer_costs.forEach((inst: any) => {
-                const option = document.createElement('option');
-                option.value = inst.installments.toString();
-                option.text = `${inst.installments} cuota${inst.installments > 1 ? 's' : ''} de ${inst.installment_amount} ${installments.currency_id || 'ARS'}`;
-                installmentsSelect.appendChild(option);
-              });
-            } else {
-              console.warn('No se recibieron cuotas válidas:', installments);
-            }
-          },
-          onError: (error: any) => {
-            console.error('Error de Mercado Pago:', error);
-            alert(`Error en el formulario de pago: ${error.message || 'Inténtalo de nuevo.'}`);
-          }
+          onError: (errors: any[]) => alert(`Error en formulario: ${errors.map(e => e.message).join('; ')}`)
         }
       });
-
-      // Cargar tipos de identificación
       mp.getIdentificationTypes();
-
-      // Cargar cuotas manualmente
-      const total = this.calcularTotal();
-      if (total > 0) {
-        mp.getInstallments({
-          amount: total.toString(),
-          locale: 'es-AR',
-          payment_method_id: 'visa',
-          bin: '450995'
-        }).then((installments: any) => {
-          console.log('Cuotas obtenidas manualmente:', installments);
-          const installmentsSelect = document.getElementById('form-checkout__installments') as HTMLSelectElement;
-          installmentsSelect.innerHTML = '<option value="">Seleccione cuotas</option>';
-          if (installments && installments.payer_costs && Array.isArray(installments.payer_costs)) {
-            installments.payer_costs.forEach((inst: any) => {
-              const option = document.createElement('option');
-              option.value = inst.installments.toString();
-              option.text = `${inst.installments} cuota${inst.installments > 1 ? 's' : ''} de ${inst.installment_amount} ${installments.currency_id || 'ARS'}`;
-              installmentsSelect.appendChild(option);
-            });
-          }
-        }).catch((error: any) => {
-          console.error('Error al obtener cuotas manualmente:', error);
-        });
-      } else {
-        console.warn('Total inválido para obtener cuotas:', total);
-      }
-
     } catch (error: any) {
-      console.error('Error al inicializar Mercado Pago:', error);
-      alert(`No se pudo inicializar el sistema de pagos: ${error.message || 'Error desconocido'}. Por favor, recarga la página.`);
+      console.error('Error inicializando Mercado Pago:', error);
+      alert('Error al inicializar pagos.');
     }
   }
 
-  realizarPedido(cardData?: any): void {
-    if (!this.direccion || !this.telefono) {
-      alert('Debes completar dirección y teléfono.');
+  async handleSubmit(): Promise<void> {
+    if (this.isProcessing) {
+      console.log('Procesamiento en curso, ignorando submit');
       return;
     }
+    this.isProcessing = true;
+    const submitButton = document.querySelector('#form-checkout__submit') as HTMLButtonElement;
+    if (submitButton) submitButton.disabled = true;
 
-    const datosPedido: any = {
-      metodo_pago: this.metodoPago,
-      direccion_entrega: this.direccion,
-      telefono: this.telefono,
-      total: this.calcularTotal()
-    };
+    try {
+      let cardData: CardData | null = null;
+      if (this.metodoPago === 'tarjeta') {
+        cardData = this.mpCardForm?.getCardFormData();
+        if (!cardData?.token) throw new Error('Datos de tarjeta inválidos.');
+        console.log('Datos de tarjeta:', cardData);
+      }
+      await this.realizarPedido(cardData);
+    } catch (error: any) {
+      console.error('Error al procesar:', error);
+      alert(`Error: ${error.message || 'Verifica los datos.'}`);
+    } finally {
+      this.isProcessing = false;
+      if (submitButton) submitButton.disabled = false;
+    }
+  }
+
+  async realizarPedido(cardData: CardData | null): Promise<void> {
+  if (!this.direccion || !this.telefono) {
+    alert('Completa dirección y teléfono.');
+    return;
+  }
+  if (!this.carrito?.length) {
+    alert('Carrito vacío.');
+    this.router.navigate(['/productos']);
+    return;
+  }
+  const token = this.authService.getAccessToken();
+  if (!token) {
+    alert('Inicia sesión.');
+    this.router.navigate(['']);
+    return;
+  }
+
+  let datosPedido: DatosPedido = {
+    metodo_pago: this.metodoPago,
+    direccion_entrega: this.direccion,
+    telefono: this.telefono,
+    total: this.calcularTotal()
+  };
+
+  try {
+    console.log('Sincronizando carrito...');
+    await this.sincronizarCarrito();
+    const carritoBackend = await firstValueFrom(this.carritoService.obtenerCarrito());
+    if (!carritoBackend.detalles_producto?.length) {
+      console.error('Carrito backend vacío:', carritoBackend);
+      throw new Error('Carrito backend vacío.');
+    }
 
     if (this.metodoPago === 'tarjeta' && cardData) {
       const paymentData = {
@@ -266,79 +239,79 @@ export class PedidoComponent implements OnInit, AfterViewInit {
         issuer_id: cardData.issuerId,
         payment_method_id: cardData.paymentMethodId,
         transaction_amount: this.calcularTotal(),
-        installments: Number(cardData.installments),
-        description: `Compra en Aymara2025 - Pedido ${Date.now()}`,
-        payer: {
-          email: cardData.cardholderEmail,
-          identification: {
-            type: cardData.identificationType,
-            number: cardData.identificationNumber
-          }
-        },
+        installments: Number(cardData.installments) || 1,
+        email: this.userEmail,
+        description: `Compra Aymara - ${Date.now()}`,
+        payer: { email: this.userEmail, identification: { type: cardData.identificationType || 'DNI', number: cardData.identificationNumber || '12345678' } },
         external_reference: `PED_${Date.now()}`
       };
 
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${this.authService.getAccessToken() || ''}`,
-        'Content-Type': 'application/json'
-      });
+      const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' });
+      const response = await firstValueFrom(
+        this.http.post<PaymentResponse>('http://127.0.0.1:8000/api/pagos/procesos_de_pago/', paymentData, { headers })
+      );
 
-      this.http.post('https://aymara.pythonanywhere.com/api/procesos_de_pago/', paymentData, { headers }).subscribe({
-        next: (response: any) => {
-          if (response.status === 'approved') {
-            alert('¡Pago exitoso!');
-            this.pedidoRealizado = true;
-            this.pedidoId = response.id;
+      if (response.status !== 'approved') throw new Error(`Pago no aprobado: ${response.status_detail}`);
+      datosPedido.numero_tarjeta = (response.card.first_six_digits || '503175') + '000000' + (response.card.last_four_digits || '0604');
+      datosPedido.fecha_expiracion = `${String(response.card.expiration_month || 11).padStart(2, '0')}/${String(response.card.expiration_year || 2030).slice(-2)}`;
+      datosPedido.codigo_seguridad = '123';
+    }
 
-            this.pedidoService.crearPedido(datosPedido).subscribe({
-              next: () => {
-                setTimeout(() => this.router.navigate(['/mispedidos']), 3000);
-              },
-              error: (error: HttpErrorResponse) => {
-                console.error('Error al guardar pedido:', error);
-                alert(`Error al guardar el pedido: ${error.message || 'Inténtalo de nuevo.'}`);
-              }
-            });
-          } else {
-            alert(`Pago no aprobado: ${response.status_detail || 'Inténtalo de nuevo.'}`);
-          }
-        },
-        error: (error: HttpErrorResponse) => {
-          console.error('Error al procesar el pago:', error);
-          alert(`Error al procesar el pago: ${error.error?.detail || 'No se pudo procesar el pago.'}`);
+    console.log('Creando pedido con:', datosPedido);
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' });
+    const pedidoResponse = await firstValueFrom(
+      this.http.post<PedidoResponse>('http://127.0.0.1:8000/api/cart/pedido/crear/', datosPedido, { headers })
+    );
+
+    this.pedidoId = pedidoResponse.id;
+    this.carrito = [];
+    alert('¡Pedido realizado!');
+    this.pedidoRealizado = true;
+    setTimeout(() => this.router.navigate(['/mispedidos']), 3000);
+  } catch (error: any) {
+    console.error('Error al crear pedido:', error);
+    alert(`Error: ${error.error?.error || error.message || 'Inténtalo de nuevo.'}`);
+    if (error.error?.error?.includes('vacío') || error.error?.error?.includes('empty')) {
+      try {
+        console.log('Reintentando sincronización de carrito...');
+        await this.sincronizarCarrito();
+        const carritoBackend = await firstValueFrom(this.carritoService.obtenerCarrito());
+        if (!carritoBackend.detalles_producto?.length) {
+          alert('No se pudo restaurar el carrito.');
+          this.router.navigate(['/productos']);
+        } else {
+          alert('Carrito restaurado. Intenta de nuevo.');
         }
-      });
-    } else if (this.metodoPago === 'efectivo') {
-      this.pedidoService.crearPedido(datosPedido).subscribe({
-        next: (response: any) => {
-          alert('¡Pedido realizado con éxito!');
-          this.pedidoRealizado = true;
-          this.pedidoId = response.id;
-          setTimeout(() => this.router.navigate(['/mispedidos']), 3000);
-        },
-        error: (error: HttpErrorResponse) => {
-          console.error('Error al realizar el pedido:', error);
-          alert(`Error al realizar el pedido: ${error.message || 'Inténtalo de nuevo.'}`);
-        }
-      });
+      } catch (restoreError: any) {
+        console.error('Error al restaurar carrito:', restoreError);
+        alert('Error al restaurar carrito.');
+        this.router.navigate(['/productos']);
+      }
     }
   }
+}
 
   descargarPDF(): void {
-    if (!this.pedidoId) return;
-    this.pedidoService.descargarPDF(this.pedidoId).subscribe({
-      next: (blob: Blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `pedido_${this.pedidoId}.pdf`;
-        a.click();
-        window.URL.revokeObjectURL(url);
-      },
-      error: (error: HttpErrorResponse) => {
-        console.error('Error al descargar PDF:', error);
-        alert(`Error al descargar el PDF: ${error.message || 'Inténtalo de nuevo.'}`);
-      }
-    });
+    if (!this.pedidoId) {
+      alert('No hay pedido.');
+      return;
+    }
+    const token = this.authService.getAccessToken();
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    this.http.get(`http://127.0.0.1:8000/api/cart/pedidos/${this.pedidoId}/factura/`, { headers, responseType: 'blob' })
+      .subscribe({
+        next: (blob: Blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `pedido-${this.pedidoId}.pdf`;
+          a.click();
+          window.URL.revokeObjectURL(url);
+        },
+        error: (error: any) => {
+          console.error('Error al descargar PDF:', error);
+          alert('Error al descargar PDF.');
+        }
+      });
   }
 }

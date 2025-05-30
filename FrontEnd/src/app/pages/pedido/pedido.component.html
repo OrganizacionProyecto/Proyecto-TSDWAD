@@ -15,10 +15,10 @@
     <h2>Total: {{ calcularTotal() | currency }}</h2>
   </div>
 
-  <form id="form-checkout" (ngSubmit)="realizarPedido()">
+  <form id="form-checkout">
     <div class="metodo-pago">
       <h3>Método de Pago</h3>
-      <select [(ngModel)]="metodoPago" name="metodoPago" class="form-select" required>
+      <select [(ngModel)]="metodoPago" name="metodoPago" class="form-select" required (change)="inicializarMercadoPago()">
         <option value="tarjeta">Tarjeta de Crédito/Débito</option>
         <option value="efectivo">Efectivo</option>
       </select>
@@ -80,7 +80,9 @@
       </div>
     </div>
 
-    <button type="submit" id="form-checkout__submit" class="btn btn-primary">Realizar Pedido</button>
+    <button type="submit" id="form-checkout__submit" class="btn btn-primary" [disabled]="isProcessing">
+      {{ isProcessing ? 'Procesando...' : 'Realizar Pedido' }}
+    </button>
     <progress value="0" class="progress-bar">Cargando...</progress>
   </form>
 
