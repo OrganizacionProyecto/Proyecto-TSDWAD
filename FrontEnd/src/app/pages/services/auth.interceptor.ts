@@ -10,37 +10,47 @@ export class AuthInterceptor implements HttpInterceptor {
 
   constructor(private tokenService: TokenService, private injector: Injector) {}
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const accessToken = this.tokenService.getAccessToken();
+intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  const accessToken = this.tokenService.getAccessToken();
 
-    if (accessToken) {
-      const cloned = req.clone({
-        headers: req.headers.set('Authorization', `Bearer ${accessToken}`)
-      });
+  if (accessToken) {
+    const cloned = req.clone({
+      headers: req.headers.set('Authorization', `Bearer ${accessToken}`)
+    });
 
-      return next.handle(cloned).pipe(
-        catchError((error: HttpErrorResponse) => {
-          if (error.status === 401) {
-            // Use the injector to get AuthService lazily
-            const authService = this.injector.get(AuthService);
-            return authService.refreshToken().pipe(
-              switchMap((res) => {
-                const clonedRetry = req.clone({
-                  headers: req.headers.set('Authorization', `Bearer ${res.access}`)
-                });
-                return next.handle(clonedRetry);
-              }),
-              catchError(() => {
+    return next.handle(cloned).pipe(
+      catchError((error: HttpErrorResponse) => {
+        if (error.status === 401) {
+          const authService = this.injector.get(AuthService);
+
+          return authService.refreshToken().pipe(
+            switchMap((res) => {
+              if (!res || !res.access) {
+                console.warn('No se pudo refrescar el token. Cerrando sesión.');
                 authService.logout();
-                return throwError(() => new Error('Error refreshing token'));
-              })
-            );
-          }
-          return throwError(() => error);
-        })
-      );
-    }
+                return throwError(() => new Error('Refresh token inválido'));
+              }
 
-    return next.handle(req);
+              const clonedRetry = req.clone({
+                headers: req.headers.set('Authorization', `Bearer ${res.access}`)
+              });
+
+              return next.handle(clonedRetry);
+            }),
+            catchError(() => {
+              console.error('Error al refrescar el token. Cerrando sesión.');
+              authService.logout();
+              return throwError(() => new Error('Error refrescando el token'));
+            })
+          );
+        }
+        return throwError(() => error);
+      })
+    );
   }
+
+  return next.handle(req);
+}
+
+
 }
