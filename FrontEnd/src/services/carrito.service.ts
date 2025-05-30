@@ -8,7 +8,7 @@ import { Carrito } from './carrito.model';
   providedIn: 'root'
 })
 export class CarritoService {
-  private baseUrl = 'https://aymara.pythonanywhere.com/api/cart/carrito';
+  private baseUrl = 'http://127.0.0.1:8000/api/cart/carrito';
 
   constructor(private http: HttpClient) {}
 

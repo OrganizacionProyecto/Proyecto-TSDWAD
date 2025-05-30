@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -140,6 +141,9 @@ MEDIA_ROOT = BASE_DIR / 'media'  # Ruta física donde se almacenarán los archiv
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+MERCADOPAGO_ACCESS_TOKEN = config('MP_ACCES_TOKEN')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
+print("Token MercadoPago:", MERCADOPAGO_ACCESS_TOKEN)
 
 
