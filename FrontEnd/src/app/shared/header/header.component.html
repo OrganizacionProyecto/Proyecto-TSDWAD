@@ -3,45 +3,40 @@
     <img src="../../../assets/img/Logo_Aymara-removebg-preview.png" alt="Logo">
   </div>
 
-  <ul class="nav-links">
-    <li><a (click)="navigateTo('/Home')">Inicio</a></li>
+  <div class="hamburger" (click)="toggleMenu()" [class.active]="menuOpen">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <ul class="nav-links" [ngClass]="{ 'show': menuOpen }">
+    <li><a (click)="navigateTo('/home')">Inicio</a></li>
     <li><a (click)="navigateTo('/productos')">Productos</a></li>
     <li><a (click)="navigateTo('/contacto')">Contacto</a></li>
-    <li><a (click)="navigateTo('/faq')">faq</a></li>
-
+    <li><a (click)="navigateTo('/faq')">FAQ</a></li>
 
     <!-- Mostrar opciones para usuarios NO logueados -->
     <ng-container *ngIf="!authService.isLoggedIn()">
       <li><a (click)="navigateTo('/login')">Ingresar</a></li>
       <li><a (click)="navigateTo('/registro')">Registro</a></li>
-
     </ng-container>
 
     <!-- Mostrar opciones para usuarios logueados -->
     <ng-container *ngIf="authService.isLoggedIn()">
       <ng-container *ngIf="userData$ | async as user">
-
-       <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
-
+        <li><a (click)="navigateTo('/carrito')">Carrito</a></li>
         <li>
-
           <a (click)="navigateTo('/dashboard')" class="welcome-message">
             Bienvenido, {{ user?.first_name || user?.nombre || '' }} {{ user?.last_name || user?.apellido || '' }}
           </a>
         </li>
-
-
-        <!-- Panel de Administrador: Solo visible para administradores -->
         <li *ngIf="authService.isAdmin()">
           <a (click)="navigateTo('/dashboard-admin')" class="admin-panel-link">Panel de Administrador</a>
         </li>
-
         <li>
           <a (click)="logout()">Cerrar sesión</a>
         </li>
       </ng-container>
     </ng-container>
-
-
   </ul>
 </nav>

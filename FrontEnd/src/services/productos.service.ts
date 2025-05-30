@@ -3,13 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-// Definimos las interfaces para los productos y otros datos relevantes.
 export interface Producto {
-  id_producto: number;  // Cambiado de idProducto a id_producto
+  id_producto: number;  
   nombre: string;
   descripcion: string;
   precio: number;
-  stock: number;  // Cambiado de disponibilidad a stock
+  stock: number;  
   imagen: string;
   id_categoria: number;
   cantidad: number;
@@ -22,7 +21,7 @@ export interface Categoria {
 
 export interface Favorito {
   id: number;
-  usuario: string;  // Asegúrate de que el modelo de usuario en la app coincida con lo que se recibe.
+  usuario: string; 
   producto: Producto;
   fecha_agregado: string;
 }
@@ -31,9 +30,9 @@ export interface Favorito {
   providedIn: 'root'
 })
 export class ProductoService {
-  private baseUrl = 'http://127.0.0.1:8000/api/products/productos/';  // Ruta base para productos
-  private categoriasUrl = 'http://127.0.0.1:8000/api/products/categorias/';  // Ruta para categorías
-  private favoritosUrl = 'http://127.0.0.1:8000/api/products/favoritos/';  // Ruta para favoritos
+  private baseUrl = 'https://aymara.pythonanywhere.com/api/products/productos/';  
+  private categoriasUrl = 'https://aymara.pythonanywhere.com/api/products/categorias/';  
+  private favoritosUrl = 'https://aymara.pythonanywhere.com/api/products/favoritos/';  
 
   constructor(private http: HttpClient) {}
 

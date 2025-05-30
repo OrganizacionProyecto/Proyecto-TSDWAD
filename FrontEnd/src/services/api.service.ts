@@ -21,9 +21,8 @@ export interface MetodoPago {
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'http://127.0.0.1:8000/api';
+  private baseUrl = 'https://aymara.pythonanywhere.com/api';
 
-  // Endpoints agrupados
   private carritoUrl = `${this.baseUrl}/cart/`;
   private pedidoUrl = `${this.baseUrl}/cart/pedido/`;
   private productosUrl = `${this.baseUrl}/products/`;
