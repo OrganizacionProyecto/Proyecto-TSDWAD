@@ -9,7 +9,7 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = 'https://aymara.pythonanywhere.com/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
   private userDataSubject = new BehaviorSubject<any>(null);
