@@ -31,14 +31,17 @@ class Pedido(models.Model):
     METODO_PAGO_CHOICES = [
         ('efectivo', 'Efectivo'),
         ('tarjeta', 'Tarjeta'),
+        ('mercadopago', 'MercadoPago'),
+
     ]
 
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pedidos')
     direccion_entrega = models.CharField(max_length=255)
     telefono = models.CharField(max_length=20)
-    metodo_pago = models.CharField(max_length=10, choices=METODO_PAGO_CHOICES)
+    metodo_pago = models.CharField(max_length=12, choices=METODO_PAGO_CHOICES)
     total = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_creacion = models.DateTimeField(auto_now_add=True)  
+    
     
     # Campos para simular el pago con tarjeta
     numero_tarjeta = models.CharField(max_length=16, blank=True, null=True)

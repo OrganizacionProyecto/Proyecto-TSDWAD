@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import ModificarProductoCarritoView, EliminarProductoCarritoView  # Asegúrate de importar la vista aquí
+from .views import ModificarProductoCarritoView, EliminarProductoCarritoView
 
 urlpatterns = [
     # Obtener carrito
@@ -22,5 +22,7 @@ urlpatterns = [
 
     # Historial de pedidos
     path('pedido/historial/', views.HistorialPedidosView.as_view(), name='historial-pedidos'),
+
+
 
 ]

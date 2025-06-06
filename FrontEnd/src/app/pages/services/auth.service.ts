@@ -74,25 +74,36 @@ export class AuthService {
   // Método para refrescar el token
 refreshToken(): Observable<any> {
   const refreshToken = this.tokenService.getRefreshToken();
+  
   if (refreshToken) {
     return this.http.post<any>(`${this.apiUrl}/auth/token/refresh/`, { refresh: refreshToken }).pipe(
       tap((tokens) => {
         if (tokens.access) {
           this.tokenService.setAccessToken(tokens.access);
+        } else {
+          console.warn('No se obtuvo un nuevo access token.');
+          this.logout();
         }
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Error al refrescar el token', error);
-        let errorMessage = 'Error al refrescar el token';
-        if (error.error && error.error.message) {
-          errorMessage = error.error.message;
+        
+        if (error.status === 401) {
+          console.warn('Refresh token inválido. Cerrando sesión.');
+          this.logout(); 
         }
-        return throwError(() => new Error(errorMessage));
+
+        return throwError(() => new Error('Error al refrescar el token'));
       })
     );
   }
+
+  console.warn('No refresh token disponible. Cerrando sesión.');
+  this.logout();
   return throwError(() => new Error('No refresh token found'));
 }
+
+
 
 
   // Método para loguearse

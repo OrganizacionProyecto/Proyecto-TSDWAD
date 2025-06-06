@@ -52,30 +52,36 @@
     </div>
   </div>
   
-  <div class="row mb-3" id="row">
-    <div class="col-md-6">
-      <label for="altura">Altura (cm)</label>
-      <input type="range" [(ngModel)]="valorAltura" min="1" max="260" id="altura" class="half-box" name="altura" required>
-      <output for="altura">{{ valorAltura }}</output>
-    </div>
-    <div class="col-md-6">
-      <label for="peso">Peso (kg)</label>
-      <input type="range" [(ngModel)]="valorPeso" min="1" max="260" id="peso" class="half-box" name="peso" required>
-      <output for="peso">{{ valorPeso }}</output>
-    </div>
-  </div>
-  
   <textarea class="box" name="objetivo" id="objetivo" rows="5" cols="40" placeholder="- Dejenos su comentario -"></textarea>
   
   <label>
     Desea Recibir Asesoramiento Nutricional
-    <input type="checkbox" name="recibir_informacion" value="sí">
+    <input 
+      type="checkbox" 
+      name="recibir_informacion" 
+      value="sí"
+      [(ngModel)]="deseaAsesoramiento"
+    >
   </label>
+  
+  <div *ngIf="deseaAsesoramiento">
+    <div class="row mb-3" id="row">
+      <div class="col-md-6">
+        <label for="altura">Altura (cm)</label>
+        <input type="range" [(ngModel)]="valorAltura" min="1" max="260" id="altura" class="half-box" name="altura" required>
+        <output for="altura">{{ valorAltura }}</output>
+      </div>
+      <div class="col-md-6">
+        <label for="peso">Peso (kg)</label>
+        <input type="range" [(ngModel)]="valorPeso" min="1" max="260" id="peso" class="half-box" name="peso" required>
+        <output for="peso">{{ valorPeso }}</output>
+      </div>
+    </div>
+  </div>
   
   <button type="submit" class="submit">Enviar</button>
   
   </form>
   
   </div>
-  
-    
+
