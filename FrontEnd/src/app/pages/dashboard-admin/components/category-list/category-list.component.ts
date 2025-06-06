@@ -65,7 +65,7 @@ import { Component, OnInit } from '@angular/core';
 
        deleteCategory(id: number): void {
          const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
-           data: { id }
+           data: { entityName: 'esta categoría' }
          });
          dialogRef.afterClosed().subscribe((result) => {
            if (result) {
