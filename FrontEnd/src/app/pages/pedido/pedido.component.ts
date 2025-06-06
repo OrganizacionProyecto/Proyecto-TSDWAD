@@ -50,51 +50,59 @@ export class PedidoComponent implements OnInit {
     return this.carrito.reduce((total, item) => total + Number(item.total_producto), 0);
   }
 
-  realizarPedido(): void {
-    if (!this.direccion || !this.telefono) {
-      alert('Debes completar dirección y teléfono.');
+realizarPedido(): void {
+  if (!this.direccion || !this.telefono) {
+    alert('Debes completar dirección y teléfono.');
+    return;
+  }
+
+  const datosPedido: any = {
+    metodo_pago: this.metodoPago,
+    direccion_entrega: this.direccion,
+    telefono: this.telefono
+  };
+
+  if (this.metodoPago === 'tarjeta') {
+    if (!this.numero_tarjeta || !this.fecha_expiracion || !this.codigo_seguridad) {
+      alert('Completa todos los campos de tarjeta.');
       return;
     }
+    datosPedido.numero_tarjeta = this.numero_tarjeta;
+    datosPedido.fecha_expiracion = this.fecha_expiracion;
+    datosPedido.codigo_seguridad = this.codigo_seguridad;
+  }
 
-    const datosPedido: any = {
-      metodo_pago: this.metodoPago,
-      direccion_entrega: this.direccion,
-      telefono: this.telefono
-    };
-
-    if (this.metodoPago === 'tarjeta') {
-      if (!this.numero_tarjeta || !this.fecha_expiracion || !this.codigo_seguridad) {
-        alert('Completa todos los campos de tarjeta.');
+  this.pedidoService.crearPedido(datosPedido).subscribe({
+    next: (response: any) => {
+      if (this.metodoPago === 'mercadopago' && response.mercadopago_url) {
+        window.location.href = response.mercadopago_url;
         return;
       }
-      datosPedido.numero_tarjeta = this.numero_tarjeta;
-      datosPedido.fecha_expiracion = this.fecha_expiracion;
-      datosPedido.codigo_seguridad = this.codigo_seguridad;
+
+      alert('¡Pedido realizado con éxito!');
+      this.pedidoRealizado = true;
+      this.pedidoId = response.id || null;
+
+      // Limpiar campos
+      this.numero_tarjeta = '';
+      this.fecha_expiracion = '';
+      this.codigo_seguridad = '';
+      this.direccion = '';
+      this.telefono = '';
+      this.metodoPago = 'tarjeta';
+
+      // Redirigir tras 3 segundos
+      setTimeout(() => this.router.navigate(['/mispedidos']), 3000);
+    },
+    error: (error: any) => {
+      console.error('Error al realizar el pedido:', error);
+      console.error('Detalle error backend:', error.error);  // <-- Aquí
+      alert('Hubo un error al procesar el pedido.');
     }
 
-    this.pedidoService.crearPedido(datosPedido).subscribe({
-      next: (response: any) => {
-        alert('¡Pedido realizado con éxito!');
-        this.pedidoRealizado = true;
-        this.pedidoId = response.id || null;
+  });
+}
 
-        // Limpiar campos
-        this.numero_tarjeta = '';
-        this.fecha_expiracion = '';
-        this.codigo_seguridad = '';
-        this.direccion = '';
-        this.telefono = '';
-        this.metodoPago = 'tarjeta';
-
-        // Redirigir tras 3 segundos
-        setTimeout(() => this.router.navigate(['/mispedidos']), 3000);
-      },
-      error: (error: any) => {
-        console.error('Error al realizar el pedido:', error);
-        alert('Hubo un error al procesar el pedido.');
-      }
-    });
-  }
 
   descargarPDF(): void {
     if (!this.pedidoId) return;

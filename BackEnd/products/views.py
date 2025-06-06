@@ -66,8 +66,8 @@ class FavoritoListCreateView(generics.ListCreateAPIView):
         if Favorito.objects.filter(usuario=self.request.user, producto_id=producto_id).exists():
             raise ValidationError("Este producto ya está en tus favoritos.")
 
-        # Si no está en favoritos, lo agregamos
         serializer.save(usuario=self.request.user)
+
 
 
 class FavoritoDeleteView(generics.DestroyAPIView):
@@ -78,7 +78,4 @@ class FavoritoDeleteView(generics.DestroyAPIView):
         return Favorito.objects.filter(usuario=self.request.user)
 
     def perform_destroy(self, instance):
-        if instance:
-            super().perform_destroy(instance)
-        else:
-            raise ValidationError("Este producto no está en tus favoritos.")
+        super().perform_destroy(instance)

@@ -1,9 +1,9 @@
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.permissions import BasePermission
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import CustomUser
-from .serializers import UserSerializer
+from .serializers import UserSerializer, ChangePasswordSerializer
 
 class IsAdminOrStaffUser(BasePermission):
     """
@@ -29,6 +29,11 @@ class IsSelfOrAdmin(BasePermission):
 class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
+    def get_serializer_class(self):
+        if self.action == 'change_password':
+            return ChangePasswordSerializer
+        return super().get_serializer_class()
+
     def get_permissions(self):
         if self.action == 'create':
             return [permissions.AllowAny()]
@@ -40,29 +45,37 @@ class UserViewSet(viewsets.ModelViewSet):
             return [permissions.IsAuthenticated()]
         elif self.action == 'list':
             return [permissions.IsAuthenticated(), IsAdminOrStaffUser()]
-        elif self.action == 'me':  # Permitir la actualización de los datos del perfil propio
+        elif self.action == 'me':
             return [permissions.IsAuthenticated()]
-        elif self.action == 'deactivate_account':  # Acción para desactivar la cuenta
+        elif self.action == 'deactivate_account':
+            return [permissions.IsAuthenticated()]
+        elif self.action == 'change_password':
             return [permissions.IsAuthenticated()]
         else:
             return [permissions.IsAuthenticated()]
 
+    def get_queryset(self):
+        """
+        Solo devuelve los usuarios para admins/superusuarios, o el propio usuario si no es admin.
+        """
+        user = self.request.user
+        if user.is_staff or user.is_superuser:
+            return CustomUser.objects.all()
+        return CustomUser.objects.filter(id=user.id)
+
     @action(detail=False, methods=['get', 'put'])
     def me(self, request):
         """
-        Devuelve el perfil del usuario autenticado o actualiza los datos del usuario autenticado.
+        Devuelve o actualiza el perfil del usuario autenticado.
         """
         user = request.user
         if request.method == 'GET':
-            # Serializa y devuelve los datos del usuario
             serializer = self.get_serializer(user)
             return Response(serializer.data)
-        
-        if request.method == 'PUT':
-            # Si la solicitud es PUT, actualizamos el perfil del usuario
+        elif request.method == 'PUT':
             serializer = self.get_serializer(user, data=request.data)
             if serializer.is_valid():
-                serializer.save()  # Guarda los cambios
+                serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=400)
 
@@ -76,12 +89,23 @@ class UserViewSet(viewsets.ModelViewSet):
         user.save()
         return Response({"detail": "Cuenta desactivada correctamente."})
 
-    def get_queryset(self):
+    @action(detail=False, methods=['post'], url_path='change_password')
+    def change_password(self, request):
         """
-        Solo devuelve los usuarios para admins/superusuarios, o el propio usuario si no es admin.
+        Permite a un usuario autenticado cambiar su contraseña.
         """
-        user = self.request.user
-        if user.is_staff or user.is_superuser:
-            return CustomUser.objects.all()  # Admin puede ver todos
-        return CustomUser.objects.filter(id=user.id)  # Solo se muestra el perfil del usuario autenticado
+        user = request.user
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        old_password = serializer.validated_data['old_password']
+        new_password = serializer.validated_data['new_password']
+
+        if not user.check_password(old_password):
+            return Response({'old_password': 'Contraseña antigua incorrecta'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(new_password)
+        user.save()
+
+        return Response({'message': 'Contraseña cambiada con éxito.'}, status=status.HTTP_200_OK)
