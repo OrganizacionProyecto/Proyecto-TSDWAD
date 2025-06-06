@@ -30,9 +30,9 @@ export interface Favorito {
   providedIn: 'root'
 })
 export class ProductoService {
-  private baseUrl = 'https://aymara.pythonanywhere.com/api/products/productos/';  
-  private categoriasUrl = 'https://aymara.pythonanywhere.com/api/products/categorias/';  
-  private favoritosUrl = 'https://aymara.pythonanywhere.com/api/products/favoritos/';  
+  private baseUrl = 'http://127.0.0.1:8000/api/products/productos/';  
+  private categoriasUrl = 'http://127.0.0.1:8000/api/products/categorias/';  
+  private favoritosUrl = 'http://127.0.0.1:8000/api/products/favoritos/';  
 
   constructor(private http: HttpClient) {}
 

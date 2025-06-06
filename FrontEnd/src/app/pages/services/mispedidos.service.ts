@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PedidoService {
-  private baseUrl = 'https://aymara.pythonanywhere.com/api/cart/pedido';
+  private baseUrl = 'http://127.0.0.1:8000/api/cart/pedido';
 
   constructor(private http: HttpClient) {}
 
