@@ -9,7 +9,7 @@ import { TokenService } from './token.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://aymara.pythonanywhere.com/api';
+  private apiUrl = 'http://127.0.0.1:8000/api';
   private authStatusSubject = new BehaviorSubject<boolean>(this.hasToken());
   public authStatus$ = this.authStatusSubject.asObservable();
   private userDataSubject = new BehaviorSubject<any>(null);
@@ -73,28 +73,27 @@ export class AuthService {
   }
 
   // Método para refrescar el token
-refreshToken(): Observable<any> {
-  const refreshToken = this.tokenService.getRefreshToken();
-  if (refreshToken) {
-    return this.http.post<any>(`${this.apiUrl}/auth/token/refresh/`, { refresh: refreshToken }).pipe(
-      tap((tokens) => {
-        if (tokens.access) {
-          this.tokenService.setAccessToken(tokens.access);
-        }
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Error al refrescar el token', error);
-        let errorMessage = 'Error al refrescar el token';
-        if (error.error && error.error.message) {
-          errorMessage = error.error.message;
-        }
-        return throwError(() => new Error(errorMessage));
-      })
-    );
+  refreshToken(): Observable<any> {
+    const refreshToken = this.tokenService.getRefreshToken();
+    if (refreshToken) {
+      return this.http.post<any>(`${this.apiUrl}/auth/refresh-token/`, { refresh: refreshToken }).pipe(
+        tap((tokens) => {
+          if (tokens.access) {
+            this.tokenService.setAccessToken(tokens.access);
+          }
+        }),
+        catchError((error: HttpErrorResponse) => {
+          console.error('Error al refrescar el token', error);
+          let errorMessage = 'Error al refrescar el token';
+          if (error.error && error.error.message) {
+            errorMessage = error.error.message;
+          }
+          return throwError(() => new Error(errorMessage));
+        })
+      );
+    }
+    return throwError(() => new Error('No refresh token found'));
   }
-  return throwError(() => new Error('No refresh token found'));
-}
-
 
   // Método para loguearse
   login(credentials: { email: string; password: string }): Observable<any> {

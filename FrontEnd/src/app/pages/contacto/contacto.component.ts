@@ -15,7 +15,6 @@ import { FormsModule } from '@angular/forms';
 export class ContactoComponent {
   valorAltura: number = 170;
   valorPeso: number = 70;
-  nombre: string = '';
-  email: string = '';
-  deseaAsesoramiento: boolean = false;
+  nombre:string='';
+  email:string='';
 }

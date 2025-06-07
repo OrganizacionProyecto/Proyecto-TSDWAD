@@ -1,0 +1,33 @@
+<div class="dashboard-container">
+  <h2>
+    Bienvenido, 
+    {{ userData?.first_name }} 
+    {{ userData?.last_name }}
+  </h2>
+
+  <div class="user-info">
+    <p><strong>Nombre:</strong> {{ userData?.first_name }}</p>
+    <p><strong>Apellido:</strong> {{ userData?.last_name }}</p>
+    <p><strong>Correo electrónico:</strong> {{ userData?.email }}</p>
+  </div>
+
+  <div class="action-buttons">
+    <button (click)="verMisPedidos()" class="btn btn-info">
+      Mis Pedidos
+    </button>
+
+    <button (click)="showEdit = !showEdit" class="btn btn-primary">
+      Editar cuenta
+    </button>
+
+    <button (click)="logout()" class="btn btn-success">
+      Cerrar sesión
+    </button>
+
+    <button (click)="confirmDelete()" class="delete-button">
+      Eliminar cuenta
+    </button>  
+  </div>
+
+  <app-account-settings *ngIf="showEdit"></app-account-settings>
+</div>

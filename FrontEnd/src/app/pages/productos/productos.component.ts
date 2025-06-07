@@ -5,7 +5,7 @@ import { CarritoService } from '../../../services/carrito.service';
 import { ProductoService, Producto } from '../../../services/productos.service';
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
-import { AuthService } from '../../pages/services/auth.service'; 
+import { AuthService } from '../../pages/services/auth.service';  // Asegúrate de tener el import correcto
 
 @Component({
   selector: 'app-productos',
@@ -25,7 +25,6 @@ export class ProductosComponent implements OnInit {
     2: 'Bebidas',
     3: 'Alimentos secos',
   };
-  errorMensajes: { [id_producto: number]: string } = {};
 
   constructor(
     private productoService: ProductoService,
@@ -42,7 +41,7 @@ export class ProductosComponent implements OnInit {
     this.productoService.obtenerProductos().subscribe(
       (productosData: Producto[]) => {
         this.productosOriginales = productosData;
-        this.productos = productosData.map(p => ({ ...p, cantidad: 1 }));
+        this.productos = productosData;
         this.loading = false;
       },
       (error) => {
@@ -74,27 +73,17 @@ export class ProductosComponent implements OnInit {
     });
   }
 
-  agregarAlCarrito(producto: Producto, cantidad: any): void {
-    // Limpia el mensaje anterior
-    this.errorMensajes[producto.id_producto] = '';
-
-    const cantidadNum = Number(cantidad);
-
-    if (isNaN(cantidadNum) || cantidadNum <= 0) {
-      this.errorMensajes[producto.id_producto] = 'La cantidad debe ser mayor a 0';
-      return;
-    }
-    if (cantidadNum > producto.stock) {
-      this.errorMensajes[producto.id_producto] = 'Cantidad no válida: supera el stock disponible';
+  agregarAlCarrito(producto: Producto, cantidad: number): void {
+    if (cantidad <= 0 || cantidad > producto.stock) {
+      console.error('Cantidad inválida o mayor al stock disponible');
       return;
     }
 
-    this.carritoService.agregarProductoAlCarrito(producto.id_producto, cantidadNum).subscribe(
+    this.carritoService.agregarProductoAlCarrito(producto.id_producto, cantidad).subscribe(
       (response) => {
         this.router.navigate(['carrito']);
       },
       (error) => {
-        this.errorMensajes[producto.id_producto] = 'Error al agregar al carrito';
         console.error('Error al agregar al carrito:', error);
       }
     );

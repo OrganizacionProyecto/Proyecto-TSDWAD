@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class PedidoService {
-  private apiUrl = 'https://aymara.pythonanywhere.com/api/cart/pedido/crear/';  
+  private apiUrl = 'http://localhost:8000/api/cart/pedido/crear/';  
 
   constructor(private http: HttpClient) {}
 
@@ -15,7 +15,7 @@ export class PedidoService {
   }
 
   descargarPDF(pedidoId: number): Observable<Blob> {
-    const url = `https://aymara.pythonanywhere.com/api/cart/pedidos/${pedidoId}/factura/`; 
+    const url = `http://localhost:8000/api/cart/pedidos/${pedidoId}/factura/`; 
     return this.http.get(url, { responseType: 'blob' });
   }
 }

@@ -10,8 +10,6 @@
   background-size: cover;
   color: #fff;
   flex-wrap: wrap;
-  position: relative;
-  z-index: 100;
 }
 
 .logo_nav img {
@@ -49,51 +47,33 @@
   color: #fff;
 }
 
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-}
-
-.hamburger div {
-  width: 25px;
-  height: 3px;
-  background-color: #fff;
-  transition: all 0.3s;
-}
-
-.hamburger.active div:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
-}
-
-.hamburger.active div:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger.active div:nth-child(3) {
-  transform: rotate(-45deg) translate(5px, -5px);
-}
-
 @media (max-width: 768px) {
-  .nav-links {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    background-color: rgba(51, 111, 53, 0.9);
+  .nav {
     flex-direction: column;
-    gap: 15px;
-    padding: 15px;
-    display: none;
-    transition: all 0.3s;
+    align-items: flex-start;
   }
 
-  .nav-links.show {
-    display: flex;
+  .nav-links {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
   }
 
-  .hamburger {
-    display: flex;
+  .nav-links li {
+    width: 100%;
   }
+}
+
+.admin-panel-link {
+  font-weight: bold;
+  color: #e74c3c; /* Rojo para resaltar */
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #0a3fba;
+  transition: background-color 0.3s;
+}
+
+.admin-panel-link:hover {
+  background-color: #e74c3c;
+  color: #fff;
 }

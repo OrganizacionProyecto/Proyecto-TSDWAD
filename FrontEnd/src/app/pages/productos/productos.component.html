@@ -29,13 +29,9 @@
         <div *ngIf="authService.isLoggedIn()">
           <p class="prod_p"><strong>Stock:</strong> {{ producto.stock }}</p>
           <div class="cantidad-container">
-            <input type="number" [(ngModel)]="producto.cantidad" name="cantidad{{producto.id_producto}}" class="cantidad-input" placeholder="Cantidad" min="1" [max]="producto.stock">
-            <!-- Debe estar dentro del *ngFor="let producto of productos" -->
-            <div *ngIf="errorMensajes[producto.id_producto]" class="error-mensaje" style="color: red; font-size: 0.9em;">
-              {{ errorMensajes[producto.id_producto] }}
-            </div>
+            <input type="number" [(ngModel)]="producto.cantidad" class="cantidad-input" placeholder="Cantidad" min="1" [max]="producto.stock">
           </div>
-          <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)">Comprar</button>
+          <button class="comprar-btn" (click)="agregarAlCarrito(producto, producto.cantidad)" [disabled]="producto.cantidad <= 0 || producto.cantidad > producto.stock">Comprar</button>
         </div>
 
         <!-- El precio siempre es visible -->
