@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'https://aymara.pythonanywhere.com/'
+    apiUrl: 'http://localhost:8000'
   };

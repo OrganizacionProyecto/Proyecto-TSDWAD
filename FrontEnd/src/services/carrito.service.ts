@@ -8,7 +8,7 @@ import { Carrito } from './carrito.model';
   providedIn: 'root'
 })
 export class CarritoService {
-  private baseUrl = 'https://aymara.pythonanywhere.com/api/cart/carrito';
+  private baseUrl = 'http://127.0.0.1:8000/api/cart/carrito';
 
   constructor(private http: HttpClient) {}
 
@@ -32,7 +32,7 @@ export class CarritoService {
   }
 
   modificarProductoCarrito(id_producto: number, accion: string, cantidad: number): Observable<any> {
-    const payload = { accion, cantidad }; 
+    const payload = { accion, cantidad }; // Aquí estamos enviando el valor de "accion"
     return this.http.put(`${this.baseUrl}/modificar/${id_producto}/`, payload).pipe(
       catchError((error) => {
         console.error('Error al modificar producto en el carrito:', error);
