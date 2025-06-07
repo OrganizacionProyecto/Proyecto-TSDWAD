@@ -20,6 +20,7 @@ export class AuthService {
     private router: Router,
     private tokenService: TokenService
   ) {
+    // Cargar los datos del usuario al inicializar el servicio si hay un token
     if (this.hasToken()) {
       this.loadUserData();
     }
@@ -74,36 +75,25 @@ export class AuthService {
   // Método para refrescar el token
 refreshToken(): Observable<any> {
   const refreshToken = this.tokenService.getRefreshToken();
-  
   if (refreshToken) {
     return this.http.post<any>(`${this.apiUrl}/auth/token/refresh/`, { refresh: refreshToken }).pipe(
       tap((tokens) => {
         if (tokens.access) {
           this.tokenService.setAccessToken(tokens.access);
-        } else {
-          console.warn('No se obtuvo un nuevo access token.');
-          this.logout();
         }
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Error al refrescar el token', error);
-        
-        if (error.status === 401) {
-          console.warn('Refresh token inválido. Cerrando sesión.');
-          this.logout(); 
+        let errorMessage = 'Error al refrescar el token';
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
         }
-
-        return throwError(() => new Error('Error al refrescar el token'));
+        return throwError(() => new Error(errorMessage));
       })
     );
   }
-
-  console.warn('No refresh token disponible. Cerrando sesión.');
-  this.logout();
   return throwError(() => new Error('No refresh token found'));
 }
-
-
 
 
   // Método para loguearse
@@ -114,7 +104,7 @@ refreshToken(): Observable<any> {
           this.tokenService.setAccessToken(res.access);
           this.tokenService.setRefreshToken(res.refresh);
           this.authStatusSubject.next(true);
-          this.loadUserData(); 
+          this.loadUserData(); // Cargar datos después del login
         }
       }),
       catchError((error: HttpErrorResponse) => {
@@ -132,7 +122,7 @@ refreshToken(): Observable<any> {
   logout(): void {
     this.tokenService.removeTokens();
     this.authStatusSubject.next(false);
-    this.userDataSubject.next(null); 
+    this.userDataSubject.next(null); // Limpiar los datos del usuario al logout
     this.router.navigate(['/']); // Redirige al inicio ("/")
   }
 
@@ -140,7 +130,7 @@ refreshToken(): Observable<any> {
   updateUser(data: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/users/me/`, data).pipe(
       tap((updatedUser) => {
-        this.userDataSubject.next(updatedUser); 
+        this.userDataSubject.next(updatedUser); // actualiza el observable global
       }),
       catchError((error: HttpErrorResponse) => {
         console.error('Error al actualizar el usuario', error);
@@ -197,5 +187,13 @@ refreshToken(): Observable<any> {
     return userData && userData.app_role === 'admin_app';
   }
 
-
+  // Manejo de errores (este método ya no es necesario con el manejo individual en cada método)
+  // private handleError(error: HttpErrorResponse): Observable<any> {
+  //   console.error('Error de autenticación', error);
+  //   let errorMessage = 'Error de autenticación';
+  //   if (error.error && error.error.message) {
+  //     errorMessage = error.error.message;
+  //   }
+  //   return throwError(() => new Error(errorMessage));
+  // }
 }
