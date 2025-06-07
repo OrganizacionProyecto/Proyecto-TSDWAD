@@ -36,3 +36,5 @@ Thumbs.db
 
 # Node (si usás Angular o React en frontend)
 node_modules/
+
+.angular/
